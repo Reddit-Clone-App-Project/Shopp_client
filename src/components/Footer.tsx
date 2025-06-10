@@ -10,6 +10,7 @@ import AirTransportation from '../assets/Air-transportation.svg';
 
 const Footer = () => {
     return (
+        /*remove absolute*/
         <section className="absolute w-[1440px] h-[468px] left-0 top-[556px] border">
             <div className="absolute w-[139px] h-[95px] left-[32px] top-[25px]">
                 <img src={Logo} className='w-[139px] h-[56px] mb-6'/>

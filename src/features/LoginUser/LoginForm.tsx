@@ -16,9 +16,9 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                 e.preventDefault(); 
                 onSubmit(email, password);
             }}
-            className="absolute w-[400px] h-[234px] left-[50px] top-[48px]"
+            className="w-[400px] h-[234px] m-auto"
         >
-            <div className="absolute w-[400px] h-[64px] left-0 top-0">
+            <div className="w-[400px] h-[64px] mt-10 mb-5">
                 <label htmlFor="login-email">
                     Email/Phone Number
                 </label>
@@ -30,10 +30,10 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="box-border absolute w-[400px] h-[40px] left-0 top-[30px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
-            <div className="absolute w-[400px] h-[64px] left-0 top-[92px]">
+            <div className="w-[400px] h-[64px] mb-2">
                 <label htmlFor="login-password">
                     Password
                 </label>
@@ -45,16 +45,18 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     autoComplete="current-password"
-                    className="box-border absolute w-[400px] h-[40px] left-0 top-[30px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
-            <p className='absolute w-[119px] h-[17px] left-0 top-[177px] Inter not-italic font-normal text-sm text-purple-800 hover:underline hover:cursor-pointer'>Forget Password?</p>
-            <button
-                type="submit"
-                /*disabled={isLoading || !email || !password}*/
-                className="absolute w-[80px] h-[30px] left-0 top-[210px] bg-black rounded-[8px] text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer"
-            >Login</button>
-            <p className="absolute h-[17px] left-[150px] top-[215px] Inter not-italic font-normal text-sm text-purple-800 hover:underline hover:cursor-pointer">New to Shopp, Sign Up now!</p>
+            <p className='w-[119px] h-[17px] mb-5 Inter not-italic font-normal text-sm text-purple-800 hover:underline hover:cursor-pointer'>Forget Password?</p>
+            <div className="flex content-center">
+                <button
+                    type="submit"
+                    /*disabled={isLoading || !email || !password}*/
+                    className="w-[80px] h-[30px] bg-black rounded-[8px] text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800"
+                >Login</button>
+                <p className="h-[17px] left-[150px] m-auto ml-8 Inter not-italic font-normal text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">New to Shopp, Sign Up now!</p>
+            </div>
         </form>
     );
 };

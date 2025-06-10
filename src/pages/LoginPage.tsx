@@ -10,11 +10,11 @@ const LoginPage = () => {
 
     return (
         <div>
-            <header className='absolute w-[1440px] h-[100px] left-[0px] top–[0px] bg-[#A567C6]'>
-                <img src={ Logo } alt='Logo shopp' className='absolute w-[135px] h-[56px] left-[652px] top-[22px]'/>
+            <header className='h-[100px] bg-[#A567C6] content-center'>
+                <img src={ Logo } alt='Logo shopp' className='flex w-[135px] h-[56px] m-auto'/>
             </header>
             <main>
-                <div className='absolute w-[500px] h-[350px] left-[470px] top-[139px] bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px]'>
+                <div className='w-[500px] h-[350px] m-auto mt-8 bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px]'>
                     <LoginForm 
                         onSubmit={handleSubmit}
                     />
