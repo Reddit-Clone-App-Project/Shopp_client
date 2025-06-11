@@ -10,7 +10,9 @@ import AirTransportation from '../assets/Air-transportation.svg';
 
 const Footer = () => {
     return (
-        <section className="flex h-[468px] top-[556px] justify-around pt-8 mt-18 border">
+        <>
+        <hr className='mt-18 text-gray-300'/>
+        <section className="flex w-full h-[468px] top-[556px] justify-around pt-8">
             <div className="w-[139px] h-[95px] left-[32px] top-[25px]">
                 <img src={Logo} className='w-[139px] h-[56px] mb-6'/>
                 <div className='flex justify-between'>
@@ -77,6 +79,7 @@ const Footer = () => {
                 <p className='font-medium text-[12px]'>@This is a fictional website, it is only intended to be used as a portfolio project.</p>
             </div>
         </section>
+        </>
     );
 };
 
