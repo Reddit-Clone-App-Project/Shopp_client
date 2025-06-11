@@ -10,9 +10,8 @@ import AirTransportation from '../assets/Air-transportation.svg';
 
 const Footer = () => {
     return (
-        /*remove absolute*/
-        <section className="absolute w-[1440px] h-[468px] left-0 top-[556px] border">
-            <div className="absolute w-[139px] h-[95px] left-[32px] top-[25px]">
+        <section className="flex h-[468px] top-[556px] justify-around pt-8 mt-18 border">
+            <div className="w-[139px] h-[95px] left-[32px] top-[25px]">
                 <img src={Logo} className='w-[139px] h-[56px] mb-6'/>
                 <div className='flex justify-between'>
                     <img src={Github} className='w-6 h-6'/>
@@ -20,7 +19,7 @@ const Footer = () => {
                     <img src={Linkedin} className='w-6 h-6'/>
                 </div>
             </div>
-            <div className='absolute w-[158px] left-[311px] top-[43px]'>
+            <div className='w-[158px] left-[311px] top-[43px]'>
                 <h2 className='mb-8 font-bold'>Customer service</h2>
                 <ul className='leading-8'>
                     <li>Shopp Help Center</li>
@@ -33,7 +32,7 @@ const Footer = () => {
                     <li>Warranty Policy</li>
                 </ul>
             </div>
-            <div className='absolute w-[130px] left-[577px] top-[43px]'>
+            <div className='w-[130px] left-[577px] top-[43px]'>
                 <h2 className='mb-8 font-bold'>Shopp</h2>
                 <ul className='leading-8'>
                     <li>About</li>
@@ -46,22 +45,24 @@ const Footer = () => {
                     <li>Media Contact</li>
                 </ul>
             </div>
-            <div className='absolute w-[96px] h-[120px] left-[843px] top-[43px]'>
-                <h2 className='mb-8 font-bold'>Payment</h2>
-                <img src={Stripe}/>
-            </div>
-            <div className='absolute w-[179px] h-[139px] left-[843px] top-[183px]'>
-                <h2 className='mb-8 font-bold'>Transportation unit</h2>
-                <div className='flex justify-between mb-5'>
-                    <img src={Fast}/>
-                    <img src={AirTransportation}/>
+            <div className='block'>
+                <div className='w-[96px] h-[120px] left-[843px] top-[43px] mb-6'>
+                    <h2 className='mb-8 font-bold'>Payment</h2>
+                    <img src={Stripe}/>
                 </div>
-                <div className='flex justify-between'>
-                    <img src={AmericanPost}/>
-                    <img src={EuropeanExpress}/>
+                <div className='w-[179px] h-[139px] left-[843px] top-[183px]'>
+                    <h2 className='mb-8 font-bold'>Transportation unit</h2>
+                    <div className='flex justify-between mb-5'>
+                        <img src={Fast}/>
+                        <img src={AirTransportation}/>
+                    </div>
+                    <div className='flex justify-between'>
+                        <img src={AmericanPost}/>
+                        <img src={EuropeanExpress}/>
+                    </div>
                 </div>
             </div>
-            <div className='absolute w-[181px] h-[280px] left-[1108px] top-[43px]'>
+            <div className='w-[181px] h-[280px] left-[1108px] top-[43px]'>
                 <h2 className='mb-8 font-bold'>Developers</h2>
                 <h2 className='mb-4 font-bold'>Nghiêm Gia Bảo</h2>
                 <div className='flex mb-6'>
