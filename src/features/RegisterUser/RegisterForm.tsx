@@ -56,7 +56,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                     maxLength={30}
 
                     required
-                    placeholder="+1 093243434"
+                    placeholder="+1093243434"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     autoComplete="tel"

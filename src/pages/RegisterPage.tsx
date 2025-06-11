@@ -6,12 +6,12 @@ import RegisterForm from '../features/RegisterUser/RegisterForm';
 const RegisterPage = () => {
     const navigate = useNavigate(); 
 
-    const handleSubmit = async (email: string, phone: string, password: string, role: string) => {
+    const handleSubmit = async (email: string, phone_number: string, password: string, role: string) => {
         try {
             const response = await fetch('http://localhost:3000/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, phone, password, role }),
+                body: JSON.stringify({ email, phone_number, password, role }),
             });
 
             const data = await response.json();
@@ -20,11 +20,11 @@ const RegisterPage = () => {
                 return;
             };
 
-            alert('Registration completed');
+            alert('Registration completed!');
             navigate('/login');
             
         } catch (err) {
-            alert('Connection Failed, try again')
+            alert('Connection Failed, try again!')
         }
     };
 
