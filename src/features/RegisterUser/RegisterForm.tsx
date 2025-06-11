@@ -2,7 +2,7 @@ import { useState } from "react";
 import classNames from 'classnames';
 
 export type RegisterFormProps = {
-    onSubmit: (email: string, phone:string, password: string, confirm: string) => void;
+    onSubmit: (email: string, phone:string, password: string, role: string) => void;
 };
 
 const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
@@ -10,6 +10,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
+    const role = 'buyer';
 
     const hasMinLength = password.length > 7;
     const hasMaxLength = password.length < 31;
@@ -23,7 +24,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
         <form 
             onSubmit={e => {
                 e.preventDefault(); 
-                onSubmit(email, phone, password, confirm);
+                onSubmit(email, phone, password, role);
             }}
             className="w-[400px] h-[234px] m-auto"
         >
