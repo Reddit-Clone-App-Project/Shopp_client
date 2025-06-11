@@ -20,7 +20,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
         >
             <div className="w-[400px] h-[64px] mt-10 mb-5">
                 <label htmlFor="login-email">
-                    Email/Phone Number
+                    Email / Phone Number
                 </label>
                 <input
                     id="login-email"
@@ -48,14 +48,16 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
-            <p className='w-[119px] h-[17px] mb-5 Inter not-italic font-normal text-sm text-purple-800 hover:underline hover:cursor-pointer'>Forget Password?</p>
+            <p className='w-[119px] h-[17px] mb-9 Inter not-italic font-light text-sm text-purple-800 hover:underline hover:cursor-pointer'>
+                Forget Password?</p>
             <div className="flex content-center">
                 <button
                     type="submit"
-                    /*disabled={isLoading || !email || !password}*/
-                    className="w-[80px] h-[30px] bg-black rounded-[8px] text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800"
+                    disabled={!email || !password}
+                    className="w-[80px] h-[30px] bg-black rounded-[8px] text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50"
                 >Login</button>
-                <p className="h-[17px] left-[150px] m-auto ml-8 Inter not-italic font-normal text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">New to Shopp, Sign Up now!</p>
+                <p className="h-[17px] left-[150px] m-auto ml-18 Inter not-italic font-light text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
+                    <a href="/register">New to Shopp, Sign Up now!</a></p>
             </div>
         </form>
     );
