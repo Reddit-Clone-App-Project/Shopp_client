@@ -2,10 +2,12 @@ import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } 
 import Root from './components/Root.tsx';
 import './App.css'
 import LoginPage from './pages/LoginPage.tsx';
+import RegisterPage from './pages/RegisterPage.tsx';
 
 const router = createBrowserRouter( createRoutesFromElements(
   <Route path="/" element={<Root />}>
     <Route path="/login" element={<LoginPage />} />
+    <Route path='/register' element={<RegisterPage />} />
   </Route>
 ));
 
@@ -13,6 +15,6 @@ function App() {
   return (
     <RouterProvider router={router}/>
   );
-}
+};
 
 export default App;
