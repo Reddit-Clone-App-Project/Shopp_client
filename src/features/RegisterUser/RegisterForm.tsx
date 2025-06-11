@@ -115,7 +115,8 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
 
             <div className="mb-6 ml-3 font-light text-[12px]">
                 <p className={classNames({
-                        'invisible' : isEqual === true || confirm.length === 0 && password.length === 0, 
+                        'invisible' : confirm.length === 0 && password.length === 0,
+                        'text-green-600' : isEqual, 
                         'text-red-500 ' : !isEqual,
                     })}
                 >
