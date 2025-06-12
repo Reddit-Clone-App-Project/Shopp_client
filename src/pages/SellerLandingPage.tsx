@@ -26,7 +26,7 @@ const SellerLandingPage: React.FC = () => {
           </button>
         </div>
       </header>
-      <main className="pt-24 px-0! md:px-16 lg:px-24">
+      <div className="pt-24 px-0! md:px-16 lg:px-24">
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-12 px-10">
           <div className="flex-1 space-y-6">
@@ -249,7 +249,7 @@ const SellerLandingPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </main>
+      </div>
       <footer>
         <Footer />
       </footer>

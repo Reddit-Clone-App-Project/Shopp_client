@@ -10,10 +10,12 @@ const HomePage : React.FC = () => {
             <BuyerHeader />
         </header>
 
-        <main>
+        <div>
             <Hero />
-            
-        </main>
+            <div>
+                
+            </div>
+        </div>
 
         <footer>
             <Footer />
