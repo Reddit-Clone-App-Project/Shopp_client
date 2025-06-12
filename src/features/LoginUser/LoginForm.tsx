@@ -6,7 +6,7 @@ export type LoginFormProps = {
 };
 
 const LoginForm = ({ onSubmit }: LoginFormProps) => {
-    const [email, setEmail] = useState('');
+    const [eOrP, setEOrP] = useState('');
     const [password, setPassword] = useState('');
     /*const isLoading = useSelector*/
 
@@ -14,7 +14,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
         <form 
             onSubmit={e => {
                 e.preventDefault(); 
-                onSubmit(email, password);
+                onSubmit(eOrP, password);
             }}
             className="w-[400px] h-[234px] m-auto"
         >
@@ -27,8 +27,8 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     type="text"
                     required
                     placeholder="example@email.com / 093243434"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    value={eOrP}
+                    onChange={e => setEOrP(e.target.value)}
                     autoComplete="email"
                     className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
@@ -53,7 +53,7 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
             <div className="flex content-center">
                 <button
                     type="submit"
-                    disabled={!email || !password}
+                    disabled={!eOrP || !password}
                     className="w-[80px] h-[30px] bg-black rounded-[8px] text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50"
                 >Login</button>
                 <p className="h-[17px] left-[150px] m-auto ml-18 Inter not-italic font-light text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">

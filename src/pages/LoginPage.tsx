@@ -1,11 +1,12 @@
+import axios from 'axios';
 import Logo from '../assets/Logo.svg';
 import LoginForm from '../features/LoginUser/LoginForm';
 import Footer from '../components/Footer';
 
 const LoginPage = () => {
 
-    const handleSubmit = () => {
-
+    const handleSubmit = (eOrP: string, password: string) => {
+        
     };
 
     return (
