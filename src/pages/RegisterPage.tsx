@@ -1,10 +1,31 @@
+import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/Logo.svg';
 import Footer from '../components/Footer';
 import RegisterForm from '../features/RegisterUser/RegisterForm';
 
 const RegisterPage = () => {
-    const handleSubmit = () => {
+    const navigate = useNavigate(); 
 
+    const handleSubmit = async (email: string, phone_number: string, password: string, role: string) => {
+        try {
+            const response = await fetch('http://localhost:3000/users/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, phone_number, password, role }),
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                alert(data.error || 'Error during registration');
+                return;
+            };
+
+            alert('Registration completed!');
+            navigate('/login');
+            
+        } catch (err) {
+            alert('Connection Failed, try again!')
+        }
     };
 
     return (
