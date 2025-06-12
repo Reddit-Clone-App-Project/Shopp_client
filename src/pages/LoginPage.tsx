@@ -1,13 +1,30 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Logo from '../assets/Logo.svg';
 import LoginForm from '../features/LoginUser/LoginForm';
 import Footer from '../components/Footer';
 
 const LoginPage = () => {
+    const navigate = useNavigate();
 
-    const handleSubmit = (eOrP: string, password: string) => {
-        
-    };
+    const handleLogin = async (eOrP: string, password: string) => {
+        try {
+            await axios.post('http://localhost:3000/users/login', {
+                eOrP,
+                password,
+            });
+
+            alert('Login successfully!');
+            /*navigate('/homepage');*/
+
+        } catch (err: any) {
+            if (err.response && err.response.data && err.response.data.error) {
+                alert(err.response.data.error);
+            } else {
+                alert("Network or Database Error!");
+            }
+        }
+    }; 
 
     return (
         <div>
@@ -17,7 +34,7 @@ const LoginPage = () => {
             <main>
                 <div className='w-[500px] h-[320px] m-auto mt-8 bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px]'>
                     <LoginForm 
-                        onSubmit={handleSubmit}
+                        onSubmit={handleLogin}
                     />
                 </div>
             </main>

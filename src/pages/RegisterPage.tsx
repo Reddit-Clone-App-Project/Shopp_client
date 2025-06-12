@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Logo from '../assets/Logo.svg';
 import Footer from '../components/Footer';
 import RegisterForm from '../features/RegisterUser/RegisterForm';
@@ -6,26 +7,25 @@ import RegisterForm from '../features/RegisterUser/RegisterForm';
 const RegisterPage = () => {
     const navigate = useNavigate(); 
 
-    const handleSubmit = async (email: string, phone_number: string, password: string, role: string) => {
+    const handleRegister = async (email: string, phone_number: string, password: string, role: string) => {
         try {
-            const response = await fetch('http://localhost:3000/users/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, phone_number, password, role }),
+            await axios.post('http://localhost:3000/users/register', {
+                email,
+                phone_number,
+                password,
+                role,
             });
-
-            const data = await response.json();
-            if (!response.ok) {
-                alert(data.error || 'Error during registration');
-                return;
-            };
 
             alert('Registration completed!');
             navigate('/login');
             
-        } catch (err) {
-            alert('Connection Failed, try again!')
-        }
+        } catch (err: any) {
+            if (err.response && err.response.data && err.response.data.error) {
+                alert(err.response.data.error);
+            } else {
+                alert('Network Error, try again!')
+            }
+        };
     };
 
     return (
@@ -36,7 +36,7 @@ const RegisterPage = () => {
             <main>
                 <div className='w-[500px] h-[560px] m-auto mt-8 bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px]'>
                     <RegisterForm 
-                        onSubmit={handleSubmit}
+                        onSubmit={handleRegister}
                     />  
                 </div>
             </main>
