@@ -1,19 +1,23 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from '../features/Auth/AuthSlice';
+/*import { useNavigate } from 'react-router-dom';*/
 import Logo from '../assets/Logo.svg';
 import LoginForm from '../features/LoginUser/LoginForm';
 import Footer from '../components/Footer';
 
 const LoginPage = () => {
-    const navigate = useNavigate();
+    /*const navigate = useNavigate();*/
+    const dispatch = useDispatch();
 
     const handleLogin = async (eOrP: string, password: string) => {
         try {
-            await axios.post('http://localhost:3000/users/login', {
+            const res = await axios.post('http://localhost:3000/users/login', {
                 eOrP,
                 password,
             });
 
+            dispatch(loginSuccess({accessToken: res.data.accessToken}))
             alert('Login successfully!');
             /*navigate('/homepage');*/
 
