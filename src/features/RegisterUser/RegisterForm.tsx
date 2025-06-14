@@ -26,11 +26,11 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                 e.preventDefault(); 
                 onSubmit(email, phone, password, role);
             }}
-            className="w-[400px] h-[234px] m-auto"
+            className="w-full"
         >
 
-            <div className="w-[400px] h-[64px] mt-10 mb-5">
-                <label htmlFor="register-email">
+            <div className="mb-5">
+                <label htmlFor="register-email" className="block mb-1 text-sm font-medium text-gray-700">
                     Email
                 </label>
                 <input
@@ -41,12 +41,12 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     autoComplete="email"
-                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
 
-            <div className="w-[400px] h-[64px] mb-5">
-                <label htmlFor="register-phone">
+            <div className="mb-5">
+                <label htmlFor="register-phone" className="block mb-1 text-sm font-medium text-gray-700">
                     Phone Number
                 </label>
                 <input
@@ -54,18 +54,17 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                     type="text"
                     minLength={8}
                     maxLength={30}
-
                     required
                     placeholder="+1093243434"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     autoComplete="tel"
-                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
 
-            <div className="w-[400px] h-[64px] mb-2">
-                <label htmlFor="login-password">
+            <div className="mb-2">
+                <label htmlFor="login-password" className="block mb-1 text-sm font-medium text-gray-700">
                     Password
                 </label>
                 <input
@@ -76,23 +75,23 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     autoComplete="new-password"
-                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
 
-            <ul className="mb-4 ml-3 font-light text-[12px]">
-                <li className={hasMinLength && hasMaxLength ? "text-green-600 mb-1" : "text-gray-500 mb-1"}>
-                    {hasMinLength && hasMaxLength ? "✓" : "X"} Contain 8 to 30 characters</li>
-                <li className={hasLowercase && hasUppercase ? "text-green-600 mb-1" : "text-gray-500 mb-1"}>
-                    {hasLowercase && hasUppercase ? "✓" : "X"} Contain both lower and uppercase letters</li>
-                <li className={hasNumber ? "text-green-600 mb-1" : "text-gray-500 mb-1"}>
-                    {hasNumber ? "✓" : "X"} Contain 1 number</li>
-                <li className={hasSpecialChar ? "text-green-600 mb-1" : "text-gray-500 mb-1"}>
-                    {hasSpecialChar ? "✓" : "X"} Contain 1 special character</li>
+            <ul className="mb-4 ml-3 space-y-1 font-light text-xs">
+                <li className={classNames("flex items-center", { "text-green-600": hasMinLength && hasMaxLength, "text-gray-500": !(hasMinLength && hasMaxLength) })}>
+                    <span className="mr-2">{hasMinLength && hasMaxLength ? "✓" : "X"}</span> Contain 8 to 30 characters</li>
+                <li className={classNames("flex items-center", { "text-green-600": hasLowercase && hasUppercase, "text-gray-500": !(hasLowercase && hasUppercase) })}>
+                    <span className="mr-2">{hasLowercase && hasUppercase ? "✓" : "X"}</span> Contain both lower and uppercase letters</li>
+                <li className={classNames("flex items-center", { "text-green-600": hasNumber, "text-gray-500": !hasNumber })}>
+                    <span className="mr-2">{hasNumber ? "✓" : "X"}</span> Contain 1 number</li>
+                <li className={classNames("flex items-center", { "text-green-600": hasSpecialChar, "text-gray-500": !hasSpecialChar })}>
+                    <span className="mr-2">{hasSpecialChar ? "✓" : "X"}</span> Contain 1 special character</li>
             </ul>
 
-            <div className="w-[400px] h-[64px] mb-2">
-                <label htmlFor="login-confirm">
+            <div className="mb-2">
+                <label htmlFor="login-confirm" className="block mb-1 text-sm font-medium text-gray-700">
                     Confirm Password
                 </label>
                 <input
@@ -104,7 +103,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                     onChange={e => setConfirm(e.target.value)}
                     autoComplete="new-password"
                     className={classNames(
-                        'box-border w-[400px] h-[40px] border rounded-[8px]', 
+                        'box-border w-full h-10 px-3 border rounded-[8px]', 
                         {
                             'border-green-600' : isEqual && confirm.length > 0, 
                             'border-red-500' : !isEqual,
@@ -114,7 +113,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                 />
             </div>
 
-            <div className="mb-6 ml-3 font-light text-[12px]">
+            <div className="mb-6 font-light text-xs h-4">
                 <p className={classNames({
                         'invisible' : confirm.length === 0 && password.length === 0,
                         'text-green-600' : isEqual, 
@@ -125,13 +124,13 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                 </p>
             </div>
 
-            <div className="flex content-center">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <button
                     type="submit"
                     disabled={!email || !phone || !password || !confirm || !hasLowercase || !hasMaxLength || !hasMinLength || !hasSpecialChar || !hasUppercase || !hasNumber || !isEqual}
-                    className="w-[80px] h-[30px] rounded-[8px] bg-black text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50"  
+                    className="w-full sm:w-auto px-6 py-2 rounded-[8px] bg-black text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 mb-4 sm:mb-0"  
                 >Register</button>
-                <p className="h-[17px] left-[150px] m-auto ml-18 Inter not-italic font-light text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
+                <p className="text-center sm:text-left text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
                     <a href="/login">Already registered, Login now!</a></p>
             </div>
 

@@ -30,22 +30,22 @@ const RegisterPage = () => {
     };
 
     return (
-        <div>
-            <header className='h-[100px] bg-[#A567C6] content-center'>
+        <div className="flex flex-col min-h-screen">
+            <header className='h-[100px] bg-[#A567C6] flex items-center justify-center'>
                 <Link to="/home">
-                    <img src={ Logo } alt='Logo shopp' className='flex w-[135px] h-[56px] m-auto'/>
+                    <img src={ Logo } alt='Logo shopp' className='w-[135px] h-[56px]'/>
                 </Link>
             </header>
-            <div>
-                <div className='w-[500px] h-[560px] m-auto mt-8 bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px]'>
+
+            <main className="flex-grow flex items-center justify-center p-4">
+                <div className='w-full max-w-lg bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px] p-6 sm:p-8 my-8'>
                     <RegisterForm 
                         onSubmit={handleRegister}
                     />  
                 </div>
-            </div>
-            <footer>
-                <Footer />
-            </footer>
+            </main>
+
+            <Footer />
         </div>
     );
 };
