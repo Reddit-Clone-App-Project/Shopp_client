@@ -1,27 +1,27 @@
-import React from 'react'
-import Footer from '../components/Footer'
-import BuyerHeader from '../features/BuyerHeader/BuyerHeader'
-import Hero from '../features/Hero/Hero'
+import React from "react";
+import Footer from "../components/Footer";
+import BuyerHeader from "../features/BuyerHeader/BuyerHeader";
+import Hero from "../features/Hero/Hero";
+import BeforeCategory from "../components/BeforeCategory";
+import Category from "../components/Category";
 
-const HomePage : React.FC = () => {
+const HomePage: React.FC = () => {
   return (
     <>
-        <header>
-            <BuyerHeader />
-        </header>
+      <header>
+        <BuyerHeader />
+      </header>
+      <div>
+        <Hero />
+        <BeforeCategory />
+        <Category />
 
-        <div>
-            <Hero />
-            <div>
-                
-            </div>
-        </div>
-
-        <footer>
-            <Footer />
-        </footer>
+      </div>
+      <footer>
+        <Footer />
+      </footer>
     </>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

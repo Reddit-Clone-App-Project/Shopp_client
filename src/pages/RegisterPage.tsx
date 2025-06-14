@@ -3,6 +3,7 @@ import axios from 'axios';
 import Logo from '../assets/Logo.svg';
 import Footer from '../components/Footer';
 import RegisterForm from '../features/RegisterUser/RegisterForm';
+import { Link } from 'react-router-dom';
 
 const RegisterPage = () => {
     const navigate = useNavigate(); 
@@ -31,7 +32,9 @@ const RegisterPage = () => {
     return (
         <div>
             <header className='h-[100px] bg-[#A567C6] content-center'>
-                <img src={ Logo } alt='Logo shopp' className='flex w-[135px] h-[56px] m-auto'/>
+                <Link to="/home">
+                    <img src={ Logo } alt='Logo shopp' className='flex w-[135px] h-[56px] m-auto'/>
+                </Link>
             </header>
             <div>
                 <div className='w-[500px] h-[560px] m-auto mt-8 bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px]'>
