@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../features/Auth/AuthSlice';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 /*import { useNavigate } from 'react-router-dom';*/
 import Logo from '../assets/Logo.svg';
 import LoginForm from '../features/LoginUser/LoginForm';
@@ -19,14 +20,14 @@ const LoginPage = () => {
             });
 
             dispatch(loginSuccess({accessToken: res.data.accessToken}))
-            alert('Login successfully!');
+            toast.success('Login successfully!');
             /*navigate('/homepage');*/
 
         } catch (err: any) {
             if (err.response && err.response.data && err.response.data.error) {
-                alert(err.response.data.error);
+                toast.error(err.response.data.error);
             } else {
-                alert("Network or Database Error!");
+                toast.error("Network or Database Error!");
             }
         }
     }; 

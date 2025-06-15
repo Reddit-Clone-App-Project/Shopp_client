@@ -1,9 +1,11 @@
+
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Logo from '../assets/Logo.svg';
 import Footer from '../components/Footer';
 import RegisterForm from '../features/RegisterUser/RegisterForm';
 import { Link } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
     const navigate = useNavigate(); 
@@ -17,14 +19,14 @@ const RegisterPage = () => {
                 role,
             });
 
-            alert('Registration completed!');
+            toast.success('Registration completed!');
             navigate('/login');
             
         } catch (err: any) {
             if (err.response && err.response.data && err.response.data.error) {
-                alert(err.response.data.error);
+                toast.error(err.response.data.error);
             } else {
-                alert('Network Error, try again!')
+                toast.error('Network Error, try again!')
             }
         };
     };
