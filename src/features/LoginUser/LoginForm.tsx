@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -11,7 +11,14 @@ const LoginForm = () => {
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { status, error } = useSelector((state: RootState) => state.auth);
+    const { status, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/home');
+        }
+    }, [isLoggedIn, navigate]);
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
