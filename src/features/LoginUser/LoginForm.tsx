@@ -1,23 +1,34 @@
 import { useState } from "react";
-/*import { useSelector } from "react-redux";*/
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { handleLogin } from "../Auth/AuthSlice";
+import { AppDispatch, RootState } from "../../redux/store";
 
-export type LoginFormProps = { 
-    onSubmit: (email: string, password: string) => void;
-};
-
-const LoginForm = ({ onSubmit }: LoginFormProps) => {
+const LoginForm = () => {
     const [eOrP, setEOrP] = useState('');
     const [password, setPassword] = useState('');
-    /*const isLoading = useSelector*/
+    const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { status, error } = useSelector((state: RootState) => state.auth);
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try{
+            const accessToken = await dispatch(handleLogin({ eOrP, password})).unwrap();
+
+            if(accessToken){
+                toast.success('Login successfully!');
+                navigate('/home');
+            }
+        }catch(err){
+            toast.error(err as String);
+        }
+    };
 
     return (
-        <form 
-            onSubmit={e => {
-                e.preventDefault(); 
-                onSubmit(eOrP, password);
-            }}
-            className="w-full" 
-        >
+        <form className="w-full" onSubmit={handleSubmit}>
             <div className="mb-5">
                 <label htmlFor="login-email" className="block mb-1 text-sm font-medium text-gray-700">
                     Email / Phone Number
@@ -53,9 +64,11 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <button
                     type="submit"
-                    disabled={!eOrP || !password}
+                    disabled={!eOrP || !password || status === 'loading'}
                     className="w-full sm:w-auto px-6 py-2 bg-black rounded-[8px] text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 mb-4 sm:mb-0"
-                >Login</button>
+                >
+                    {status === 'loading' ? 'Logging in...' : 'Login'}
+                </button>
                 <p className="text-center sm:text-left text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
                     <a href="/register">New to Shopp, Sign Up now!</a></p>
             </div>
