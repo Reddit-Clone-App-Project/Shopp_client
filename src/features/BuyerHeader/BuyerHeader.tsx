@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 // SVG
 import Bell from "../../assets/HomePage/Header/bell.svg";
 import GitHub from "../../assets/HomePage/Header/github-white.svg";
@@ -8,11 +10,12 @@ import ShoppingCart from "../../assets/HomePage/Header/shopping-cart.svg";
 import Menu from "../../assets/HomePage/Header/hamburger_menu.svg";
 import CloseIcon from "../../assets/HomePage/Header/Close.svg";
 import Logo from "../../assets/Logo.svg";
-
+import GenericAvatar from "../../assets/generic-avatar.svg";
 
 const BuyerHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { status, error, user } = useSelector((state: RootState) => state.profile); 
 
   return (
     <div className="bg-purple-500">
@@ -41,13 +44,13 @@ const BuyerHeader: React.FC = () => {
               <span className="hover:underline cursor-pointer">Notification</span>
             </div>
             <div className="flex items-center space-x-4">
-              <Link to="/register" className="hover:underline">
+              {status !== 'succeeded'? (<><Link to="/register" className="hover:underline">
                 Register
               </Link>
               <span>|</span>
               <Link to="/login" className="hover:underline">
                 Login
-              </Link>
+              </Link></>) : <img className="h-8" src={user?.profile_img ?? GenericAvatar} alt="Profile image"/>}
             </div>
           </div>
         </div>
@@ -146,20 +149,22 @@ const BuyerHeader: React.FC = () => {
               </div>
 
               <div className="pt-2 border-t border-purple-400">
-                <Link 
-                  to="/register" 
-                  className="block text-white hover:bg-purple-700 p-2 rounded"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Register
-                </Link>
-                <Link 
-                  to="/login" 
-                  className="block text-white hover:bg-purple-700 p-2 rounded"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Login
-                </Link>
+                {status !== 'succeeded' ? (<>
+                  <Link 
+                    to="/register" 
+                    className="block text-white hover:bg-purple-700 p-2 rounded"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Register
+                  </Link>
+                  <Link 
+                    to="/login" 
+                    className="block text-white hover:bg-purple-700 p-2 rounded"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  </>) :  <img className="h-8" src={user?.profile_img ?? GenericAvatar} alt="Profile image"/>}
               </div>
             </div>
           </div>
