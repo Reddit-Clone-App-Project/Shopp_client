@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { handleLogin } from "../Auth/AuthSlice";
 import { AppDispatch, RootState } from "../../redux/store";
+import { handleGetProfile } from "../UserProfile/UserProfileSlice";
 
 const LoginForm = () => {
     const [eOrP, setEOrP] = useState('');
@@ -27,6 +28,7 @@ const LoginForm = () => {
 
             if(accessToken){
                 toast.success('Login successfully!');
+                dispatch(handleGetProfile());
                 navigate('/home');
             }
         }catch(err){

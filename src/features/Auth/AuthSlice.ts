@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, isRejected } from "@reduxjs/toolkit";
 import { login, logout } from "../../api";
-import type { RootState } from "../../redux/store";
 
 export const handleLogin = createAsyncThunk(
     'auth/handleLogin',
