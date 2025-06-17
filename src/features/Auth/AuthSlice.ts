@@ -1,5 +1,12 @@
 import { createSlice, createAsyncThunk, isRejected } from "@reduxjs/toolkit";
 import { login, logout } from "../../api";
+import { jwtDecode } from 'jwt-decode';
+
+interface DecodedToken {
+    userId: number;
+    email: string;
+    role: string;
+}
 
 export const handleLogin = createAsyncThunk(
     'auth/handleLogin',
@@ -7,7 +14,11 @@ export const handleLogin = createAsyncThunk(
         try{
             const res = await login(eOrP, password);
             if(res?.data?.accessToken){
-                return res.data.accessToken;
+                const decoded: DecodedToken = jwtDecode(res.data.accessToken);
+                return {
+                    accessToken: res.data.accessToken,
+                    role: decoded.role
+                };
             }
             return thunkAPI.rejectWithValue('Login failed: Invalid response from server.');
         }catch(err: any){
@@ -31,6 +42,7 @@ export const handleLogout = createAsyncThunk(
 
 export interface AuthState {
     accessToken: string | null;
+    role: string | null;
     isLoggedIn: boolean;
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
@@ -38,6 +50,7 @@ export interface AuthState {
 
 const initialState: AuthState = {
     accessToken: null,
+    role: null,
     isLoggedIn: false,
     status: 'idle',
     error: null
@@ -58,7 +71,8 @@ const AuthSlice = createSlice({
             .addCase(handleLogin.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.isLoggedIn = true;
-                state.accessToken = action.payload;
+                state.accessToken = action.payload.accessToken;
+                state.role = action.payload.role;
             })
             // Logout Cases
             .addCase(handleLogout.pending, (state) => {
@@ -67,6 +81,7 @@ const AuthSlice = createSlice({
             })
             .addCase(handleLogout.fulfilled, (state) => {
                 state.accessToken = null;
+                state.role = null;
                 state.isLoggedIn = false;
                 state.status = 'idle'; 
                 state.error = null;
