@@ -1,37 +1,83 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, isRejected } from "@reduxjs/toolkit";
+import { login, logout } from "../../api";
+
+export const handleLogin = createAsyncThunk(
+    'auth/handleLogin',
+    async({eOrP, password}: { eOrP: String, password: String}, thunkAPI) => {
+        try{
+            const res = await login(eOrP, password);
+            if(res?.data?.accessToken){
+                return res.data.accessToken;
+            }
+            return thunkAPI.rejectWithValue('Login failed: Invalid response from server.');
+        }catch(err: any){
+            const errorMsg = err.response?.data?.error || "A network or server error occurred.";
+            return thunkAPI.rejectWithValue(errorMsg);   
+        }
+    }
+);
+
+export const handleLogout = createAsyncThunk(
+    'auth/handleLogout',
+    async(_, thunkAPI) => {
+        try{
+            await logout();
+        }catch(err: any){
+            const errorMsg = err.response?.data?.error || err.response?.data?.message || "A network or server error occurred.";
+            return thunkAPI.rejectWithValue(errorMsg);
+        }
+    }
+)
 
 export interface AuthState {
     accessToken: string | null;
     isLoggedIn: boolean;
-    user: any | null;
+    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    error: string | null;
 };
 
 const initialState: AuthState = {
     accessToken: null,
     isLoggedIn: false,
-    user: null,
+    status: 'idle',
+    error: null
 };
 
 const AuthSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        loginSuccess(state, action: PayloadAction<{ accessToken: string; user?: any}>) {
-            state.accessToken = action.payload.accessToken;
-            state.isLoggedIn = true;
-            if(action.payload.user) state.user = action.payload.user;
-        },
-        logout(state) {
-            state.accessToken = null;
-            state.isLoggedIn = false;
-            state.user = null;
-        },
-        setAccessToken(state, action: PayloadAction<string>) {
-            state.accessToken = action.payload;
-            state.isLoggedIn = true;
-        }
     },
+    extraReducers: (builder) => {
+        builder
+            // Login Cases
+            .addCase(handleLogin.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(handleLogin.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.isLoggedIn = true;
+                state.accessToken = action.payload;
+            })
+            // Logout Cases
+            .addCase(handleLogout.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addCase(handleLogout.fulfilled, (state) => {
+                state.accessToken = null;
+                state.isLoggedIn = false;
+                state.status = 'idle'; 
+                state.error = null;
+            })
+            .addMatcher(isRejected(handleLogin, handleLogout), (state, action) => {
+                state.status = 'failed';
+                state.isLoggedIn = false; 
+                state.accessToken = null; 
+                state.error = action.payload as string;
+            });
+    }
 });
 
-export const { loginSuccess, logout, setAccessToken } = AuthSlice.actions;
 export default AuthSlice.reducer;

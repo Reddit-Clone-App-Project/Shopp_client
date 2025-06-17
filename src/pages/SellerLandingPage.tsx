@@ -11,6 +11,8 @@ import Wrench from "../assets/sellerLandingPage/wrench.svg";
 import Shop from "../assets/sellerLandingPage/shop.svg";
 // Components import
 import Footer from "../components/Footer";
+// Dependencies
+import { Link } from "react-router-dom";
 
 const SellerLandingPage: React.FC = () => {
   return (
@@ -18,15 +20,15 @@ const SellerLandingPage: React.FC = () => {
       <header className="fixed w-full h-18 flex justify-between items-center p-4 bg-purple-500 shadow-md">
         <img src={Logo} alt="Logo" />
         <div className="flex gap-4">
-          <button className="bg-black text-white rounded-lg px-6 py-2 text-base font-medium hover:bg-gray-800 transition-colors cursor-pointer">
+          <Link to="/login" className="bg-black text-white rounded-lg px-6 py-2 text-xs sm:text-base font-medium hover:bg-gray-800 transition-colors cursor-pointer">
             Login
-          </button>
-          <button className="bg-white text-purple-800 rounded-lg px-6 py-2 text-base font-medium hover:bg-gray-100 transition-colors cursor-pointer">
+          </Link>
+          <Link to="/register" className="bg-white text-purple-800 rounded-lg px-6 py-2 text-xs sm:text-base font-medium hover:bg-gray-100 transition-colors cursor-pointer">
             Register
-          </button>
+          </Link>
         </div>
       </header>
-      <main className="pt-24 px-0! md:px-16 lg:px-24">
+      <div className="pt-24 px-0! md:px-16 lg:px-24">
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-12 px-10">
           <div className="flex-1 space-y-6">
@@ -38,9 +40,9 @@ const SellerLandingPage: React.FC = () => {
               Join us today and start selling your products to a global
               audience.
             </p>
-            <button className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer">
+            <Link to="/login" className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer">
               Start selling now
-            </button>
+            </Link>
           </div>
           <div className="flex-1">
             <img
@@ -206,9 +208,9 @@ const SellerLandingPage: React.FC = () => {
                     <span>Pay Fixed Fee only when a sale is made.</span>
                   </li>
                 </ul>
-                <button className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors cursor-pointer">
+                <Link to="/login" className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors cursor-pointer">
                   Register now
-                </button>
+                </Link>
               </div>
             </div>
             {/* Individual Seller */}
@@ -242,14 +244,14 @@ const SellerLandingPage: React.FC = () => {
                     </span>
                   </li>
                 </ul>
-                <button className="mt-4 bg-purple-400 text-white px-6 py-2 rounded-md hover:bg-purple-500 transition-colors cursor-pointer">
+                <Link to="/login" className="mt-4 bg-purple-400 text-white px-6 py-2 rounded-md hover:bg-purple-500 transition-colors cursor-pointer">
                   Register now
-                </button>
+                </Link>
               </div>
             </div>
           </div>
         </div>
-      </main>
+      </div>
       <footer>
         <Footer />
       </footer>

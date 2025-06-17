@@ -1,25 +1,45 @@
-import { useState } from "react";
-/*import { useSelector } from "react-redux";*/
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { handleLogin } from "../Auth/AuthSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+import { handleGetProfile } from "../UserProfile/UserProfileSlice";
 
-export type LoginFormProps = { 
-    onSubmit: (email: string, password: string) => void;
-};
-
-const LoginForm = ({ onSubmit }: LoginFormProps) => {
+const LoginForm = () => {
     const [eOrP, setEOrP] = useState('');
     const [password, setPassword] = useState('');
-    /*const isLoading = useSelector*/
+    const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { status, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate('/home');
+        }
+    }, [isLoggedIn, navigate]);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        try{
+            const accessToken = await dispatch(handleLogin({ eOrP, password})).unwrap();
+
+            if(accessToken){
+                toast.success('Login successfully!');
+                dispatch(handleGetProfile());
+                navigate('/home');
+            }
+        }catch(err){
+            toast.error(err as String);
+        }
+    };
 
     return (
-        <form 
-            onSubmit={e => {
-                e.preventDefault(); 
-                onSubmit(eOrP, password);
-            }}
-            className="w-[400px] h-[234px] m-auto"
-        >
-            <div className="w-[400px] h-[64px] mt-10 mb-5">
-                <label htmlFor="login-email">
+        <form className="w-full" onSubmit={handleSubmit}>
+            <div className="mb-5">
+                <label htmlFor="login-email" className="block mb-1 text-sm font-medium text-gray-700">
                     Email / Phone Number
                 </label>
                 <input
@@ -30,11 +50,11 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     value={eOrP}
                     onChange={e => setEOrP(e.target.value)}
                     autoComplete="email"
-                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
-            <div className="w-[400px] h-[64px] mb-2">
-                <label htmlFor="login-password">
+            <div className="mb-2">
+                <label htmlFor="login-password" className="block mb-1 text-sm font-medium text-gray-700">
                     Password
                 </label>
                 <input
@@ -45,18 +65,20 @@ const LoginForm = ({ onSubmit }: LoginFormProps) => {
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     autoComplete="current-password"
-                    className="box-border w-[400px] h-[40px] border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                    className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                 />
             </div>
-            <p className='w-[119px] h-[17px] mb-9 Inter not-italic font-light text-sm text-purple-800 hover:underline hover:cursor-pointer'>
+            <p className='mb-6 text-sm font-light text-purple-800 hover:underline hover:cursor-pointer'>
                 Forget Password?</p>
-            <div className="flex content-center">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <button
                     type="submit"
-                    disabled={!eOrP || !password}
-                    className="w-[80px] h-[30px] bg-black rounded-[8px] text-white Inter not-italic font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50"
-                >Login</button>
-                <p className="h-[17px] left-[150px] m-auto ml-18 Inter not-italic font-light text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
+                    disabled={!eOrP || !password || status === 'loading'}
+                    className="w-full sm:w-auto px-6 py-2 bg-black rounded-[8px] text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 mb-4 sm:mb-0"
+                >
+                    {status === 'loading' ? 'Logging in...' : 'Login'}
+                </button>
+                <p className="text-center sm:text-left text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
                     <a href="/register">New to Shopp, Sign Up now!</a></p>
             </div>
         </form>
