@@ -1,9 +1,9 @@
 import React from "react";
-import Footer from "../components/Footer";
-import BuyerHeader from "../features/BuyerHeader/BuyerHeader";
-import Hero from "../features/Hero/Hero";
-import BeforeCategory from "../components/BeforeCategory";
-import Category from "../components/Category";
+import Footer from "../../components/Footer";
+import BuyerHeader from "../../features/BuyerHeader/BuyerHeader";
+import Hero from "../../features/Hero/Hero";
+import BeforeCategory from "../../components/BeforeCategory";
+import Category from "../../components/Category";
 
 const HomePage: React.FC = () => {
   return (

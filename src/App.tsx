@@ -2,8 +2,8 @@ import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } 
 import Root from './components/Root.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import SellerLandingPage from './pages/SellerLandingPage.tsx';
-import HomePage from './pages/HomePage.tsx';
+import SellerLandingPage from './pages/seller/SellerLandingPage.tsx';
+import HomePage from './pages/buyer/HomePage.tsx';
 
 
 const router = createBrowserRouter( createRoutesFromElements(
