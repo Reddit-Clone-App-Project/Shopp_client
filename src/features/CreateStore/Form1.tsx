@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import frame from '../../assets/CreateStore/SideFrame1.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
-import { StoreStepProps } from './LandingForm';
 import AddAddressModal from './AddAddressModal';
 import { AddressFormData } from './AddAddressModal';
 
@@ -10,10 +9,10 @@ import { AddressFormData } from './AddAddressModal';
 type Form1Props = {
   data: any;
   onChange: (data: any) => void;
-  onSubmit: () => void;
+  onNext: () => void;
 };
 
-const Form1: React.FC<Form1Props> = ({ data, onChange, onSubmit }) => {
+const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
     const [isModalOpen, setModalOpen] = useState(false);
     
     const handleAddressSave = (address: AddressFormData) => {
@@ -25,7 +24,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onSubmit }) => {
             <CreateStoreHeader />
             <main className="flex-grow flex items-center justify-center p-4">
                 <div className='flex w-full max-w-[1000px] h-[500px] bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px] p-6 sm:p-8'>
-                    <div className='flex h-[350px]'>
+                    <div className='flex w-[75%] h-[350px]'>
                         <img src={frame} alt='bar progress' className='ml-4'/>
                         <ul className='font-light text-[1.2rem] mt-5 mb-5 ml-2 flex flex-col justify-between w-full'>
                             <li className='font-semibold text-purple-800'>Shop's Information</li>
@@ -35,41 +34,81 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onSubmit }) => {
                             <li>Complete</li>
                         </ul>
                     </div>
-                </div>
-                <div className="p-6">
-                    <h2 className="text-xl font-semibold mb-4">Step 3: Indirizzo</h2>
+                    <div className="flex flex-col justify-between p-2 mb-2 w-full mr-10">
+                        <label htmlFor="name" className="block text-[1.2rem] font-normal">
+                            Shop's Name
+                        </label>
+                        <input
+                            id="name"
+                            type="text"
+                            required
+                            placeholder="ToyShop.official"
+                            value={data.storeName}
+                            onChange={e => onChange({ ...data, storeName: e.target.value })}
+                            className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                        />
 
-                    {data.address && (
-                        <div className="mb-4 border rounded p-2">
-                        <p>{data.address.street}, {data.address.city}</p>
-                        <p>{data.address.postalCode}, {data.address.country}</p>
-                        </div>
-                    )}
+                        <p className='text-[1.2rem] font-normal'>Pick Up Address</p>
+                        {data.address && (
+                            <div className="border-[rgba(0,0,0,0.3)] border rounded-[8px]">
+                            <p>{data.address.full_name}, {data.address.phone_number}</p>
+                            <p>{data.address.city}, {data.address.country}, {data.address.province}, {data.address.postal_code}</p>
+                            <p>{data.address.address_line1}, {data.address.address_line2}</p>
+                            </div>
+                        )}
+                        <button 
+                            type='button' 
+                            onClick={() => setModalOpen(true)} 
+                            className="px-2 py-1 w-18 rounded-[8px] bg-[#A567C6] text-white hover:bg-purple-700 hover:cursor-pointer"
+                            >
+                            + Add
+                        </button>
 
-                    <button 
-                        type='button' 
-                        onClick={() => setModalOpen(true)} 
-                        className="bg-green-600 text-white px-4 py-2 rounded"
-                    >
-                        + Aggiungi Indirizzo
-                    </button>
+                        <AddAddressModal
+                            isOpen={isModalOpen}
+                            onClose={() => setModalOpen(false)}
+                            onSave={(addr) => {
+                                handleAddressSave(addr);
+                                setModalOpen(false);
+                            }}
+                        />
 
-                    <AddAddressModal
-                        isOpen={isModalOpen}
-                        onClose={() => setModalOpen(false)}
-                        onSave={(addr) => {
-                        handleAddressSave(addr);
-                        setModalOpen(false);
-                        }}
-                    />
+                        <label htmlFor="email" className="block text-[1.2rem] font-normal">
+                            Email
+                        </label>
+                        <input
+                            id="email"
+                            type="text"
+                            required
+                            placeholder="example@gmail.com"
+                            value={data.storeEmail}
+                            onChange={e => onChange({ ...data, storeEmail: e.target.value })}
+                            autoComplete='email'
+                            className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                        />
 
-                    <button 
-                        type='button'
-                        onClick={onSubmit} 
-                        className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-                    >
-                        Invia Store
-                    </button>
+                        <label htmlFor="phone" className="block text-[1.2rem] font-normal">
+                            Phone Number
+                        </label>
+                        <input
+                            id="phone"
+                            type="text"
+                            required
+                            placeholder="012345678"
+                            value={data.storePhone}
+                            onChange={e => onChange({ ...data, storePhone: e.target.value })}
+                            className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
+                        />
+
+                        <button
+                            type='button'
+                            onClick={onNext}
+                            className="bg-[#A567C6] w-16 text-white py-1 px-2 rounded-[8px] hover:bg-purple-800 hover:cursor-pointer"
+                        >
+                            Next
+                        </button>
+
+                    </div>
                 </div>
             </main>
         </div>
@@ -77,3 +116,11 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onSubmit }) => {
 };
 
 export default Form1;
+                    
+                    /*<button 
+                        type='button'
+                        onClick={onSubmit} 
+                        className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
+                    >
+                        Invia Store
+                    </button>*/

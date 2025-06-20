@@ -23,9 +23,12 @@ const CreateStorePage = () => {
     return (
         <form>
             {step === 1 && <LandingForm onNext={goNext} />}
-            {step === 2 && <Form1 data={storeData} onChange={setStoreData} onSubmit={handleFinalSubmit} />}
+            {step === 2 && <Form1 data={storeData} onChange={setStoreData} onNext={goNext}/>}
+            
         </form>
     );
 };
 
 export default CreateStorePage;
+
+// onSubmit handleFinalSubmit
