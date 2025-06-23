@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import frame from '../../assets/CreateStore/SideFrame1.svg';
+import frame from '../../assets/CreateStore/SideFrame2.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
 import AddAddressModal from './AddAddressModal';
 import { AddressFormData } from './AddAddressModal';
 
 
 
-type Form1Props = {
+type Form2Props = {
   data: any;
   onChange: (data: any) => void;
   onNext: () => void;
+  onBack: () => void;
 };
 
-const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
+const Form1: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
     const [isModalOpen, setModalOpen] = useState(false);
     
     const handleAddressSave = (address: AddressFormData) => {
@@ -92,6 +93,14 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                             onChange={e => onChange({ ...data, storePhone: e.target.value })}
                             className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                         />
+
+                        <button
+                            type='button'
+                            onClick={onBack}
+                            className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer"
+                        >
+                            Next
+                        </button>
 
                         <button
                             type='button'
