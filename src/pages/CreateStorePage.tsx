@@ -12,6 +12,10 @@ const CreateStorePage = () => {
         storeEmail: '',
         storePhone: '',
         address: null as AddressFormData | null,
+        expressShipping: false,
+        fastShipping: false,
+        economicalShipping: false,
+        bulkyShipping: false,
         // more if needed
     });
 

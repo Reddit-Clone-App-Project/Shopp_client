@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import frame from '../../assets/CreateStore/SideFrame2.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
-import AddAddressModal from './AddAddressModal';
-import { AddressFormData } from './AddAddressModal';
-
+import ToggleSwitch from '../../components/ToggleSwitch';
 
 
 type Form2Props = {
@@ -13,12 +11,7 @@ type Form2Props = {
   onBack: () => void;
 };
 
-const Form1: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
-    const [isModalOpen, setModalOpen] = useState(false);
-    
-    const handleAddressSave = (address: AddressFormData) => {
-        onChange({ ...data, address });
-    };
+const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
 
     return (
         <div className="bg-[#F4F4F5] flex flex-col min-h-screen">
@@ -28,88 +21,64 @@ const Form1: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
                     <div className='flex w-[75%] h-[325px]'>
                         <img src={frame} alt='bar progress' className='ml-4 mt-5'/>
                     </div>
-                    <div className="flex flex-col justify-between p-2 mb-2 w-full mr-10">
-                        <label htmlFor="name" className="block text-[1.2rem] font-normal">
-                            Shop's Name
-                        </label>
-                        <input
-                            id="name"
-                            type="text"
-                            required
-                            placeholder="ToyShop.official"
-                            value={data.storeName}
-                            onChange={e => onChange({ ...data, storeName: e.target.value })}
-                            className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
-                        />
+                    <div className="flex flex-col justify-between p-2 mb-2 w-full mr-10 font-light">
+                        <div>
+                            <h2 className='text-2xl'>Shipping Method</h2>
+                            <p className='text-[0.8rem] text-gray-500'>Activate the appropriate shipping method</p>
+                        </div>
+                        <div className='flex justify-between'> 
+                            <p className='text-[1.2rem] font-normal'>Express</p>
+                            <ToggleSwitch 
+                                value={data.expressShipping}
+                                onChange={(val) => onChange({ ...data, expressShipping: val})}
+                            />
+                        </div>
 
-                        <p className='text-[1.2rem] font-normal'>Pick Up Address</p>
-                        {data.address && (
-                            <div className="border-[rgba(0,0,0,0.3)] border rounded-[8px]">
-                            <p>{data.address.full_name}, {data.address.phone_number}</p>
-                            <p>{data.address.city}, {data.address.province}, {data.address.country}, {data.address.postal_code}</p>
-                            <p>{data.address.address_line1}, {data.address.address_line2}</p>
+                        <div className='flex justify-between'> 
+                            <p className='text-[1.2rem] font-normal'>Fast</p>
+                            <ToggleSwitch 
+                                value={data.fastShipping}
+                                onChange={(val) => onChange({ ...data, fastShipping: val})}
+                            />
+                        </div>
+                        
+                        <div className='flex justify-between'> 
+                            <p className='text-[1.2rem] font-normal'>Economical</p>
+                            <ToggleSwitch 
+                                value={data.economicalShipping}
+                                onChange={(val) => onChange({ ...data, economicalShipping: val})}
+                            />
+                        </div>
+
+                        <div className='flex justify-between'> 
+                            <div>
+                                <p className='text-[1.2rem] font-normal'>Bulky</p>
+                                <p className='text-[0.8rem] text-gray-500 w-90'>For goods that are over 155lbs, or have the total width, length, and height over 150 centimeters</p>
                             </div>
-                        )}
-                        <button 
-                            type='button' 
-                            onClick={() => setModalOpen(true)} 
-                            className="px-2 py-1 w-18 rounded-[8px] bg-[#A567C6] text-white hover:bg-purple-700 hover:cursor-pointer"
+                            <ToggleSwitch 
+                                value={data.bulkyShipping}
+                                onChange={(val) => onChange({ ...data, bulkyShipping: val})}
+                            />
+                        </div>
+
+                        <div className='flex justify-end'>
+                            <button
+                                type='button'
+                                onClick={onBack}
+                                className="bg-white w-16 border py-1 px-2 rounded-[8px] hover:cursor-pointer hover:bg-purple-800 hover:text-white mr-6"
                             >
-                            + Add
-                        </button>
+                                Back
+                            </button>
 
-                        <AddAddressModal
-                            isOpen={isModalOpen}
-                            onClose={() => setModalOpen(false)}
-                            onSave={(addr) => {
-                                handleAddressSave(addr);
-                                setModalOpen(false);
-                            }}
-                        />
-
-                        <label htmlFor="email" className="block text-[1.2rem] font-normal">
-                            Email
-                        </label>
-                        <input
-                            id="email"
-                            type="text"
-                            required
-                            placeholder="example@gmail.com"
-                            value={data.storeEmail}
-                            onChange={e => onChange({ ...data, storeEmail: e.target.value })}
-                            autoComplete='email'
-                            className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
-                        />
-
-                        <label htmlFor="phone" className="block text-[1.2rem] font-normal">
-                            Phone Number
-                        </label>
-                        <input
-                            id="phone"
-                            type="text"
-                            required
-                            placeholder="012345678"
-                            value={data.storePhone}
-                            onChange={e => onChange({ ...data, storePhone: e.target.value })}
-                            className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
-                        />
-
-                        <button
-                            type='button'
-                            onClick={onBack}
-                            className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer"
-                        >
-                            Next
-                        </button>
-
-                        <button
-                            type='button'
-                            onClick={onNext}
-                            disabled={!data.storeName || !data.storeEmail || !data.storePhone || !data.address}
-                            className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50"
-                        >
-                            Next
-                        </button>
+                            <button
+                                type='button'
+                                onClick={onNext}
+                                disabled={!(data.expressShipping || data.fastShipping || data.economicalShipping || data.bulkyShipping)}
+                                className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50 disabled:hover:bg-[rgba(165,103,198)] disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
+                        </div>
 
                     </div>
                 </div>
@@ -118,7 +87,7 @@ const Form1: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
     )
 };
 
-export default Form1;
+export default Form2;
                     
                     /*<button 
                         type='button'
