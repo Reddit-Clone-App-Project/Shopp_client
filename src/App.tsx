@@ -14,10 +14,9 @@ const router = createBrowserRouter( createRoutesFromElements(
     <Route path='/register' element={<RegisterPage />} />
     <Route path="/seller" element={<SellerLandingPage />} />
     <Route path='/home' element={<HomePage />} />
-    <Route path='/new-store' element={<CreateStorePage />} />
+    <Route path='/new-store' element={<PrivateRoute component={CreateStorePage} />} />
   </Route>
 ));
-/*<Route path='/new-store' element={<PrivateRoute component={CreateStorePage} />} />*/
 
 function App() {
   return (
