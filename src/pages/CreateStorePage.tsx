@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import LandingForm from "../features/CreateStore/LandingForm";
 import Form1 from "../features/CreateStore/Form1";
 import Form2 from "../features/CreateStore/Form2";
