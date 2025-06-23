@@ -24,8 +24,8 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
             <CreateStoreHeader />
             <main className="flex-grow flex items-center justify-center p-4">
                 <div className='flex w-full max-w-[1000px] h-[500px] bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px] p-6 sm:p-8'>
-                    <div className='flex w-[75%] h-[325px]'>
-                        <img src={frame} alt='bar progress' className='ml-4 mt-5'/>
+                    <div className='flex m-auto w-[75%] h-[200px]'>
+                        <img src={frame} alt='bar progress' className='ml-4 mb-6'/>
                     </div>
                     <div className="flex flex-col justify-between p-2 mb-2 w-full mr-10">
                         <label htmlFor="name" className="block text-[1.2rem] font-normal">
@@ -71,7 +71,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                         </label>
                         <input
                             id="email"
-                            type="text"
+                            type="email"
                             required
                             placeholder="example@gmail.com"
                             value={data.storeEmail}
@@ -90,6 +90,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                             placeholder="012345678"
                             value={data.storePhone}
                             onChange={e => onChange({ ...data, storePhone: e.target.value })}
+                            autoComplete='tel'
                             className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                         />
                         <div className='flex justify-end'>

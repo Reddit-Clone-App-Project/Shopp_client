@@ -3,23 +3,23 @@ import frame from '../../assets/CreateStore/SideFrame2.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
 import ToggleSwitch from '../../components/ToggleSwitch';
 
-
 type Form2Props = {
   data: any;
   onChange: (data: any) => void;
   onNext: () => void;
   onBack: () => void;
+  onSubmit: () => void;
 };
 
-const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
+const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit }) => {
 
     return (
         <div className="bg-[#F4F4F5] flex flex-col min-h-screen">
             <CreateStoreHeader />
             <main className="flex-grow flex items-center justify-center p-4">
                 <div className='flex w-full max-w-[1000px] h-[500px] bg-[#FFFFFF] border-t border-t-[rgba(0,0,0,0.1)] shadow-[0_4px_4px_rgba(0,0,0,0.25)] rounded-[12px] p-6 sm:p-8'>
-                    <div className='flex w-[75%] h-[325px]'>
-                        <img src={frame} alt='bar progress' className='ml-4 mt-5'/>
+                    <div className='flex w-[75%] h-[200px] m-auto'>
+                        <img src={frame} alt='bar progress' className='ml-4 mb-6'/>
                     </div>
                     <div className="flex flex-col justify-between p-2 mb-2 w-full mr-10 font-light">
                         <div>
@@ -72,7 +72,10 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
 
                             <button
                                 type='button'
-                                onClick={onNext}
+                                onClick={() => {
+                                    onSubmit();
+                                    onNext(); 
+                                }}
                                 disabled={!(data.expressShipping || data.fastShipping || data.economicalShipping || data.bulkyShipping)}
                                 className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50 disabled:hover:bg-[rgba(165,103,198)] disabled:cursor-not-allowed"
                             >
@@ -88,11 +91,3 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack }) => {
 };
 
 export default Form2;
-                    
-                    /*<button 
-                        type='button'
-                        onClick={onSubmit} 
-                        className="mt-6 bg-blue-600 text-white px-4 py-2 rounded"
-                    >
-                        Save store
-                    </button>*/
