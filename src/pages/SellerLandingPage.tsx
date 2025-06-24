@@ -24,12 +24,10 @@ const SellerLandingPage: React.FC = () => {
       <header className="fixed w-full h-18 flex justify-between items-center p-4 bg-purple-500 shadow-md">
         <img src={Logo} alt="Logo" />
         <div className="flex gap-4">
-          {/*adjust path! for seller login*/}
-          <Link to="/seller-login" className="bg-black text-white rounded-lg px-6 py-2 text-xs sm:text-base font-medium hover:bg-gray-800 transition-colors cursor-pointer">
+          <Link to="/login" className="bg-black text-white rounded-lg px-6 py-2 text-xs sm:text-base font-medium hover:bg-gray-800 transition-colors cursor-pointer">
             Login
           </Link>
-           {/*adjust path! for seller register*/}
-          <Link to="/seller-register" className="bg-white text-purple-800 rounded-lg px-6 py-2 text-xs sm:text-base font-medium hover:bg-gray-100 transition-colors cursor-pointer">
+          <Link to="/register" className="bg-white text-purple-800 rounded-lg px-6 py-2 text-xs sm:text-base font-medium hover:bg-gray-100 transition-colors cursor-pointer">
             Register
           </Link>
         </div>
