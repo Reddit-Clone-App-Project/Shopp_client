@@ -2,7 +2,7 @@ import React from 'react';
 import frame from '../../assets/CreateStore/FinalFrame.svg';
 import vector from '../../assets/CreateStore/FinalVector.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
-
+import { Link } from 'react-router-dom';
 
 const FinalForm: React.FC = () => {
 
@@ -14,12 +14,17 @@ const FinalForm: React.FC = () => {
                     <div className='flex w-[75%] h-[200px] m-auto'>
                         <img src={frame} alt='bar progress' className='ml-4 mb-6'/>
                     </div>
-                    <div className="content-center p-2 mb-2 w-full mr-10 ml-0">
+                    <div className="content-center p-2 w-full mr-10 ml-0">
                         <img src={vector} alt='waiting' className='h-[150px] m-auto mb-10'/>
                         <p className='text-[1.2rem] text-center'>
                             Now wait until we verify your information! <br />
                             We will send you the result via the email that you registered
                         </p>
+                    </div>
+                    <div className='mt-auto'>
+                        <Link to='/home' className="bg-[#A567C6] text-white px-4 py-1.5 rounded-md hover:bg-purple-800 transition-colors cursor-pointer">
+                            End
+                        </Link>
                     </div>
                 </div>
             </main>
