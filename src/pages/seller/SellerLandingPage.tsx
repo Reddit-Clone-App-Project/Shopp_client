@@ -14,7 +14,7 @@ import Footer from "../../components/Footer";
 // Dependencies
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 
 const SellerLandingPage: React.FC = () => {
   const { isLoggedIn } = useSelector((state: RootState) => state.auth);
