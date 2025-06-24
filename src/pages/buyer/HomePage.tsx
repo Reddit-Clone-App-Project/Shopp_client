@@ -3,7 +3,8 @@ import Footer from "../../components/Footer";
 import BuyerHeader from "../../features/BuyerHeader/BuyerHeader";
 import Hero from "../../features/Hero/Hero";
 import BeforeCategory from "../../components/BeforeCategory";
-import Category from "../../components/Category";
+import Category from "../../features/Category/Category";
+import FlashSale from "../../features/FlashSale/FlashSale";
 
 const HomePage: React.FC = () => {
   return (
@@ -15,7 +16,7 @@ const HomePage: React.FC = () => {
         <Hero />
         <BeforeCategory />
         <Category />
-
+        <FlashSale />
       </div>
       <footer>
         <Footer />
