@@ -44,7 +44,7 @@ const SellerLandingPage: React.FC = () => {
               Join us today and start selling your products to a global
               audience.
             </p>
-            <Link to={ isLoggedIn ? '/new-store' : '/login'} className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer">
+            <Link to={ isLoggedIn ? '/new-store' : '/login'} state={!isLoggedIn ? { from: '/new-store' } : undefined} className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors cursor-pointer">
               Start selling now
             </Link>
           </div>
@@ -212,7 +212,7 @@ const SellerLandingPage: React.FC = () => {
                     <span>Pay Fixed Fee only when a sale is made.</span>
                   </li>
                 </ul>
-                <Link to={ isLoggedIn ? '/new-store' : '/login'} className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors cursor-pointer">
+                <Link to={ isLoggedIn ? '/new-store' : '/login'} state={!isLoggedIn ? { from: '/new-store' } : undefined} className="mt-4 bg-purple-600 text-white px-6 py-2 rounded-md hover:bg-purple-700 transition-colors cursor-pointer">
                   Register now
                 </Link>
               </div>
@@ -248,7 +248,7 @@ const SellerLandingPage: React.FC = () => {
                     </span>
                   </li>
                 </ul>
-                <Link to={ isLoggedIn ? '/new-store' : '/login'} className="mt-4 bg-purple-400 text-white px-6 py-2 rounded-md hover:bg-purple-500 transition-colors cursor-pointer">
+                <Link to={ isLoggedIn ? '/new-store' : '/login'} state={!isLoggedIn ? { from: '/new-store' } : undefined} className="mt-4 bg-purple-400 text-white px-6 py-2 rounded-md hover:bg-purple-500 transition-colors cursor-pointer">
                   Register now
                 </Link>
               </div>

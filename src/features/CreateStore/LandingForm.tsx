@@ -16,7 +16,7 @@ const LandingForm: React.FC<StoreStepProps> = ({ onNext }) => {
                         <p className='text-[1.2rem] font-[350] mb-5'>This account haven't had a shop yet!</p>
                         <button 
                             onClick={onNext}
-                            className='flex w-full sm:w-auto m-auto px-4 py-3 bg-[#A567C6] text-[1.2rem] font-[350] rounded-[8px] text-white leading-4 hover:cursor-pointer hover:bg-purple-800'>
+                            className='flex w-full sm:w-auto m-auto px-4 py-3 bg-black text-[1.2rem] font-[350] rounded-[8px] text-white leading-4 hover:cursor-pointer hover:bg-purple-800'>
                             Sign up
                         </button>
                     </div>

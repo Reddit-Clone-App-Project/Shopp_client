@@ -24,7 +24,7 @@ export type StoreDataType = {
 const CreateStorePage = () => {
     const [step, SetStep] = useState(1);
     const { accessToken } = useSelector((state: RootState) => state.auth);
-
+    const [status, setStatus] = useState(true);
     const [storeData, setStoreData] = useState<StoreDataType>({
         storeName: '',
         storeEmail: '',
@@ -45,8 +45,8 @@ const CreateStorePage = () => {
                     }
                 }
             );
-
             toast.success('Registration completed!');
+            setStatus(true);
 
         } catch (err: any) {
             if (err.response && err.response.data && err.response.data.error) {
@@ -54,6 +54,7 @@ const CreateStorePage = () => {
             } else {
                 toast.error('Network Error, try again!')
             } 
+            setStatus(false);
         };
         
     };
@@ -66,7 +67,7 @@ const CreateStorePage = () => {
             {step === 1 && <LandingForm onNext={goNext} />}
             {step === 2 && <Form1 data={storeData} onChange={setStoreData} onNext={goNext}/>}
             {step === 3 && <Form2 data={storeData} onChange={setStoreData} onNext={goNext} onBack={goBack} onSubmit={handleFinalSubmit}/>}
-            {step === 4 && <FinalForm />}
+            {step === 4 && <FinalForm status={status}/>}
         </div>
     );
 };
