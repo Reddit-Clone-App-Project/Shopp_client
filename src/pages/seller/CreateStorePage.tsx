@@ -1,13 +1,13 @@
 import { useState } from "react";
-import LandingForm from "../features/CreateStore/LandingForm";
-import Form1 from "../features/CreateStore/Form1";
-import Form2 from "../features/CreateStore/Form2";
-import FinalForm from "../features/CreateStore/FinalForm";
-import { AddressFormData } from "../features/CreateStore/AddAddressModal";
+import LandingForm from "../../features/CreateStore/LandingForm";
+import Form1 from "../../features/CreateStore/Form1";
+import Form2 from "../../features/CreateStore/Form2";
+import FinalForm from "../../features/CreateStore/FinalForm";
+import { AddressFormData } from "../../features/CreateStore/AddAddressModal";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 
 export type StoreDataType = {
     storeName: string,
