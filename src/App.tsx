@@ -2,10 +2,13 @@ import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } 
 import Root from './components/Root.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
-import SellerLandingPage from './pages/SellerLandingPage.tsx';
-import HomePage from './pages/HomePage.tsx';
+import SellerLandingPage from './pages/seller/SellerLandingPage.tsx';
+import HomePage from './pages/buyer/HomePage.tsx';
+
 import PrivateRoute from './components/PrivateRoutes.tsx';
-import CreateStorePage from './pages/CreateStorePage.tsx';
+import CreateStorePage from './pages/seller/CreateStorePage.tsx';
+import CreateProduct from './pages/seller/CreateProduct.tsx';
+
 
 
 const router = createBrowserRouter( createRoutesFromElements(
@@ -15,6 +18,9 @@ const router = createBrowserRouter( createRoutesFromElements(
     <Route path="/seller" element={<SellerLandingPage />} />
     <Route path='/home' element={<HomePage />} />
     <Route path='/new-store' element={<PrivateRoute component={CreateStorePage} />} />
+    {/* Route /seller/create is using for testing, changes will be made later */}
+    <Route path='/seller/create' element={<CreateProduct />} />
+
   </Route>
 ));
 

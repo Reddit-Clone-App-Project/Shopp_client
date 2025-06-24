@@ -20,4 +20,9 @@ export const login = (eOrP: String, password: String) => API.post('/users/login'
 
 export const logout = () => API.post('/users/logout');
 
+// Privacy information
 export const getProfile = () => API.get("/users/me");
+
+
+// All users
+export const getActiveCategories = () => API.get("/categories/active");

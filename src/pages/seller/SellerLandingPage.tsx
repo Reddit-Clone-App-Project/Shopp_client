@@ -1,16 +1,16 @@
 import React from "react";
 // SVG import
-import Logo from "../assets/Logo.svg";
-import ShopMallLogo from "../assets/sellerLandingPage/shop-mall.svg";
-import RightHero from "../assets/sellerLandingPage/right-hero.svg";
-import ZeroPercent from "../assets/sellerLandingPage/zero-percentage.svg";
-import BullHorn from "../assets/sellerLandingPage/bullhorn.svg";
-import DeliveryTruck from "../assets/sellerLandingPage/delivery-truck.svg";
-import Basket from "../assets/sellerLandingPage/basket.svg";
-import Wrench from "../assets/sellerLandingPage/wrench.svg";
-import Shop from "../assets/sellerLandingPage/shop.svg";
+import Logo from "../../assets/Logo.svg";
+import ShopMallLogo from "../../assets/sellerLandingPage/shop-mall.svg";
+import RightHero from "../../assets/sellerLandingPage/right-hero.svg";
+import ZeroPercent from "../../assets/sellerLandingPage/zero-percentage.svg";
+import BullHorn from "../../assets/sellerLandingPage/bullhorn.svg";
+import DeliveryTruck from "../../assets/sellerLandingPage/delivery-truck.svg";
+import Basket from "../../assets/sellerLandingPage/basket.svg";
+import Wrench from "../../assets/sellerLandingPage/wrench.svg";
+import Shop from "../../assets/sellerLandingPage/shop.svg";
 // Components import
-import Footer from "../components/Footer";
+import Footer from "../../components/Footer";
 // Dependencies
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
