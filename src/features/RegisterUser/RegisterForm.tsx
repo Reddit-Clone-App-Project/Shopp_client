@@ -129,7 +129,7 @@ const RegisterForm = ({ onSubmit }: RegisterFormProps) => {
                 <button
                     type="submit"
                     disabled={!email || !phone || !password || !confirm || !hasLowercase || !hasMaxLength || !hasMinLength || !hasSpecialChar || !hasUppercase || !hasNumber || !isEqual}
-                    className="w-full sm:w-auto px-6 py-2 rounded-[8px] bg-black text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 mb-4 sm:mb-0"  
+                    className="w-full sm:w-auto px-6 py-2 rounded-[8px] bg-black text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 disabled:hover:bg-black disabled:hover:cursor-not-allowed mb-4 sm:mb-0"  
                 >Register</button>
                 <p className="text-center sm:text-left text-sm text-purple-800 underline hover:no-underline hover:cursor-pointer">
                     <a href="/login">Already registered, Login now!</a></p>

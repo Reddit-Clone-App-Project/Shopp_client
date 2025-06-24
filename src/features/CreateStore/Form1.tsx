@@ -98,7 +98,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                                 type='button'
                                 onClick={onNext}
                                 disabled={!data.storeName || !data.storeEmail || !data.storePhone || !data.address}
-                                className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[rgba(165,103,198)]"
+                                className="bg-black hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black"
                             >
                                 Next
                             </button>

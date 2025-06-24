@@ -7,9 +7,10 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { RootState } from '../redux/store';
+import { useEffect } from 'react';
 
 interface PrivateRouteProps {
     component: React.ComponentType<any>; /* component that we render if the user have authorization */
@@ -19,15 +20,16 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, allowedRoles }) => {
     const { isLoggedIn, role } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    if (!isLoggedIn) {
-        toast.error('You must be logged in!', {
-            autoClose: false,
-            closeOnClick: true,
-            onClose: () => navigate('/login')
-        });
-        return null;
-    }
+     useEffect(() => {
+        if (!isLoggedIn) {
+        toast.error('You must be logged in!');
+        navigate('/login', { state: { from: location.pathname }, replace: true });
+        }
+    }, [isLoggedIn, navigate, location]);
+
+    if (!isLoggedIn) return null;
 
     if (allowedRoles && !allowedRoles.includes(role || '')) {
         toast.error('You do not have permission to access this page.', {
