@@ -77,7 +77,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                                     onNext(); 
                                 }}
                                 disabled={!(data.expressShipping || data.fastShipping || data.economicalShipping || data.bulkyShipping)}
-                                className="bg-[#A567C6] hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50 disabled:hover:bg-[rgba(165,103,198)] disabled:cursor-not-allowed"
+                                className="bg-black hover:bg-purple-800 w-16 text-white py-1 px-2 rounded-[8px] hover:cursor-pointer disabled:opacity-50 disabled:hover:bg-black disabled:cursor-not-allowed"
                             >
                                 Next
                             </button>

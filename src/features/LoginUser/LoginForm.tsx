@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { handleLogin } from "../Auth/AuthSlice";
 import { AppDispatch, RootState } from "../../redux/store";
@@ -11,6 +11,8 @@ const LoginForm = () => {
     const [password, setPassword] = useState('');
     const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from || '/home';
 
     const { status, error, isLoggedIn } = useSelector((state: RootState) => state.auth);
 
@@ -29,8 +31,9 @@ const LoginForm = () => {
             if(accessToken){
                 toast.success('Login successfully!');
                 dispatch(handleGetProfile());
-                navigate('/home');
-            }
+                navigate(from, { replace: true });
+            };
+
         }catch(err){
             toast.error(err as String);
         }
@@ -74,7 +77,7 @@ const LoginForm = () => {
                 <button
                     type="submit"
                     disabled={!eOrP || !password || status === 'loading'}
-                    className="w-full sm:w-auto px-6 py-2 bg-black rounded-[8px] text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 mb-4 sm:mb-0"
+                    className="w-full sm:w-auto px-6 py-2 bg-black rounded-[8px] text-white font-normal text-sm leading-4 hover:cursor-pointer hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black mb-4 sm:mb-0"
                 >
                     {status === 'loading' ? 'Logging in...' : 'Login'}
                 </button>
