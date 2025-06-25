@@ -1,8 +1,13 @@
 import React from 'react'
 import type { Item } from '../../types/Item';
 import ItemCard from '../../components/Item';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { Link } from 'react-router-dom';
 
 const SuggestionOfTheDay: React.FC = () => {
+    const { status, error, user } = useSelector((state: RootState) => state.profile);
+
     const items: Item[] = [
         {
             name: "Classic Leather Wallet",
@@ -207,8 +212,8 @@ const SuggestionOfTheDay: React.FC = () => {
     ];
 
   return (
-    <div className='mt-10 mx-0. lg:mx-14'>
-        <div className='h-16 lg:mb-4 flex items-center justify-center lg:border border-gray-300'>
+    <div className='flex flex-col mt-10 mx-0. lg:mx-14 gap-4'>
+        <div className='h-16 flex items-center justify-center lg:border border-gray-300'>
             <h2 className="text-xl font-semibold text-purple-600 uppercase">
                 Suggestion of the Day
             </h2>
@@ -219,6 +224,8 @@ const SuggestionOfTheDay: React.FC = () => {
                 <ItemCard item={item}/>
             ))}
         </div>
+
+        { user ? <button className='self-center border border-gray-300 px-4 py-2 cursor-pointer hover:text-gray-600'>See More</button> : <Link className='self-center border border-gray-300 px-4 py-2 cursor-pointer hover:text-gray-600' to='/login'>Login To See More</Link>}
 
     </div>
   )
