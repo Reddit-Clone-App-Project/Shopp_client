@@ -6,6 +6,7 @@ import AddImage from '../../assets/addImage.svg';
 import AddVideo from '../../assets/addVideo.svg';
 import Chat from '../../assets/chat.svg';
 import Cart from '../../assets/HomePage/Header/shopping-cart.svg';
+import CategoryInput from '../../components/CategoryInput';
 
 const CreateProduct = () => {
     const [productImage, setProductImage] = useState<File[]>([]);
@@ -14,6 +15,15 @@ const CreateProduct = () => {
     const [productName, setProductName] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
+
+    // ! Mock category, change in the future
+    const categories = [
+        'Electronics',
+        'Clothing',
+        'Home',
+        'Books',
+        'Toys',
+    ]
 
     // handle amount of allowance images in product images
     const productFilesInputRef = useRef<HTMLInputElement | null>(null);
@@ -169,19 +179,19 @@ const CreateProduct = () => {
                         <input className='border border-slate-400 focus:border-slate-200 focus:outline-none rounded-md p-2 text-slate-400' type="text" id='product-name' placeholder="Product's name + Brand name + Model + Specifications" />
                     </div>
 
-                    <div>
+                    <div className='flex flex-col gap-2 mb-2'>
                         <label htmlFor='category'><span className='text-red-500'>*</span>Category</label>
-                        <select id='category'>
-                            <option value=''>Select a category</option>
-                            <option value='electronics'>Electronics</option>
-                            <option value='clothing'>Clothing</option>
-                            <option value='home'>Home</option>
-                        </select>
+                        <CategoryInput 
+                            options={categories}
+                            placeholder='e.g., Electronics, Clothing, Home, Books, Toys'
+                            onSelect={(value) => setCategory(value)}
+                        />
                     </div>
 
-                    <div>
+                    <div className='flex flex-col gap-2'>
                         <label htmlFor='product-description'><span className='text-red-500'>*</span>Product Description</label>
-                        <textarea id='product-description' placeholder='Product description'></textarea>
+                        <textarea className='border border-slate-400 p-2 rounded-md text-slate-400' id='product-description' placeholder='Product description' rows={5}></textarea>
+                        <p className='text-slate-400 self-end'>{description.length}/3000</p>
                     </div>
                 </div>
                 {/* Sales information */}
@@ -189,36 +199,36 @@ const CreateProduct = () => {
                 {/* Other information */}
             </div>
 
-            <div className='w-1/5 bg-slate-700'>
-                <p>Preview</p>
+            <div className='w-1/5 bg-slate-700 px-2.5 py-2'>
+                <p className='font-semibold'>Preview</p>
                 <img
                     src={promotionImage ? URL.createObjectURL(promotionImage) : undefined}
                     alt="Product Preview Image"
+                    className='my-3 w-full'
                 />
 
-                <div>
+                <div className='flex flex-wrap'>
                     {productImage.map((image, index) => (
                         <img
                             key={index}
                             src={URL.createObjectURL(image)}
                             alt={`Product Image ${index + 1}`}
+                            className='w-10 h-10 object-cover m-1 ml-0'
                         />
                     ))}
-
-
                 </div>
                 
                 <h6>Description</h6>
                 <p>{description}</p>
                 
-                <div>
-                    <button className='flex items-center'>
-                        <img src={Chat} alt="Chat" />
+                <div className='flex h-12 my-4'>
+                    <button className='flex grow-1 items-center justify-center bg-blue-700'>
+                        <img className='w-6' src={Chat} alt="Chat" />
                     </button>
-                    <button className='flex items-center'>
-                        <img src={Cart} alt="Cart" />
+                    <button className='flex grow-1 items-center justify-center bg-blue-700'>
+                        <img className='w-6' src={Cart} alt="Cart" />
                     </button>
-                    <button className='flex items-center'>
+                    <button className='flex grow-2 items-center justify-center bg-purple-700'>
                         Buy Now
                     </button>
                 </div>
