@@ -11,7 +11,7 @@ type HeaderProps = {
 
 const SellerBlackHeader: React.FC<HeaderProps> = ({section}) => {
   return (
-    <header className="fixed bg-black backdrop-blur-sm w-full px-4 md:px-6 pt-6 py-2 flex items-center justify-between z-50">
+    <header className="fixed bg-black backdrop-blur-sm w-full px-4 md:px-6 pt-4 py-2 flex items-center justify-between z-50">
       {/* Left section - logo and navigation */}
       <div className="flex items-center">
         {/* Mobile menu button - visible only on small screens */}
@@ -23,7 +23,7 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section}) => {
         <img 
           src={SellerLogo} 
           alt="Seller Logo" 
-          className="ml-4"
+          className="ml-7"
         />
         
         {/* Breadcrumb - hidden on mobile, visible from md upwards */}
