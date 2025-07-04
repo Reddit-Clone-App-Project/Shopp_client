@@ -18,6 +18,8 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 
+
+
 const SellerSideBar = () => {
     const [orderIsOpen, setOrderIsOpen] = useState(false);
     const [productIsOpen, setProductIsOpen] = useState(false);
@@ -27,6 +29,8 @@ const SellerSideBar = () => {
     const [metricsIsOpen, setMetricsIsOpen] = useState(false);
     const [settingsIsOpen, setSettingsIsOpen] = useState(false);
     const navigate = useNavigate();
+    
+
 
     return (
         <aside className="bg-black h-screen w-85 mt-18">
