@@ -19,7 +19,8 @@ const router = createBrowserRouter( createRoutesFromElements(
     <Route path="/seller" element={<SellerLandingPage />} />
     <Route path='/home' element={<HomePage />} />
     <Route path='/new-store' element={<PrivateRoute component={CreateStorePage} />} />
-    <Route path='/seller/dashboard' element={<PrivateRoute allowedRoles={['seller', 'admin']} component={SellerDashboard} />} />
+    <Route path='/seller/dashboard' element={<SellerDashboard />} />
+    {/*<Route path='/seller/dashboard' element={<PrivateRoute allowedRoles={['seller', 'admin']} component={SellerDashboard} />} />*/}
     {/* Route /seller/create is using for testing, changes will be made later */}
     <Route path='/seller/create' element={<CreateProduct />} />
 

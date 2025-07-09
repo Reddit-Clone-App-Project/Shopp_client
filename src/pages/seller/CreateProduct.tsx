@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { toast } from 'react-toastify';
-import FormSellerHeader from '../../features/SellerHeader/FormSellerHeader'
+import SellerBlackHeader from '../../components/SellerBlackHeader';
 // SVG
 import AddImage from '../../assets/addImage.svg';
 import AddVideo from '../../assets/addVideo.svg';
@@ -15,6 +15,7 @@ const CreateProduct = () => {
     const [productName, setProductName] = useState('');
     const [category, setCategory] = useState('');
     const [description, setDescription] = useState('');
+    const [next, setNext] = useState(false); 
 
     // ! Mock category, change in the future
     const categories = [
@@ -34,17 +35,20 @@ const CreateProduct = () => {
 
         if (!files) return;
 
-        const selectedFilesCount = files?.length;
+        const selectedFilesCount = productImage?.length;
+        const limitImage = selectedFilesCount + 1;
         
-        if (selectedFilesCount > maxFiles) {
-        toast.error(`You can only upload a maximum of ${maxFiles} images.`);
-        if(productFilesInputRef.current) {
-            productFilesInputRef.current.value = '';
-        }
-        setProductImage([]);
+        if (limitImage > maxFiles) {
+            toast.error(`You can only upload a maximum of ${maxFiles} images.`);
+
+            if(productFilesInputRef.current) {
+                productFilesInputRef.current.value = '';
+            };
+
+            setProductImage([...productImage]);
         } else {
-        setProductImage(Array.from(files));
-    }
+            setProductImage([...productImage, ...Array.from(files)]);
+        };
     };
 
     const handlePromotionFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,9 +71,9 @@ const CreateProduct = () => {
 
     return (
     <>
-        <FormSellerHeader />
+        <SellerBlackHeader section={'Product Management > Add a Product'} />
         <div className='w-full min-h-screen flex gap-3 justify-between items-start text-white bg-gray-950 pt-20 px-6'>
-            <div className='w-1/5 bg-slate-700 px-2.5 pt-2.5 pb-4'>
+            <div className='w-1/5 bg-slate-700 px-2.5 pt-2.5 pb-4 mt-4'>
                 <h3 className='font-semibold mb-2.5'>Suggested information filling</h3>
                 <ul className='space-y-2 text-sm'>
                     <li>✓ Add at least 3 images</li>
@@ -80,28 +84,40 @@ const CreateProduct = () => {
                 </ul>
             </div>
 
-            <div className='w-3/5'>
+            <div className='w-3/5 mt-4'>
                 <div className='flex bg-slate-700 h-12'>
-                    <div className='flex-1 flex justify-center items-center'>Basic information</div>
-                    <div className='flex-1 flex justify-center items-center'>Sales information</div>
-                    <div className='flex-1 flex justify-center items-center'>Shipping information</div>
-                    <div className='flex-1 flex justify-center items-center'>Other information</div>
+                    <div className='flex-1 flex justify-start items-center'>
+                        {next === false && 
+                            <>
+                                <p className='ml-5 text-[#A567C6]'>Basic information</p>
+                                <div className='bg-[#A567C6] h-0.5 w-39 absolute self-end'></div>
+                                <p className='ml-5'>Sales information</p>
+                            </>
+                        }
+                        {next &&
+                            <>
+                                <p className='ml-5'>Basic information</p>
+                                <p className='ml-5 text-[#A567C6]'>Sales information</p>
+                                <div className='bg-[#A567C6] ml-39 h-0.5 w-36 absolute self-end'></div>
+                            </>
+                        } 
+                    </div>
                 </div>
                 {/* Basic information */}
                 <div className='bg-slate-700 px-4 py-4 mt-4'>
                     <h3 className='font-semibold text-lg mb-2.5'>Basic information</h3>
 
-                    <div className='flex flex-col gap-4 mb-4'>
-                        <p><span className='text-red-500'>*</span>Product Image (1x1 image)</p>
+                    <p><span className='text-red-500'>*</span>Product Image (1x1 image)</p>
+                    <div className='flex gap-4 mb-2'>
                         <label
                             htmlFor="product-image"
-                            className="flex w-48 h-48 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                            className="flex w-48 h-48 mt-5 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
                         >
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <img src={AddImage} alt='Add Product' />
-                            <p className="mb-2 text-sm text-slate-400">
-                                <span className="font-semibold">Add image</span> ({productImage.length}/{maxFiles})
-                            </p>
+                                <img src={AddImage} alt='Add Product' />
+                                <p className="mb-2 text-sm text-slate-400">
+                                    <span className="font-semibold">Add image</span> ({productImage.length}/{maxFiles})
+                                </p>
                             </div>
                         </label>
                         <input 
@@ -113,6 +129,11 @@ const CreateProduct = () => {
                             onChange={handleProductFilesChange}
                             ref={productFilesInputRef}
                         />
+                        <div className='flex overflow-y-scroll py-4 px-2'>
+                            {productImage.map((image, id) => 
+                                <img key={id} src={URL.createObjectURL(image)} alt={`Image ${id + 1}`} className='w-50 h-50 mr-12' />
+                            )}
+                        </div>
                     </div>
 
                     <div className='mb-4'>
@@ -199,7 +220,7 @@ const CreateProduct = () => {
                 {/* Other information */}
             </div>
 
-            <div className='w-1/5 bg-slate-700 px-2.5 py-2'>
+            <div className='w-1/5 bg-slate-700 px-2.5 py-2 mt-4'>
                 <p className='font-semibold'>Preview</p>
                 <img
                     src={promotionImage ? URL.createObjectURL(promotionImage) : undefined}

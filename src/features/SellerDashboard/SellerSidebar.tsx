@@ -74,7 +74,7 @@ const SellerSideBar = () => {
                         >
                             <ul className='ml-12 space-y-1.5 mb-5'> 
                                     <li className='hover:cursor-pointer'>All Products</li>
-                                    <li className='hover:cursor-pointer'>Add Products</li>
+                                    <li className='hover:cursor-pointer'><a href="/seller/create">Add Products</a></li>
                             </ul>
                         </motion.div>
                     }
