@@ -16,6 +16,7 @@ import CreateStorePage from "./pages/seller/CreateStorePage.tsx";
 import CreateProduct from "./pages/seller/CreateProduct.tsx";
 import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
+import ProductPage from "./pages/buyer/ProductPage.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/seller" element={<SellerLandingPage />} />
       <Route path="/home" element={<HomePage />} />
+      <Route path="/product/:id" element={<ProductPage />} />
       <Route
         path="/new-store"
         element={<PrivateRoute component={CreateStorePage} />}

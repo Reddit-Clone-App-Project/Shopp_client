@@ -5,10 +5,13 @@
 */
 import React from "react";
 import type { FlashSaleItem, Item } from "../types/Item";
+import { replace, useNavigate } from "react-router-dom";
 
 const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, item: Item | null }) => { // !The item and the flashSaleItem must be the same type, but for now for some reason I have to separate them
   const discountedPrice = (flashSaleItem?.price ?? 0) * (1 - (flashSaleItem?.discount ?? 0) / 100);
   const prices = item?.variants?.map((variant) => variant.price);
+
+  const navigate = useNavigate();
   // Function to check if the item is a Item
   /*
   const isFlashSaleItem = (obj: any): obj is FlashSaleItem => {
@@ -49,7 +52,7 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
     );
 
     return (
-    <div className={`bg-white rounded-sm overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-purple-500`}>
+    <div onClick={() => {navigate(`/product/${item.id}`, { replace: true })}} className={`bg-white rounded-sm overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-purple-500`}>
       <div className="relative">
         <img
           src={item.promotion_image?.url}
