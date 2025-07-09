@@ -1,5 +1,5 @@
 // This is a combobox input for selecting categories and entering the input.
-import React, { useState, useRef, useEffect, useId, FC, KeyboardEvent, ChangeEvent} from 'react'
+import { useState, useRef, useEffect, useId, FC, KeyboardEvent, ChangeEvent} from 'react'
 import ChevronDown from '../assets/chevron-down.svg';
 
 interface ComboboxProps {

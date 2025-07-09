@@ -115,9 +115,10 @@ const CreateProduct = () => {
                         >
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                 <img src={AddImage} alt='Add Product' />
-                                <p className="mb-2 text-sm text-slate-400">
+                                <p className="mt-2 text-sm text-slate-400">
                                     <span className="font-semibold">Add image</span> ({productImage.length}/{maxFiles})
                                 </p>
+                                <p className='text-3xl text-slate-400'>+</p>
                             </div>
                         </label>
                         <input 
@@ -131,7 +132,7 @@ const CreateProduct = () => {
                         />
                         <div className='flex overflow-y-scroll py-4 px-2'>
                             {productImage.map((image, id) => 
-                                <img key={id} src={URL.createObjectURL(image)} alt={`Image ${id + 1}`} className='w-50 h-50 mr-12' />
+                                <img key={id} src={URL.createObjectURL(image)} alt={`Image ${id + 1}`} className='w-48 h-48 mr-6' />
                             )}
                         </div>
                     </div>
@@ -139,26 +140,53 @@ const CreateProduct = () => {
                     <div className='mb-4'>
                         <p><span className='text-red-500'>*</span>Promotion Image (1x1 image)</p>
                         <div className='flex mt-4'>
-                            <label
-                                htmlFor="promotion-image"
-                                className="flex w-48 h-48 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
-                            >
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <img src={AddImage} alt='Add Product' />
-                                <p className="mb-2 text-sm text-slate-400">
-                                    <span className="font-semibold">Add image</span>
-                                </p>
-                                </div>
-                            </label>
-                            <input 
-                                type="file" 
-                                accept="image/*" 
-                                id='promotion-image' 
-                                className='hidden' 
-                                onChange={handlePromotionFileChange}   
-                            />
-                            
-                            <ul className='w-1/2 ml-4 text-sm text-slate-400'>
+                            {promotionImage ? 
+                                <>
+                                    <label
+                                            htmlFor="promotion-image"
+                                            className="flex w-48 h-48 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                                        >
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <img src={AddImage} alt='Add Product' />
+                                                <p className="mt-2 text-sm text-slate-400">
+                                                    <span className="font-semibold">Change image (1/1)</span>
+                                                </p>
+                                                <p className='text-3xl text-slate-400'>+</p>
+                                            </div>
+                                        </label>
+                                        <input 
+                                            type="file" 
+                                            accept="image/*" 
+                                            id='promotion-image' 
+                                            className='hidden' 
+                                            onChange={handlePromotionFileChange}   
+                                        />
+                                    <img src={promotionImage ? URL.createObjectURL(promotionImage) : undefined} alt='promotion image' className='h-48 w-48 self-center ml-5' />
+                                </>
+                                :
+                                <>
+                                    <label
+                                        htmlFor="promotion-image"
+                                        className="flex w-48 h-48 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                                    >
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <img src={AddImage} alt='Add Product' />
+                                            <p className="mt-2 text-sm text-slate-400">
+                                                <span className="font-semibold">Add image</span>
+                                            </p>
+                                            <p className='text-3xl text-slate-400'>+</p>
+                                        </div>
+                                    </label>
+                                    <input 
+                                        type="file" 
+                                        accept="image/*" 
+                                        id='promotion-image' 
+                                        className='hidden' 
+                                        onChange={handlePromotionFileChange}   
+                                    />
+                                </>
+                            }
+                            <ul className='w-1/2 ml-6 text-sm text-slate-400 self-center'>
                                 <li>Upload 1x1 image</li>
                                 <li>Promotion photo will be displayed on Search Results, Today's Suggestions, etc. Using beautiful promotion photo will attract more visits to your products</li>
                             </ul>
@@ -173,10 +201,11 @@ const CreateProduct = () => {
                                 className="flex w-48 h-48 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
                             >
                                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <img src={AddVideo} alt='Add Product' />
-                                <p className="mb-2 text-sm text-slate-400">
-                                    <span className="font-semibold">Add video</span>
-                                </p>
+                                    <img src={AddVideo} alt='Add Product' />
+                                    <p className="mt-2 text-sm text-slate-400">
+                                        <span className="font-semibold">Add video</span>
+                                    </p>
+                                    <p className='text-3xl text-slate-400'>+</p>
                                 </div>
                             </label>
                             <input 
@@ -197,7 +226,7 @@ const CreateProduct = () => {
 
                     <div className='flex flex-col gap-4 mb-4'>
                         <label htmlFor='product-name'><span className='text-red-500'>*</span>Product Name</label>
-                        <input className='border border-slate-400 focus:border-slate-200 focus:outline-none rounded-md p-2 text-slate-400' type="text" id='product-name' placeholder="Product's name + Brand name + Model + Specifications" />
+                        <input className='border border-slate-400 focus:border-slate-200 focus:outline-none rounded-md p-2 text-slate-400' type="text" id='product-name' placeholder="Product's name + Brand name + Model + Specifications" value={productName} onChange={e => setProductName(e.target.value)}/>
                     </div>
 
                     <div className='flex flex-col gap-2 mb-2'>
@@ -211,7 +240,7 @@ const CreateProduct = () => {
 
                     <div className='flex flex-col gap-2'>
                         <label htmlFor='product-description'><span className='text-red-500'>*</span>Product Description</label>
-                        <textarea className='border border-slate-400 p-2 rounded-md text-slate-400' id='product-description' placeholder='Product description' rows={5}></textarea>
+                        <textarea className='border border-slate-400 p-2 rounded-md text-slate-400' id='product-description' placeholder='Product description' rows={5} value={description} onChange={e => setDescription(e.target.value)}></textarea>
                         <p className='text-slate-400 self-end'>{description.length}/3000</p>
                     </div>
                 </div>
@@ -225,24 +254,24 @@ const CreateProduct = () => {
                 <img
                     src={promotionImage ? URL.createObjectURL(promotionImage) : undefined}
                     alt="Product Preview Image"
-                    className='my-3 w-full'
+                    className='my-3 w-50 m-auto'
                 />
-
-                <div className='flex flex-wrap'>
+                <h2 className='font-bold mb-3'>{productName}</h2>
+                <div className='flex flex-wrap mb-2'>
                     {productImage.map((image, index) => (
                         <img
                             key={index}
                             src={URL.createObjectURL(image)}
                             alt={`Product Image ${index + 1}`}
-                            className='w-10 h-10 object-cover m-1 ml-0'
+                            className='w-7 h-7 object-cover m-1 ml-0'
                         />
                     ))}
                 </div>
                 
-                <h6>Description</h6>
-                <p>{description}</p>
+                <h6 className='font-medium mb-2'>Description</h6>
+                <p className='font-extralight text-[0.75rem]'>{description}</p>
                 
-                <div className='flex h-12 my-4'>
+                <div className='flex h-12 my-4 mx-2'>
                     <button className='flex grow-1 items-center justify-center bg-blue-700'>
                         <img className='w-6' src={Chat} alt="Chat" />
                     </button>
@@ -254,7 +283,7 @@ const CreateProduct = () => {
                     </button>
                 </div>
 
-                <p>Images are for reference only and are not the final image the Buyer sees.</p>
+                <p className='font-extralight text-[0.75rem]'>Images are for reference only and are not the final image the Buyer sees.</p>
             </div>
         </div>
     </>
