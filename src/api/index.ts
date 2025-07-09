@@ -23,6 +23,7 @@ export const logout = () => API.post('/users/logout');
 // Privacy information
 export const getProfile = () => API.get("/users/me");
 
-
 // All users
 export const getActiveCategories = () => API.get("/categories/active");
+
+export const getHot = (offset:number) => API.get(`/products/hot?offset=${offset}`);

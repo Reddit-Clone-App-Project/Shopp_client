@@ -154,7 +154,7 @@ const FlashSale = () => {
                 key={item.name}
                 className="embla__slide flex-[0_0_auto] w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5 min-w-0 pl-2"
               >
-                <FlashSaleCard item={item} />
+                <FlashSaleCard flashSaleItem={item} item={null} />
               </div>
             ))}
           </div>
