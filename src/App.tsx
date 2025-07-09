@@ -1,4 +1,4 @@
-import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route } from 'react-router-dom';
+import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route, Navigate } from 'react-router-dom';
 import Root from './components/Root.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import RegisterPage from './pages/RegisterPage.tsx';
@@ -14,6 +14,7 @@ import SellerDashboard from './pages/seller/SellerDashboard.tsx';
 
 const router = createBrowserRouter( createRoutesFromElements(
   <Route path="/" element={<Root />}>
+    <Route index element={<Navigate to="/home" replace />} />
     <Route path="/login" element={<LoginPage />} />
     <Route path='/register' element={<RegisterPage />} />
     <Route path="/seller" element={<SellerLandingPage />} />
