@@ -69,6 +69,10 @@ const CreateProduct = () => {
         }
     };
 
+    const removeImage = (idToRemove: number) => {
+        setProductImage(prevImages => prevImages.filter((_, id) => id !== idToRemove))
+    };
+
     return (
     <>
         <SellerBlackHeader section={'Product Management > Add a Product'} />
@@ -106,8 +110,10 @@ const CreateProduct = () => {
                 {/* Basic information */}
                 <div className='bg-slate-700 px-4 py-4 mt-4'>
                     <h3 className='font-semibold text-lg mb-2.5'>Basic information</h3>
-
-                    <p><span className='text-red-500'>*</span>Product Image (1x1 image)</p>
+                    <div className='flex items-center'>
+                        <p><span className='text-red-500'>*</span>Product Image (1x1 image)</p>
+                        {productImage?.length !== 0 ? <button className='text-white border border-slate-600 rounded-lg px-2 bg-slate-600 ml-4 hover:cursor-pointer hover:bg-slate-400' onClick={() => setProductImage([])}>Remove All Images</button> : ''}
+                    </div>
                     <div className='flex gap-4 mb-2'>
                         <label
                             htmlFor="product-image"
@@ -132,7 +138,10 @@ const CreateProduct = () => {
                         />
                         <div className='flex overflow-y-scroll py-4 px-2'>
                             {productImage.map((image, id) => 
-                                <img key={id} src={URL.createObjectURL(image)} alt={`Image ${id + 1}`} className='w-48 h-48 mr-6' />
+                                <>
+                                    <img key={id} src={URL.createObjectURL(image)} alt={`Image ${id + 1}`} className='w-48 h-48' />
+                                    <span className='self-start hover:cursor-pointer ml-1 mr-6' onClick={() => removeImage(id)}>X</span>
+                                </>
                             )}
                         </div>
                     </div>
@@ -162,6 +171,7 @@ const CreateProduct = () => {
                                             onChange={handlePromotionFileChange}   
                                         />
                                     <img src={promotionImage ? URL.createObjectURL(promotionImage) : undefined} alt='promotion image' className='h-48 w-48 self-center ml-5' />
+                                    <span className='self-start hover:cursor-pointer ml-1' onClick={() => setPromotionImage(null)}>X</span>
                                 </>
                                 :
                                 <>
@@ -195,27 +205,57 @@ const CreateProduct = () => {
 
                     <div className='mb-4'>
                         <p>Product's video</p>
-                        <div className='flex mt-4 gap-4 items-center'>
-                            <label
-                                htmlFor="product-video"
-                                className="flex w-48 h-48 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
-                            >
-                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                    <img src={AddVideo} alt='Add Product' />
-                                    <p className="mt-2 text-sm text-slate-400">
-                                        <span className="font-semibold">Add video</span>
-                                    </p>
-                                    <p className='text-3xl text-slate-400'>+</p>
-                                </div>
-                            </label>
-                            <input 
-                                type="file" 
-                                accept="video/*" 
-                                id='product-video' 
-                                className='hidden'
-                                onChange={handleVideoFileChange}
-                            />
-                            <ul className='w-1/2 text-sm text-slate-400'>
+                        <div className='flex mt-4 items-center'>
+                            {productVideo ? 
+                                <>    
+                                    <label
+                                        htmlFor="product-video"
+                                        className="flex w-48 h-48 flex-col justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                                    >
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <img src={AddVideo} alt='Add Product' />
+                                            <p className="mt-2 text-sm text-slate-400">
+                                                <span className="font-semibold">Add video</span>
+                                            </p>
+                                            <p className='text-3xl text-slate-400'>+</p>
+                                        </div>
+                                    </label>
+                                    <input 
+                                        type="file" 
+                                        accept="video/*" 
+                                        id='product-video' 
+                                        className='hidden'
+                                        onChange={handleVideoFileChange}
+                                    />
+                                    <video src={URL.createObjectURL(productVideo)} controls className='h-48 w-48 ml-5'>
+                                        Broswer doesn't support video format
+                                    </video>
+                                    <span className='self-start hover:cursor-pointer ml-1' onClick={() => setProductVideo(null)}>X</span>
+                                </>
+                                :
+                                <>    
+                                    <label
+                                        htmlFor="product-video"
+                                        className="flex w-48 h-48 flex-col justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                                    >
+                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                            <img src={AddVideo} alt='Add Product' />
+                                            <p className="mt-2 text-sm text-slate-400">
+                                                <span className="font-semibold">Add video</span>
+                                            </p>
+                                            <p className='text-3xl text-slate-400'>+</p>
+                                        </div>
+                                    </label>
+                                    <input 
+                                        type="file" 
+                                        accept="video/*" 
+                                        id='product-video' 
+                                        className='hidden'
+                                        onChange={handleVideoFileChange}
+                                    />
+                                </>
+                            }               
+                            <ul className='w-1/2 text-sm ml-6 text-slate-400'>
                                 <li>Maximum size 30Mb, resolution not exceeding 1280x1280px</li>
                                 <li>Length: 10s-60s</li>
                                 <li>Format: MP4</li>
