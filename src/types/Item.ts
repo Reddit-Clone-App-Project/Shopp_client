@@ -31,13 +31,13 @@ interface Discount {
     end_at: Date;
 }
 
-interface ItemImage {
+export interface ItemImage {
     id: number;
     url: string;
     alt_text: string | null;
 }
 
-interface ItemVariant {
+export interface ItemVariant {
     id: number;
     variant_name: string;
     price: number;
