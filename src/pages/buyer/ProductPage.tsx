@@ -19,6 +19,7 @@ import DeliveryTruck from "../../assets/Product/LightDeliveryTruck.svg";
 import DarkStar from "../../assets/Product/DarkStar.svg";
 import LightStar from "../../assets/Product/LightStar.svg";
 import DefaultAvatar from "../../assets/generic-avatar.svg";
+import { countTime } from "../../utility/countTime";
 
 
 const ProductPage: React.FC = () => {
@@ -52,6 +53,18 @@ const ProductPage: React.FC = () => {
 
   const decreaseQuantity = () => {
     setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+  }
+
+  const countStars = (rating:number) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < rating) {
+        stars.push(<img key={i} src={DarkStar} alt="Dark Star" className="w-4 h-4" />);
+      } else {
+        stars.push(<img key={i} src={LightStar} alt="Light Star" className="w-4 h-4" />);
+      }
+    }
+    return stars;
   }
 
   useEffect(() => {
@@ -132,7 +145,13 @@ const ProductPage: React.FC = () => {
             <div>
               <h1>{product.name}</h1>
               <div>
-                <div><p>{product.price}</p>{product.bought} Sold</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5"><div className="flex items-center">{countStars(product.avgRating)}</div> <span className="text-blue-500">{product.avgRating ?? 0}</span></div>
+                  <p>|</p>
+                  <p><span className="text-blue-500">{product.totalRating ?? 0}</span> Rating</p>
+                  <p>|</p>
+                  <p>{product.bought} Sold</p>
+                </div>
                 <div>
                   <img src={Heart} alt="Favorite" className="cursor-pointer" />
                   <img src={Share} alt="Share" className="cursor-pointer" />
@@ -225,6 +244,21 @@ const ProductPage: React.FC = () => {
               <div>
                 <button>Chat Now</button>
                 <button>View Store</button>
+              </div>
+            </div>
+
+            <div>
+              <div>
+                <p>Ratings</p>
+                <p>{store?.total_reviews ?? 0}</p>
+              </div>
+              <div>
+                <p>Average Rating</p>
+                <p>{store?.average_rating ?? 0}</p>
+              </div>
+              <div>
+                <p>Join</p>
+                <p>{store?.created_at ? countTime(store.created_at) : 'N/A'}</p>
               </div>
             </div>
 
