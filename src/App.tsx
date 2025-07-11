@@ -18,6 +18,7 @@ import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
 
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
@@ -42,7 +43,6 @@ const router = createBrowserRouter(
       />
       {/* Route /seller/create is using for testing, changes will be made later */}
       <Route path="/seller/create" element={<CreateProduct />} />
-
       {/* Catch-all route for 404 errors */}
       <Route path="*" element={<ErrorPage />} />
     </Route>
