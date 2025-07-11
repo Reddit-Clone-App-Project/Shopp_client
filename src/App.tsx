@@ -18,20 +18,31 @@ import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
 
-const router = createBrowserRouter( 
+
+const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
       <Route index element={<Navigate to="/home" replace />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path='/register' element={<RegisterPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="/seller" element={<SellerLandingPage />} />
-      <Route path='/home' element={<HomePage />} />
-      <Route path='/new-store' element={<PrivateRoute component={CreateStorePage} />} />
-      <Route path='/seller/dashboard' element={<SellerDashboard />} />
-      {/*<Route path='/seller/dashboard' element={<PrivateRoute allowedRoles={['seller', 'admin']} component={SellerDashboard} />} />*/}
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/product/:id" element={<ProductPage />} />
+      <Route
+        path="/new-store"
+        element={<PrivateRoute component={CreateStorePage} />}
+      />
+      <Route
+        path="/seller/dashboard"
+        element={
+          <PrivateRoute
+            allowedRoles={["seller", "admin"]}
+            component={SellerDashboard}
+          />
+        }
+      />
       {/* Route /seller/create is using for testing, changes will be made later */}
-      <Route path='/seller/create' element={<CreateProduct />} />
-
+      <Route path="/seller/create" element={<CreateProduct />} />
       {/* Catch-all route for 404 errors */}
       <Route path="*" element={<ErrorPage />} />
     </Route>

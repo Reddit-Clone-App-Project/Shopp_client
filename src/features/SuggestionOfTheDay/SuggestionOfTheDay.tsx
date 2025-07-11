@@ -1,13 +1,36 @@
-import React from 'react'
-import type { Item } from '../../types/Item';
-import ItemCard from '../../components/Item';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from "react";
+import ItemCard from "../../components/Item";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../redux/store";
+import { Link } from "react-router-dom";
+import { fetchSuggestionOfTheDay } from "./SuggestionOfTheDaySlice";
 
 const SuggestionOfTheDay: React.FC = () => {
-    const { status, error, user } = useSelector((state: RootState) => state.profile);
+  const { user } = useSelector((state: RootState) => state.profile);
+  const dispatch: AppDispatch = useDispatch();
+  const items = useSelector(
+    (state: RootState) => state.suggestionOfTheDay.products
+  );
+  const { offset, status } = useSelector(
+    (state: RootState) => state.suggestionOfTheDay
+  );
 
+ useEffect(() => {
+  // We only fetch if there are no products.
+  // This is the only condition we need.
+  if (items.length === 0) {
+    const promise = dispatch(fetchSuggestionOfTheDay(offset));
+
+    // The cleanup function will run on unmount.
+    return () => {
+      promise.abort();
+    };
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []); // <-- The dependency array MUST be empty.
+
+
+  /*
     const items: Item[] = [
         {
             name: "Classic Leather Wallet",
@@ -210,25 +233,40 @@ const SuggestionOfTheDay: React.FC = () => {
             isBestPrice: true
         }
     ];
-
+    */
   return (
-    <div className='flex flex-col mt-10 mx-0. lg:mx-14 gap-4'>
-        <div className='h-16 flex items-center justify-center lg:border border-gray-300'>
-            <h2 className="text-xl font-semibold text-purple-600 uppercase">
-                Suggestion of the Day
-            </h2>
-        </div>
+    <div className="flex flex-col mt-10 mx-0. lg:mx-14 gap-4">
+      <div className="h-16 flex items-center justify-center lg:border border-gray-300">
+        <h2 className="text-xl font-semibold text-purple-600 uppercase">
+          Suggestion of the Day
+        </h2>
+      </div>
 
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'>
-            {items.map((item, index) => (
-                <ItemCard item={item}/>
-            ))}
-        </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        {items.map((item, index) => (
+          <ItemCard key={index} flashSaleItem={null} item={item} />
+        ))}
+      </div>
 
-        { user ? <button className='self-center border border-gray-300 px-4 py-2 cursor-pointer hover:text-gray-600'>See More</button> : <Link className='self-center border border-gray-300 px-4 py-2 cursor-pointer hover:text-gray-600' to='/login'>Login To See More</Link>}
-
+      {user ? (
+        <button 
+            className="self-center border border-gray-300 px-4 py-2 cursor-pointer hover:text-gray-600"
+            onClick={() => {
+                dispatch(fetchSuggestionOfTheDay(offset));
+            }}
+        >
+          See More
+        </button>
+      ) : (
+        <Link
+          className="self-center border border-gray-300 px-4 py-2 cursor-pointer hover:text-gray-600"
+          to="/login"
+        >
+          Login To See More
+        </Link>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default SuggestionOfTheDay
+export default SuggestionOfTheDay;
