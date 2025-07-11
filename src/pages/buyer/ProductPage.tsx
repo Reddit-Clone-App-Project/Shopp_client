@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { useParams, useNavigate } from "react-router-dom";
@@ -21,7 +21,6 @@ import LightStar from "../../assets/Product/LightStar.svg";
 import DefaultAvatar from "../../assets/generic-avatar.svg";
 import { countTime } from "../../utility/countTime";
 
-
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -35,37 +34,126 @@ const ProductPage: React.FC = () => {
     (state: RootState) => state.storeProfile
   );
 
-  const { user } = useSelector(
-    (state: RootState) => state.profile
-  );
+  const { user } = useSelector((state: RootState) => state.profile);
 
   const { id } = useParams<{ id: string }>();
-  
+
   const product = products.find(
     (product: Item) => product.id.toString() === id
   );
-  const [currentVariant, setCurrentVariant] = useState<ItemVariant>(product?.variants[0]);
+
+  // This is the selected image for the product
+  const [selectedImage, setSelectedImage] = useState<ItemImage>(
+    product.promotion_image
+  );
+
+  // This is the current image that is displayed in the product page while through selected or hovered
+  const [currentImage, setCurrentImage] = useState<ItemImage>(
+    product.promotion_image
+  );
+
+  const [currentVariant, setCurrentVariant] = useState<ItemVariant>(
+    product?.variants[0]
+  );
   const [quantity, setQuantity] = useState<number>(1);
 
+  // Image carousel state
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+
+  // Get all images in a single array for carousel navigation
+  const getAllImages = (): ItemImage[] => {
+    const allImages: ItemImage[] = [product.promotion_image];
+
+    if (product.product_images) {
+      allImages.push(...product.product_images);
+    }
+
+    if (product.variants) {
+      product.variants.forEach((variant: ItemVariant) => {
+        if (variant.images) {
+          allImages.push(...variant.images);
+        }
+      });
+    }
+
+    return allImages;
+  };
+
+  const allImages = getAllImages();
+  const imagesPerView = 3; // Number of thumbnails to show at once
+
+  // Navigation functions for image carousel
+  const goToPrevious = () => {
+    setCurrentImageIndex((prev) =>
+      prev > 0
+        ? prev - imagesPerView
+        : Math.max(0, allImages.length - imagesPerView)
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentImageIndex((prev) =>
+      prev + imagesPerView < allImages.length ? prev + imagesPerView : 0
+    );
+  };
+
+  const getVisibleImages = () => {
+    return allImages.slice(
+      currentImageIndex,
+      currentImageIndex + imagesPerView
+    );
+  };
+
+  // When choosing a variant, update the selected image and current variant
+  const handleVariantChange = (variant: ItemVariant) => {
+    setCurrentVariant(variant);
+    if (variant.images && variant.images.length > 0) {
+      setSelectedImage(variant.images[0]);
+    } else {
+      // If the variant has no images, fallback to the product's promotion image
+      setSelectedImage(product.promotion_image);
+    }
+  };
+
   const increaseQuantity = () => {
-    setQuantity(prevQuantity => (prevQuantity < currentVariant.stock_quantity ? prevQuantity + 1 : currentVariant.stock_quantity));
-  }
+    setQuantity((prevQuantity) =>
+      prevQuantity < currentVariant.stock_quantity
+        ? prevQuantity + 1
+        : currentVariant.stock_quantity
+    );
+  };
 
   const decreaseQuantity = () => {
-    setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
-  }
+    setQuantity((prevQuantity) => (prevQuantity > 1 ? prevQuantity - 1 : 1));
+  };
 
-  const countStars = (rating:number) => {
+  const countStars = (rating: number) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
       if (i < rating) {
-        stars.push(<img key={i} src={DarkStar} alt="Dark Star" className="w-4 h-4" />);
+        stars.push(
+          <img key={i} src={DarkStar} alt="Dark Star" className="w-4 h-4" />
+        );
       } else {
-        stars.push(<img key={i} src={LightStar} alt="Light Star" className="w-4 h-4" />);
+        stars.push(
+          <img key={i} src={LightStar} alt="Light Star" className="w-4 h-4" />
+        );
       }
     }
     return stars;
-  }
+  };
+
+  useEffect(() => {
+    if (!product) {
+      // If product not found, redirect to home page
+      navigate("/");
+    }
+  }, []);
+
+  // Update the current image when the selected image changes
+  useEffect(() => {
+    setCurrentImage(selectedImage);
+  }, [selectedImage]);
 
   useEffect(() => {
     if (addressStatus === "idle" || !address) {
@@ -74,7 +162,7 @@ const ProductPage: React.FC = () => {
 
       return () => {
         promise.abort();
-      }
+      };
     }
   }, []);
 
@@ -85,106 +173,198 @@ const ProductPage: React.FC = () => {
 
       return () => {
         promise.abort();
-      }
+      };
     }
   }, []);
 
   return (
-    <div>
+    <div className="bg-gray-100">
       <header>
         <BuyerHeader />
       </header>
       <nav className="ml-16 mt-4 text-lg">
         <Link to="/">Home</Link>
-        {product.category_hierarchy?.map((category: { id: number; name: string; slug: string }) => (
-          <> / <Link to={`/category/${category.slug}`}>{category.name}</Link></> 
-        ))}
+        {product.category_hierarchy?.map(
+          (category: { id: number; name: string; slug: string }) => (
+            <>
+              {" "}
+              / <Link to={`/category/${category.slug}`}>{category.name}</Link>
+            </>
+          )
+        )}
       </nav>
       <main className="mx-8 my-4">
         <div className="w-full flex">
           {/* Product and Variants */}
-          <div className="w-2/3">
+          <div className="w-2/3 flex bg-white pb-4">
             {/* Images */}
             <div>
-              <img 
-                src={product.promotion_image.url}
-                alt={product.promotion_image.alt_text || "Product Image"}
-                className=""
+              <img
+                src={currentImage.url}
+                alt={currentImage.alt_text ?? "Product Image"}
+                className="w-100 h-100"
               />
-              <div>
-                <img src={ChevronLeft} alt="Previous" />
-                <div>
-                  <img 
-                    src={product.promotion_image.url}
-                    alt={product.promotion_image.alt_text || "Product Image"}
-                    className=""
-                  />
-                  {product.product_images?.map((image: ItemImage) => (
-                    <img
-                      src={image.url}
-                      alt={image.alt_text || "Product Image"}
-                      className=""
-                    />
-                  ))}
-                  {product.variants?.map((variant: ItemVariant) => {
-                    return variant.images?.map((image: ItemImage) => (
-                      <img
-                        key={image.id}
-                        src={image.url}
-                        alt={image.alt_text || "Variant Image"}
-                        className=""
-                      />
-                    ));
-                  })}
+              {/* AI start doing here */}
+              <div className="mt-6 px-4">
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4 shadow-sm">
+                  {/* Previous Button */}
+                  <button
+                    className={`flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md transition-all duration-200 ${
+                      currentImageIndex > 0
+                        ? "hover:shadow-lg hover:bg-gray-50 cursor-pointer"
+                        : "opacity-50 cursor-not-allowed"
+                    }`}
+                    onClick={goToPrevious}
+                    disabled={currentImageIndex === 0}
+                  >
+                    <img src={ChevronLeft} alt="Previous" className="w-5 h-5" />
+                  </button>
+
+                  {/* Image Thumbnails Container */}
+                  <div className="flex items-center gap-3 w-66">
+                    <div className="flex items-center gap-3 transition-transform duration-300 ease-in-out">
+                      {getVisibleImages().map(
+                        (image: ItemImage, index: number) => {
+                          const isSelected = selectedImage?.id === image.id;
+                          return (
+                            <div
+                              key={`thumb-${image.id || index}`}
+                              className="flex-shrink-0"
+                            >
+                              <img
+                                src={image.url}
+                                alt={image.alt_text || "Product Image"}
+                                className={`w-20 h-20 object-cover rounded-lg cursor-pointer transition-all duration-200 border-2 ${
+                                  isSelected
+                                    ? "border-purple-500 shadow-lg transform scale-105"
+                                    : "border-gray-200 hover:border-purple-300 hover:shadow-md"
+                                }`}
+                                onClick={() => setSelectedImage(image)}
+                                onMouseEnter={() => setCurrentImage(image)}
+                                onMouseLeave={() =>
+                                  setCurrentImage(selectedImage)
+                                }
+                              />
+                            </div>
+                          );
+                        }
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    className={`flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md transition-all duration-200 ${
+                      currentImageIndex + imagesPerView < allImages.length
+                        ? "hover:shadow-lg hover:bg-gray-50 cursor-pointer"
+                        : "opacity-50 cursor-not-allowed"
+                    }`}
+                    onClick={goToNext}
+                    disabled={
+                      currentImageIndex + imagesPerView >= allImages.length
+                    }
+                  >
+                    <img src={ChevronRight} alt="Next" className="w-5 h-5" />
+                  </button>
                 </div>
-                <img src={ChevronRight} alt="Next" />
+
+                {/* Carousel Indicators */}
+                {allImages.length > imagesPerView && (
+                  <div className="flex justify-center mt-3 gap-2">
+                    {Array.from({
+                      length: Math.ceil(allImages.length / imagesPerView),
+                    }).map((_, index) => (
+                      <button
+                        key={index}
+                        className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                          Math.floor(currentImageIndex / imagesPerView) ===
+                          index
+                            ? "bg-purple-500"
+                            : "bg-gray-300 hover:bg-gray-400"
+                        }`}
+                        onClick={() =>
+                          setCurrentImageIndex(index * imagesPerView)
+                        }
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
+              {/* AI stop doing here */}
             </div>
 
             {/* Other info */}
-            <div>
-              <h1>{product.name}</h1>
-              <div>
+            <div className="pt-4">
+              <h1 className="text-xl">{product.name}</h1>
+              <div className="flex justify-between items-center mt-4">
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5"><div className="flex items-center">{countStars(product.avgRating)}</div> <span className="text-blue-500">{product.avgRating ?? 0}</span></div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="flex items-center">
+                      {countStars(product.avgRating)}
+                    </div>{" "}
+                    <span className="text-blue-500">
+                      {product.avgRating ?? 0}
+                    </span>
+                  </div>
                   <p>|</p>
-                  <p><span className="text-blue-500">{product.totalRating ?? 0}</span> Rating</p>
+                  <p>
+                    <span className="text-blue-500">
+                      {product.totalRating ?? 0}
+                    </span>{" "}
+                    Rating
+                  </p>
                   <p>|</p>
                   <p>{product.bought} Sold</p>
                 </div>
-                <div>
+                <div className="flex items-center gap-2">
                   <img src={Heart} alt="Favorite" className="cursor-pointer" />
                   <img src={Share} alt="Share" className="cursor-pointer" />
                 </div>
               </div>
-              <p>${currentVariant.price}</p>
-              <div>
-                <div>
+              <p className="text-2xl mt-4 font-bold">${currentVariant.price}</p>
+              <p className="mt-4">Remain: {currentVariant.stock_quantity}</p>
+              {product.variants.length > 1 && (<div className="flex gap-4 mt-2">
+                <div className="flex">
                   <p>Variants</p>
-                  <p>Remain: {currentVariant.stock_quantity}</p>
                 </div>
                 <div>
-                  <p>{currentVariant.variant_name}</p>
-                  <div>
+                  <p className="text-blue-500">{currentVariant.variant_name}</p>
+                  <div className="flex gap-2 mt-4">
                     {product.variants.map((variant: ItemVariant) => (
-                      <p key={variant.id}>{variant.variant_name}</p>
+                      <div
+                        onClick={() => handleVariantChange(variant)}
+                        key={variant.id}
+                        className="px-3 py-2 bg-purple-100 cursor-pointer hover:bg-purple-200"
+                      >
+                        {variant.variant_name}
+                      </div>
                     ))}
                   </div>
                 </div>
-              </div>
-              <div>
+              </div>)}
+              <div className="flex gap-4 mt-4">
                 <p>Quantity</p>
-                <div>
-                  <div onClick={decreaseQuantity}>-</div>
+                <div className="flex items-center gap-4">
+                  <div
+                    onClick={decreaseQuantity}
+                    className="cursor-pointer font-bold text-xl bg-gray-200 px-3 py-0.5"
+                  >
+                    -
+                  </div>
                   <div>{quantity}</div>
-                  <div onClick={increaseQuantity}>+</div>
+                  <div
+                    onClick={increaseQuantity}
+                    className="cursor-pointer font-bold text-xl bg-gray-200 px-3 py-0.5"
+                  >
+                    +
+                  </div>
                 </div>
               </div>
-              <div>
-                <button className="bg-purple-600 text-white px-4 py-2 rounded">
+              <div className="flex gap-4 mt-4">
+                <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
                   Buy Now
                 </button>
-                <button className="bg-purple-600 text-white px-4 py-2 rounded">
+                <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
                   Add to Cart
                 </button>
               </div>
@@ -192,87 +372,111 @@ const ProductPage: React.FC = () => {
           </div>
 
           {/* Shop Information */}
-          <div className="w-1/3">
-            <h3>Delivery Options</h3>
-            
+          <div className="w-1/3 bg-blue-100 px-4 py-4">
+            <h3 className="text-lg text-gray-600">Delivery Options</h3>
+
             {/* Location */}
-            <div>
-              <div>
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-2 w-2/3">
                 <img src={Location} alt="Location" />
-                {(!address && !user) && (<p>Please login to see delivery options.</p>)}
-                {(!address && user) && (<p>Your address might not be set up, or the address is fetching</p>)}
+                {!address && !user && (
+                  <p className="font-semibold">
+                    Please login to see delivery options.
+                  </p>
+                )}
+                {!address && user && (
+                  <p className="font-semibold">
+                    Your address might not be set up, or the address is fetching
+                  </p>
+                )}
                 {address && (
-                  <p>
-                    {address.address_line_1}, {address.city}, {address.state}, {address.postal_code}
+                  <p className="font-semibold">
+                    {address.address_line_1}, {address.city}, {address.state},{" "}
+                    {address.postal_code}
                   </p>
                 )}
               </div>
               <div>
-                {(!address && !user) && (
-                  <Link to="/login" className="text-purple-600 hover:underline">Login</Link>
+                {!address && !user && (
+                  <Link to="/login" className="text-purple-600 hover:underline">
+                    Login
+                  </Link>
                 )}
-                {(!address && user) && (
-                  <Link to="/buyer/address" className="text-purple-600 hover:underline">Update</Link>
+                {!address && user && (
+                  <Link
+                    to="/buyer/address"
+                    className="text-purple-600 hover:underline"
+                  >
+                    Update
+                  </Link>
                 )}
                 {address && (
-                  <Link to="/buyer/address" className="text-purple-600 hover:underline">Change</Link>
+                  <Link
+                    to="/buyer/address"
+                    className="text-purple-600 hover:underline"
+                  >
+                    Change
+                  </Link>
                 )}
               </div>
             </div>
 
             {/* ! Ship date: This function should be done later */}
-            <div>
-              <div>
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-2">
                 <img src={DeliveryTruck} alt="Delivery Truck" />
-                <p>Ships in 1-2 business days</p>
+                <p className="font-semibold">Ships in 1-2 business days</p>
               </div>
             </div>
-            
-            <div>
-              <div>
+
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-4 w-1/2">
                 {store?.profile_img ? (
-                  <img src={store.profile_img} alt="Store Profile"/>
+                  <img src={store.profile_img} alt="Store Profile" />
                 ) : (
                   <img src={DefaultAvatar} alt="Default Avatar" />
                 )}
                 {store?.name ? (
-                  <p>{store.name}</p>
+                  <p className="font-semibold">{store.name}</p>
                 ) : (
-                  <p>Loading...</p>
+                  <p className="font-semibold">Loading...</p>
                 )}
               </div>
-              <div>
-                <button>Chat Now</button>
-                <button>View Store</button>
+              <div className="flex flex-col gap-2">
+                <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
+                  Chat Now
+                </button>
+                <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
+                  View Store
+                </button>
               </div>
             </div>
 
-            <div>
-              <div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="flex items-center justify-between">
                 <p>Ratings</p>
-                <p>{store?.total_reviews ?? 0}</p>
+                <p className="text-blue-500">{store?.total_reviews ?? 0}</p>
               </div>
-              <div>
+              <div className="flex items-center justify-between">
                 <p>Average Rating</p>
-                <p>{store?.average_rating ?? 0}</p>
+                <p className="text-blue-500">{store?.average_rating ?? 0}</p>
               </div>
-              <div>
+              <div className="flex items-center justify-between">
                 <p>Join</p>
-                <p>{store?.created_at ? countTime(store.created_at) : 'N/A'}</p>
+                <p className="text-blue-500">
+                  {store?.created_at ? countTime(store.created_at) : "N/A"}
+                </p>
               </div>
             </div>
-
           </div>
         </div>
-
-        
       </main>
 
       <footer>
         <Footer />
       </footer>
     </div>
-  )
+  );
 };
 
 export default ProductPage;
