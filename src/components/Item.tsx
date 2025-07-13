@@ -57,7 +57,7 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
         <img
           src={item.promotion_image?.url}
           alt={item.name}
-          className="w-full h-44 object-cover"
+          className="w-full h-44 object-contain"
           onError={(e) => {
             e.currentTarget.src =
               "https://placehold.co/200x200/e2e8f0/e2e8f0?text=Img";

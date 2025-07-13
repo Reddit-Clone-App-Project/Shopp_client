@@ -25,5 +25,16 @@ export const getProfile = () => API.get("/users/me");
 
 // All users
 export const getActiveCategories = () => API.get("/categories/active");
-
 export const getHot = (offset:number) => API.get(`/products/hot?offset=${offset}`);
+export const getStoreProducts = (storeId: number, limit: number, offset: number) => API.get(`/store/${storeId}/products?limit=${limit}&offset=${offset}`);
+export const getStoreHotProducts = (storeId: number, limit: number, offset: number) => API.get(`/store/${storeId}/products/hot?limit=${limit}&offset=${offset}`);
+export const getProductsReview = (productId: number, offset: number) => API.get(`/products/${productId}/reviews?limit=25&offset=${offset}`);
+export const getProductsReviewByStars = (productId: number, stars: number, offset: number) => API.get(`/products/${productId}/reviews/rating/${stars}?limit=25&offset=${offset}`);
+export const getProductsReviewByComment = (productId: number, offset: number) => API.get(`/products/${productId}/reviews/comment?limit=25&offset=${offset}`);
+export const getProductsReviewByImage = (productId: number, offset: number) => API.get(`/products/${productId}/reviews/image?limit=25&offset=${offset}`);
+
+export const getStore = (storeId: number) => API.get(`/store/${storeId}`);
+export const getStoreReleasedRuledDiscounts = (storeId: number) => API.get(`/store/${storeId}/discounts`);
+
+// Buyers
+export const getBuyerAddress = () => API.get("/users/me/address");
