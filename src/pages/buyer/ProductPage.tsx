@@ -480,15 +480,15 @@ const ProductPage: React.FC = () => {
 
         {/* --------------------------------------------Product Details----------------------------------------------------------------- */}
 
-        <div className="flex gap-6">
+        <div className="flex gap-6 mt-20">
           <div>
             {/* Description */}
-            <div>
-              <div>
-                <h2>Product Detail</h2>
+            <div className="px-4 py-6 bg-white mb-12">
+              <div className="bg-blue-100 px-4 py-2 mb-4">
+                <h2 className="text-lg">Product Detail</h2>
               </div>
 
-              <div>
+              <div className="flex justify-between items-center mb-4">
                 <p>Category</p>
                 <nav className="">
                   <Link to="/" className="text-blue-500">Shopp</Link>
@@ -506,7 +506,7 @@ const ProductPage: React.FC = () => {
                 </nav>
               </div>
 
-              <div>
+              <div className="flex justify-between items-center mb-4">
                 <p>Total Amounts</p>
                 <p className="">
                   {product.variants.reduce(
@@ -516,8 +516,8 @@ const ProductPage: React.FC = () => {
                 </p>
               </div>
 
-              <div>
-                <h2>Description</h2>
+              <div className="bg-blue-100 px-4 py-2 mt-16 mb-4">
+                <h2 className="text-lg">Description</h2>
               </div>
               <p>{product.description}</p>
 

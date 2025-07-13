@@ -29,7 +29,7 @@ export const getHot = (offset:number) => API.get(`/products/hot?offset=${offset}
 export const getStoreProducts = (storeId: number, limit: number, offset: number) => API.get(`/store/${storeId}/products?limit=${limit}&offset=${offset}`);
 export const getStoreHotProducts = (storeId: number, limit: number, offset: number) => API.get(`/store/${storeId}/products/hot?limit=${limit}&offset=${offset}`);
 export const getProductsReview = (productId: number, offset: number) => API.get(`/products/${productId}/reviews?limit=25&offset=${offset}`);
-export const getProductsReviewByStars = (productId: number, stars: number, offset: number) => API.get(`/products/${productId}/rating/${stars}?&limit=25&offset=${offset}`);
+export const getProductsReviewByStars = (productId: number, stars: number, offset: number) => API.get(`/products/${productId}/reviews/rating/${stars}?limit=25&offset=${offset}`);
 export const getProductsReviewByComment = (productId: number, offset: number) => API.get(`/products/${productId}/reviews/comment?limit=25&offset=${offset}`);
 export const getProductsReviewByImage = (productId: number, offset: number) => API.get(`/products/${productId}/reviews/image?limit=25&offset=${offset}`);
 
