@@ -20,6 +20,11 @@ import DarkStar from "../../assets/Product/DarkStar.svg";
 import LightStar from "../../assets/Product/LightStar.svg";
 import DefaultAvatar from "../../assets/generic-avatar.svg";
 import { countTime } from "../../utility/countTime";
+import Review from "../../features/Review/Review";
+import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
+import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
+import StoreProducts from "../../features/StoreProducts/StoreProducts";
+import SuggestionOfTheDay from "../../features/SuggestionOfTheDay/SuggestionOfTheDay";
 
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -183,7 +188,7 @@ const ProductPage: React.FC = () => {
         <BuyerHeader />
       </header>
       <nav className="ml-16 mt-4 text-lg">
-        <Link to="/">Home</Link>
+        <Link to="/">Shopp</Link>
         {product.category_hierarchy?.map(
           (category: { id: number; name: string; slug: string }) => (
             <>
@@ -204,7 +209,6 @@ const ProductPage: React.FC = () => {
                 alt={currentImage.alt_text ?? "Product Image"}
                 className="w-100 h-100"
               />
-              {/* AI start doing here */}
               <div className="mt-6 px-4">
                 <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4 shadow-sm">
                   {/* Previous Button */}
@@ -290,7 +294,6 @@ const ProductPage: React.FC = () => {
                   </div>
                 )}
               </div>
-              {/* AI stop doing here */}
             </div>
 
             {/* Other info */}
@@ -300,16 +303,16 @@ const ProductPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
                     <div className="flex items-center">
-                      {countStars(product.avgRating)}
+                      {countStars(product.average_rating)}
                     </div>{" "}
                     <span className="text-blue-500">
-                      {product.avgRating ?? 0}
+                      {product.average_rating ?? 0}
                     </span>
                   </div>
                   <p>|</p>
                   <p>
                     <span className="text-blue-500">
-                      {product.totalRating ?? 0}
+                      {product.total_reviews ?? 0}
                     </span>{" "}
                     Rating
                   </p>
@@ -323,25 +326,29 @@ const ProductPage: React.FC = () => {
               </div>
               <p className="text-2xl mt-4 font-bold">${currentVariant.price}</p>
               <p className="mt-4">Remain: {currentVariant.stock_quantity}</p>
-              {product.variants.length > 1 && (<div className="flex gap-4 mt-2">
-                <div className="flex">
-                  <p>Variants</p>
-                </div>
-                <div>
-                  <p className="text-blue-500">{currentVariant.variant_name}</p>
-                  <div className="flex gap-2 mt-4">
-                    {product.variants.map((variant: ItemVariant) => (
-                      <div
-                        onClick={() => handleVariantChange(variant)}
-                        key={variant.id}
-                        className="px-3 py-2 bg-purple-100 cursor-pointer hover:bg-purple-200"
-                      >
-                        {variant.variant_name}
-                      </div>
-                    ))}
+              {product.variants.length > 1 && (
+                <div className="flex gap-4 mt-2">
+                  <div className="flex">
+                    <p>Variants</p>
+                  </div>
+                  <div>
+                    <p className="text-blue-500">
+                      {currentVariant.variant_name}
+                    </p>
+                    <div className="flex gap-2 mt-4">
+                      {product.variants.map((variant: ItemVariant) => (
+                        <div
+                          onClick={() => handleVariantChange(variant)}
+                          key={variant.id}
+                          className="px-3 py-2 bg-purple-100 cursor-pointer hover:bg-purple-200"
+                        >
+                          {variant.variant_name}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>)}
+              )}
               <div className="flex gap-4 mt-4">
                 <p>Quantity</p>
                 <div className="flex items-center gap-4">
@@ -470,6 +477,65 @@ const ProductPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* --------------------------------------------Product Details----------------------------------------------------------------- */}
+
+        <div className="flex gap-6">
+          <div>
+            {/* Description */}
+            <div>
+              <div>
+                <h2>Product Detail</h2>
+              </div>
+
+              <div>
+                <p>Category</p>
+                <nav className="">
+                  <Link to="/" className="text-blue-500">Shopp</Link>
+                  {product.category_hierarchy?.map(
+                    (category: { id: number; name: string; slug: string }) => (
+                      <>
+                        {" "}
+                        /{" "}
+                        <Link to={`/category/${category.slug}`} className="text-blue-500">
+                          {category.name}
+                        </Link>
+                      </>
+                    )
+                  )}
+                </nav>
+              </div>
+
+              <div>
+                <p>Total Amounts</p>
+                <p className="">
+                  {product.variants.reduce(
+                    (total: number, variant: ItemVariant) => total + variant.stock_quantity,
+                    0
+                  )}
+                </p>
+              </div>
+
+              <div>
+                <h2>Description</h2>
+              </div>
+              <p>{product.description}</p>
+
+            </div>
+
+            {/* Rating */}
+            <Review total_reviews={product.total_reviews} average_rating={product.average_rating} countStars={countStars} stars_5={product.stars_5} stars_4={product.stars_4} stars_3={product.stars_3} stars_2={product.stars_2} stars_1={product.stars_1} have_comment={product.have_comment} have_image={product.have_image} />
+            
+          </div>
+
+          <div>
+            <StoreDiscount store_id={product.store.id}/>
+            <StoreHotProduct store_id={product.store.id} />
+          </div>
+        </div>
+
+        <StoreProducts store_id={product.store.id} />
+        <SuggestionOfTheDay />
       </main>
 
       <footer>
