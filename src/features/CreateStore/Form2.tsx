@@ -2,10 +2,11 @@ import React from 'react';
 import frame from '../../assets/CreateStore/SideFrame2.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
 import ToggleSwitch from '../../components/ToggleSwitch';
+import { StoreDataType } from '../../pages/seller/CreateStorePage';
 
 type Form2Props = {
-  data: any;
-  onChange: (data: any) => void;
+  data: StoreDataType;
+  onChange: (updater: (prev: StoreDataType) => StoreDataType) => void;
   onNext: () => void;
   onBack: () => void;
   onSubmit: () => void;
@@ -30,7 +31,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             <p className='text-[1.2rem] font-normal'>Express</p>
                             <ToggleSwitch 
                                 value={data.expressShipping}
-                                onChange={(val) => onChange({ ...data, expressShipping: val})}
+                                onChange={(val) => onChange(prev => ({ ...prev, expressShipping: val}))}
                             />
                         </div>
 
@@ -38,7 +39,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             <p className='text-[1.2rem] font-normal'>Fast</p>
                             <ToggleSwitch 
                                 value={data.fastShipping}
-                                onChange={(val) => onChange({ ...data, fastShipping: val})}
+                                onChange={(val) => onChange(prev => ({ ...prev, fastShipping: val}))}
                             />
                         </div>
                         
@@ -46,7 +47,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             <p className='text-[1.2rem] font-normal'>Economical</p>
                             <ToggleSwitch 
                                 value={data.economicalShipping}
-                                onChange={(val) => onChange({ ...data, economicalShipping: val})}
+                                onChange={(val) => onChange(prev => ({ ...prev, economicalShipping: val}))}
                             />
                         </div>
 
@@ -57,7 +58,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             </div>
                             <ToggleSwitch 
                                 value={data.bulkyShipping}
-                                onChange={(val) => onChange({ ...data, bulkyShipping: val})}
+                                onChange={(val) => onChange(prev => ({ ...prev, bulkyShipping: val}))}
                             />
                         </div>
 
