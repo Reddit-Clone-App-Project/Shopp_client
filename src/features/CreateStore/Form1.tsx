@@ -3,12 +3,12 @@ import frame from '../../assets/CreateStore/SideFrame1.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
 import AddAddressModal from './AddAddressModal';
 import { AddressFormData } from './AddAddressModal';
-
+import { StoreDataType } from '../../pages/seller/CreateStorePage';
 
 
 type Form1Props = {
-  data: any;
-  onChange: (data: any) => void;
+  data: StoreDataType;
+  onChange: (updater: (prev: StoreDataType) => StoreDataType) => void;
   onNext: () => void;
 };
 
@@ -16,7 +16,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
     const [isModalOpen, setModalOpen] = useState(false);
     
     const handleAddressSave = (address: AddressFormData) => {
-        onChange({ ...data, address });
+        onChange(prev => ({ ...prev, address }));
     };
 
     return (
@@ -37,7 +37,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                             required
                             placeholder="ToyShop.official"
                             value={data.storeName}
-                            onChange={e => onChange({ ...data, storeName: e.target.value })}
+                            onChange={e => onChange(prev => ({ ...prev, storeName: e.target.value }))}
                             className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                         />
 
@@ -75,7 +75,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                             required
                             placeholder="example@gmail.com"
                             value={data.storeEmail}
-                            onChange={e => onChange({ ...data, storeEmail: e.target.value })}
+                            onChange={e => onChange(prev => ({ ...prev, storeEmail: e.target.value }))}
                             autoComplete='email'
                             className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                         />
@@ -89,7 +89,7 @@ const Form1: React.FC<Form1Props> = ({ data, onChange, onNext }) => {
                             required
                             placeholder="012345678"
                             value={data.storePhone}
-                            onChange={e => onChange({ ...data, storePhone: e.target.value })}
+                            onChange={e => onChange(prev => ({ ...prev, storePhone: e.target.value }))}
                             autoComplete='tel'
                             className="box-border w-full h-10 px-3 border border-[rgba(0,0,0,0.3)] rounded-[8px]"
                         />

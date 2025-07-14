@@ -1,7 +1,7 @@
 import Store from '../../assets/CreateStore/Store.svg';
 import CreateStoreHeader from '../../components/CreateStoreHeader';
 
-export type StoreStepProps = {
+type StoreStepProps = {
   onNext: () => void;
 };
 
