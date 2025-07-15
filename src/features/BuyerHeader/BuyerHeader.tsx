@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 // SVG
@@ -35,6 +35,8 @@ const useDebounce = (value: string, delay: number) => {
 };
 
 const BuyerHeader: React.FC = () => {
+  const navigate = useNavigate();
+
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { status, error, user } = useSelector(
@@ -46,6 +48,13 @@ const BuyerHeader: React.FC = () => {
   const [cachedSuggestions, setCachedSuggestions] = useState<string[]>([]);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
+  // Handle search
+  const handleSearch = () => {
+    if (debouncedSearchTerm) {
+      navigate(`/search?q=${debouncedSearchTerm}`);
+    }
+  };
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -155,7 +164,7 @@ const BuyerHeader: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={handleSearchFocus}
             />
-            <div className="absolute w-14 h-6 right-3 top-1/2 transform -translate-y-1/2 bg-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-700">
+            <div onClick={handleSearch} className="absolute w-14 h-6 right-3 top-1/2 transform -translate-y-1/2 bg-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-700">
               <img src={Search} alt="Search" className="w-4 h-4" />
             </div>
             {suggestions.length > 0 && (
@@ -218,7 +227,7 @@ const BuyerHeader: React.FC = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={handleSearchFocus}
               />
-              <div className="absolute right-0 top-0 h-10 w-10 flex items-center justify-center bg-purple-600 rounded-r">
+              <div onClick={handleSearch} className="absolute right-0 top-0 h-10 w-10 flex items-center justify-center bg-purple-600 rounded-r">
                 <img src={Search} alt="Search" className="w-4 h-4" />
               </div>
               {suggestions.length > 0 && (
