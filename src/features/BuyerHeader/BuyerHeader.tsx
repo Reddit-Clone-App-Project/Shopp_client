@@ -46,13 +46,41 @@ const BuyerHeader: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [cachedSuggestions, setCachedSuggestions] = useState<string[]>([]);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] =
+    useState<number>(-1);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
   // Handle search
   const handleSearch = () => {
-    if (debouncedSearchTerm) {
-      navigate(`/search?q=${debouncedSearchTerm}`);
+    const searchQuery =
+      selectedSuggestionIndex >= 0 && suggestions[selectedSuggestionIndex]
+        ? suggestions[selectedSuggestionIndex]
+        : debouncedSearchTerm;
+
+    if (searchQuery) {
+      navigate(`/search?q=${searchQuery}`);
+      setSuggestions([]);
+      setSelectedSuggestionIndex(-1);
+    }
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) => (prev > -1 ? prev - 1 : -1));
+    } else if (e.key === "Escape") {
+      setSuggestions([]);
+      setSelectedSuggestionIndex(-1);
     }
   };
 
@@ -65,6 +93,7 @@ const BuyerHeader: React.FC = () => {
         .then((response) => {
           setSuggestions(response.data);
           setCachedSuggestions(response.data);
+          setSelectedSuggestionIndex(-1);
         })
         .catch((error) => {
           console.error("Error fetching suggestions:", error);
@@ -72,6 +101,7 @@ const BuyerHeader: React.FC = () => {
     } else {
       setSuggestions([]);
       setCachedSuggestions([]);
+      setSelectedSuggestionIndex(-1);
     }
   }, [debouncedSearchTerm]);
 
@@ -96,6 +126,7 @@ const BuyerHeader: React.FC = () => {
   const handleSearchFocus = () => {
     if (searchTerm && cachedSuggestions.length > 0) {
       setSuggestions(cachedSuggestions);
+      setSelectedSuggestionIndex(-1);
     }
   };
 
@@ -151,7 +182,9 @@ const BuyerHeader: React.FC = () => {
 
         {/* Bottom header */}
         <div className="flex items-center justify-between px-8 pb-3 pt-1">
-          <img src={Logo} alt="Logo" className="h-8 cursor-pointer" />
+          <Link to="/" className="flex items-center">
+            <img src={Logo} alt="Logo" className="h-8 cursor-pointer" />
+          </Link>
           <div
             className="flex-1 max-w-3xl mx-12 relative"
             ref={searchContainerRef}
@@ -163,8 +196,12 @@ const BuyerHeader: React.FC = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={handleSearchFocus}
+              onKeyDown={handleKeyDown}
             />
-            <div onClick={handleSearch} className="absolute w-14 h-6 right-3 top-1/2 transform -translate-y-1/2 bg-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-700">
+            <div
+              onClick={handleSearch}
+              className="absolute w-14 h-6 right-3 top-1/2 transform -translate-y-1/2 bg-purple-600 flex items-center justify-center cursor-pointer hover:bg-purple-700"
+            >
               <img src={Search} alt="Search" className="w-4 h-4" />
             </div>
             {suggestions.length > 0 && (
@@ -173,7 +210,9 @@ const BuyerHeader: React.FC = () => {
                   <Link
                     to={`search/${suggestion}`}
                     key={index}
-                    className="block p-2 hover:bg-purple-100 cursor-pointer shadow-sm"
+                    className={`block p-2 hover:bg-purple-100 cursor-pointer shadow-sm ${
+                      selectedSuggestionIndex === index ? "bg-purple-100" : ""
+                    }`}
                   >
                     {suggestion}
                   </Link>
@@ -204,7 +243,9 @@ const BuyerHeader: React.FC = () => {
                 className="w-6 h-6"
               />
             </button>
-            <img src={Logo} alt="Logo" className="h-6" />
+            <Link to="/" className="flex items-center">
+              <img src={Logo} alt="Logo" className="h-6" />
+            </Link>
           </div>
 
           <div className="flex items-center space-x-4">
@@ -226,8 +267,12 @@ const BuyerHeader: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onFocus={handleSearchFocus}
+                onKeyDown={handleKeyDown}
               />
-              <div onClick={handleSearch} className="absolute right-0 top-0 h-10 w-10 flex items-center justify-center bg-purple-600 rounded-r">
+              <div
+                onClick={handleSearch}
+                className="absolute right-0 top-0 h-10 w-10 flex items-center justify-center bg-purple-600 rounded-r"
+              >
                 <img src={Search} alt="Search" className="w-4 h-4" />
               </div>
               {suggestions.length > 0 && (
@@ -236,8 +281,9 @@ const BuyerHeader: React.FC = () => {
                     <Link
                       to={`search/${suggestion}`}
                       key={index}
-                      className="block p-2 hover:bg-purple-100 cursor-pointer shadow-sm"
-
+                      className={`block p-2 hover:bg-purple-100 cursor-pointer shadow-sm ${
+                        selectedSuggestionIndex === index ? "bg-purple-100" : ""
+                      }`}
                     >
                       {suggestion}
                     </Link>

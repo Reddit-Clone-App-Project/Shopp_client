@@ -47,15 +47,15 @@ const SearchSlice = createSlice({
                 state.status = 'succeeded';
                 if(!state.query){
                     state.query = action.payload.query;
-                    state.offset += 20; // Increment offset by 20 for the next fetch
+                    state.offset += 60; // Increment offset by 60 for the next fetch
                     state.results = state.results.concat(action.payload.results); // Assuming the payload is an array of search results
                 }else{
                     if(state.query === action.payload.query){
-                        state.offset += 20; // Increment offset by 20 for the next fetch
+                        state.offset += 60; // Increment offset by 60 for the next fetch
                         state.results = state.results.concat(action.payload.results);
                     }else{
                         state.query = action.payload.query;
-                        state.offset = 20; // Reset offset to 20 for the new query
+                        state.offset = 60; // Reset offset to 60 for the new query
                         state.results = action.payload.results; // Replace results with new query results
                     }
                 }

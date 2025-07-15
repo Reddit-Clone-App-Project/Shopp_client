@@ -37,7 +37,7 @@ export const getStore = (storeId: number) => API.get(`/store/${storeId}`);
 export const getStoreReleasedRuledDiscounts = (storeId: number) => API.get(`/store/${storeId}/discounts`);
 
 // Search
-export const searchProducts = (q: string, limit: number = 20, offset: number = 0) => API.get(`/products/search?q=${q}&limit=${limit}&offset=${offset}`);
+export const searchProducts = (q: string, limit: number = 60, offset: number = 0) => API.get(`/products/search?q=${q}&limit=${limit}&offset=${offset}`);
 export const searchByCategory = (categoryId: number, limit: number = 20, offset: number = 0) => API.get(`/category/products/${categoryId}?limit=${limit}&offset=${offset}`);
 
 //! Buyers
