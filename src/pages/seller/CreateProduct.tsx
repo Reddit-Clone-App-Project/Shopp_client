@@ -11,6 +11,7 @@ import BasicInformation from '../../features/CreateProduct/BasicInformation';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import axios from "axios";
+import SalesInformation from '../../features/CreateProduct/SalesInformation';
 
 export type ProductDataType = {
     name: string;
@@ -82,48 +83,65 @@ const CreateProduct = () => {
     const goBack = () => setStep(prev => prev - 1);
 
     return (
-        <div>
-            {step === 1 && <BasicInformation data={productData} onChange={setProductData} onNext={goNext} />}
-
-            {/* Preview */}
-
-            <div className='w-1/5 bg-slate-700 px-2.5 py-2 mt-4'>
-                <p className='font-semibold'>Preview</p>
-                <img
-                    src={promotionImage ? (typeof promotionImage === 'string' ? promotionImage : URL.createObjectURL(promotionImage)) : undefined}
-                    alt="Product Preview Image"
-                    className='my-3 w-50 m-auto'
-                />
-                <h2 className='font-bold mb-3'>{name}</h2>
-                <div className='flex flex-wrap mb-2'>
-                    {productImage.map((image, index) => (
-                        <img
-                            key={index}
-                            src={typeof image === 'string' ? image : URL.createObjectURL(image)}
-                            alt={`Product Image ${index + 1}`}
-                            className='w-7 h-7 object-cover m-1 ml-0'
-                        />
-                    ))}
+        <>
+            <SellerBlackHeader section={'Product Management > Add a Product'} />
+            <div className='w-full min-h-screen flex gap-3 justify-between items-start text-white bg-gray-950 pt-20 px-6'>
+                <div className='w-1/6 bg-slate-700 px-2.5 pt-2.5 pb-4 mt-4'>
+                    <h3 className='font-semibold mb-2.5 text-sm'>Suggested information filling</h3>
+                    <ul className='space-y-2 text-[0.8rem] font-light'>
+                        <li>✓ Add at least 3 images</li>
+                        <li className='flex'>
+                            <p className='mr-1'>✓</p>
+                            <p>Product name must be at least 25-100 characters long</p>
+                        </li>
+                        <li className='flex'>
+                            <p className='mr-1'>✓</p>
+                            <p>Add at least 100 characters in the product description</p>
+                        </li>
+                    </ul>
                 </div>
-                
-                <h6 className='font-medium mb-2'>Description</h6>
-                <p className='font-extralight text-[0.75rem]'>{description}</p>
-                
-                <div className='flex h-12 my-4 mx-2'>
-                    <button className='flex grow-1 items-center justify-center bg-blue-700'>
-                        <img className='w-6' src={Chat} alt="Chat" />
-                    </button>
-                    <button className='flex grow-1 items-center justify-center bg-blue-700'>
-                        <img className='w-6' src={Cart} alt="Cart" />
-                    </button>
-                    <button className='flex grow-2 items-center justify-center bg-purple-700'>
-                        Buy Now
-                    </button>
-                </div>
+                {step === 1 && <BasicInformation data={productData} onChange={setProductData} onNext={goNext} />}
+                {step === 2 && <SalesInformation data={productData} onChange={setProductData} onBack={goBack} onSubmit={handleFinalSubmit} />}
+                {/* Preview */}
 
-                <p className='font-extralight text-[0.75rem]'>Images are for reference only and are not the final image the Buyer sees.</p>
+                <div className='w-1/4 bg-slate-700 px-2.5 py-2 mt-4'>
+                    <p className='font-semibold'>Preview</p>
+                    <img
+                        src={promotionImage ? (typeof promotionImage === 'string' ? promotionImage : URL.createObjectURL(promotionImage)) : AddImage}
+                        alt="Product Preview Image"
+                        className='my-3 w-50 m-auto'
+                    />
+                    <h2 className='font-bold mb-3'>{name}</h2>
+                    <div className='flex flex-wrap mb-2'>
+                        {productImage.map((image, index) => (
+                            <img
+                                key={index}
+                                src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                                alt={`Product Image ${index + 1}`}
+                                className='w-7 h-7 object-cover m-1 ml-0'
+                            />
+                        ))}
+                    </div>
+                    
+                    <h6 className='font-medium mb-2'>Description</h6>
+                    <p className='font-extralight text-[0.75rem]'>{description}</p>
+                    
+                    <div className='flex h-12 my-4 mx-2'>
+                        <button className='flex grow-1 items-center justify-center bg-blue-700'>
+                            <img className='w-6' src={Chat} alt="Chat" />
+                        </button>
+                        <button className='flex grow-1 items-center justify-center bg-blue-700'>
+                            <img className='w-6' src={Cart} alt="Cart" />
+                        </button>
+                        <button className='flex grow-2 items-center justify-center bg-purple-700'>
+                            Buy Now
+                        </button>
+                    </div>
+
+                    <p className='font-extralight text-[0.75rem]'>Images are for reference only and are not the final image the Buyer sees.</p>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 
