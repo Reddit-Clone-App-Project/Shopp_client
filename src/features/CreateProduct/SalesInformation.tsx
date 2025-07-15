@@ -2,6 +2,7 @@ import { ProductDataType } from "../../pages/seller/CreateProduct";
 import SellerBlackHeader from "../../components/SellerBlackHeader";
 import { useForm } from "react-hook-form";
 import { useRef, useState } from "react";
+import ToggleSwitch from "../../components/ToggleSwitch";
 
 
 type SalesInfoProps = {
@@ -57,49 +58,77 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                             Weight(lbs) - After packing
                         </label>
                         <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[50%]' 
-                            type="number"
-                            step='1' 
+                            type="text"
                             id='product-weight'
                             {...register('weight', {
                                 required: 'Weight required',
-                                pattern: {
-                                    value: /^\d+$/,
-                                    message: 'Insert only integer numbers'
-                                }
                             })} 
                             placeholder="Enter weight here" 
                             value={weight} 
-                            onChange={e => onChange(prev => ({...prev, weight: Number(e.target.value)}))}
+                            onChange={e => onChange(prev => ({...prev, weight: e.target.value}))}
                         />
                     </div>
                     <div className='flex flex-col gap-4 mb-4'>
-                        <label htmlFor='product-weight' className='font-semibold text-[0.9rem]'>
+                        <label htmlFor='product-length' className='font-semibold text-[0.9rem]'>
                             <span className='text-red-500'>*</span>
                             Packing size(cm) - Actual shipping fee will vary if you enter wrong size
                         </label>
                         <div className='flex justify-between w-[80%]'>
                             <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[30%]' 
-                                type="number" 
-                                id='product-weight' 
+                                type="text" 
+                                id='product-length' 
                                 placeholder="Enter Length" 
                                 value={length} 
-                                onChange={e => onChange(prev => ({...prev, length: Number(e.target.value)}))}
+                                onChange={e => onChange(prev => ({...prev, length: e.target.value}))}
                             />
                             <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[30%]' 
-                                type="number" 
-                                id='product-weight' 
+                                type="text" 
                                 placeholder="Enter Width" 
                                 value={width} 
-                                onChange={e => onChange(prev => ({...prev, width: Number(e.target.value)}))}
+                                onChange={e => onChange(prev => ({...prev, width: e.target.value}))}
                             />
                             <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[30%]' 
-                                type="number" 
-                                id='product-weight' 
+                                type="text" 
                                 placeholder="Enter Height" 
                                 value={height} 
-                                onChange={e => onChange(prev => ({...prev, height: Number(e.target.value)}))}
+                                onChange={e => onChange(prev => ({...prev, height: e.target.value}))}
                             />
                         </div>
+                    </div>
+                    <div className="border border-slate-400 p-2 rounded-lg">
+                         <div className='flex justify-between mb-5 items-center'> 
+                            <p className='text-[1.2rem] font-normal'>Express</p>
+                            <p className="ml-auto mr-4">7.00 $</p>
+                            <ToggleSwitch 
+                                value={express}
+                                onChange={(val) => onChange(prev => ({ ...prev, express: val}))}
+                            />
+                        </div> 
+                        <div className='flex justify-between mb-5 items-center'> 
+                            <p className='text-[1.2rem] font-normal'>Fast</p>
+                            <p className="ml-auto mr-4">6.00 $</p>
+                            <ToggleSwitch 
+                                value={fast}
+                                onChange={(val) => onChange(prev => ({ ...prev, fast: val}))}
+                            />
+                        </div>
+                        <div className='flex justify-between mb-5 items-center'> 
+                            <p className='text-[1.2rem] font-normal'>Economical</p>
+                            <p className="ml-auto mr-4">5.00 $</p>
+                            <ToggleSwitch 
+                                value={economical}
+                                onChange={(val) => onChange(prev => ({ ...prev, economical: val}))}
+                            />
+                        </div>
+                        <div className='flex justify-between mb-5 items-center'> 
+                            <div>
+                                <p className='text-[1.2rem] font-normal'>Bulky</p>
+                            </div>
+                            <ToggleSwitch 
+                                value={bulky}
+                                onChange={(val) => onChange(prev => ({ ...prev, bulky: val}))}
+                            />
+                        </div>  
                     </div>
                     <div className="flex justify-end items-center mt-10">
                         <button
@@ -110,7 +139,8 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                         </button>
                         <button
                             onClick={onSubmit}
-                            className='border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800'
+                            /* disabled={!weight || !length || !width || !height || !(express || fast || economical || bulky)} */
+                            className='border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#A567C6]'
                         >
                             Create Product
                         </button>

@@ -19,11 +19,11 @@ export type ProductDataType = {
     description: string;
     productImage: (string | File)[];
     promotionImage: string | File;
-    price: number;
-    weight: number;
-    length: number;
-    width: number;
-    height: number;
+    price: string;
+    weight: string;
+    length: string;
+    width: string;
+    height: string;
     express: boolean;
     fast: boolean;
     economical: boolean;
@@ -40,11 +40,11 @@ const CreateProduct = () => {
         description: '',
         productImage: [''],
         promotionImage: '',
-        price: 0,
-        weight: 0,
-        length: 0,
-        width: 0,
-        height: 0,
+        price: '',
+        weight: '',
+        length: '',
+        width: '',
+        height: '',
         express: false,
         fast: false,
         economical: false,

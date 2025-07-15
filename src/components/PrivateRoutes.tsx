@@ -13,11 +13,11 @@ import { RootState } from '../redux/store';
 import { useEffect } from 'react';
 
 interface PrivateRouteProps {
-    component: React.ComponentType<any>; /* component that we render if the user have authorization */
+    children: React.ReactNode; /* component that we render if the user have authorization */
     allowedRoles?: string[];
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, allowedRoles }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, allowedRoles }) => {
     const { isLoggedIn, role } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
     const location = useLocation();
@@ -40,7 +40,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, allow
         return null;
     }
 
-    return <Component />;
+    return <>{children}</>;
 };
 
 export default PrivateRoute;

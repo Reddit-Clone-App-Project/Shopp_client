@@ -27,7 +27,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             <h2 className='text-2xl'>Shipping Method</h2>
                             <p className='text-[0.8rem] text-gray-500'>Activate the appropriate shipping method</p>
                         </div>
-                        <div className='flex justify-between'> 
+                        <div className='flex justify-between items-center'> 
                             <p className='text-[1.2rem] font-normal'>Express</p>
                             <ToggleSwitch 
                                 value={data.expressShipping}
@@ -35,7 +35,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             />
                         </div>
 
-                        <div className='flex justify-between'> 
+                        <div className='flex justify-between items-center'> 
                             <p className='text-[1.2rem] font-normal'>Fast</p>
                             <ToggleSwitch 
                                 value={data.fastShipping}
@@ -43,7 +43,7 @@ const Form2: React.FC<Form2Props> = ({ data, onChange, onNext, onBack, onSubmit 
                             />
                         </div>
                         
-                        <div className='flex justify-between'> 
+                        <div className='flex justify-between items-center'> 
                             <p className='text-[1.2rem] font-normal'>Economical</p>
                             <ToggleSwitch 
                                 value={data.economicalShipping}

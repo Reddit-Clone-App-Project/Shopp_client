@@ -211,7 +211,8 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
                 </div>
                 <button
                     onClick={onNext}
-                    className='flex ml-auto mt-5 border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800'
+                    disabled={!name || !category || !description || !promotionImage}
+                    className='flex ml-auto mt-5 border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#A567C6]'
                 >
                     Next
                 </button>
