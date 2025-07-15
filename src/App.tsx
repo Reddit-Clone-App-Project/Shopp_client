@@ -30,7 +30,11 @@ const router = createBrowserRouter(
       <Route path="/product/:id" element={<ProductPage />} />
       <Route
         path="/new-store"
-        element={<PrivateRoute component={CreateStorePage} />}
+        element={
+          <PrivateRoute>
+            <CreateStorePage />
+          </PrivateRoute>
+        }
       />
 
       <Route path="/seller">
@@ -38,10 +42,9 @@ const router = createBrowserRouter(
         <Route
           path="dashboard"
           element={
-            <PrivateRoute
-              allowedRoles={["seller", "admin"]}
-              component={SellerDashboard}
-            />
+            <PrivateRoute allowedRoles={['seller', 'admin']}>
+              <SellerDashboard />
+            </PrivateRoute>
           }
         />
         {/* Route /seller/create is using for testing, changes will be made later */}
