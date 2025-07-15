@@ -48,17 +48,17 @@ const ProductPage: React.FC = () => {
   );
 
   // This is the selected image for the product
-  const [selectedImage, setSelectedImage] = useState<ItemImage>(
-    product.promotion_image
+  const [selectedImage, setSelectedImage] = useState<ItemImage | null>(
+    product?.promotion_image || null
   );
 
   // This is the current image that is displayed in the product page while through selected or hovered
-  const [currentImage, setCurrentImage] = useState<ItemImage>(
-    product.promotion_image
+  const [currentImage, setCurrentImage] = useState<ItemImage | null>(
+    product?.promotion_image || null
   );
 
-  const [currentVariant, setCurrentVariant] = useState<ItemVariant>(
-    product?.variants[0]
+  const [currentVariant, setCurrentVariant] = useState<ItemVariant | null>(
+    product?.variants?.[0] || null
   );
   const [quantity, setQuantity] = useState<number>(1);
 
@@ -67,7 +67,13 @@ const ProductPage: React.FC = () => {
 
   // Get all images in a single array for carousel navigation
   const getAllImages = (): ItemImage[] => {
-    const allImages: ItemImage[] = [product.promotion_image];
+    if (!product) return [];
+
+    const allImages: ItemImage[] = [];
+
+    if (product.promotion_image) {
+      allImages.push(product.promotion_image);
+    }
 
     if (product.product_images) {
       allImages.push(...product.product_images);
@@ -116,11 +122,12 @@ const ProductPage: React.FC = () => {
       setSelectedImage(variant.images[0]);
     } else {
       // If the variant has no images, fallback to the product's promotion image
-      setSelectedImage(product.promotion_image);
+      setSelectedImage(product.promotion_image || null);
     }
   };
 
   const increaseQuantity = () => {
+    if (!currentVariant) return;
     setQuantity((prevQuantity) =>
       prevQuantity < currentVariant.stock_quantity
         ? prevQuantity + 1
@@ -137,16 +144,33 @@ const ProductPage: React.FC = () => {
     for (let i = 0; i < 5; i++) {
       if (i < rating) {
         stars.push(
-          <img key={i} src={DarkStar} alt="Dark Star" className="w-4 h-4" />
+          <img key={i} src={DarkStar} alt="Dark Star" className="w-2 h-2 md:w-4 md:h-4" />
         );
       } else {
         stars.push(
-          <img key={i} src={LightStar} alt="Light Star" className="w-4 h-4" />
+          <img key={i} src={LightStar} alt="Light Star" className="w-2 h-2 md:w-4 md:h-4" />
         );
       }
     }
     return stars;
   };
+
+  // Early return if product is not found
+  useEffect(() => {
+    if (!product) {
+      // If product not found, redirect to home page
+      navigate("/");
+    } else {
+      // Initialize states when product is available
+      if (product.promotion_image && !selectedImage) {
+        setSelectedImage(product.promotion_image);
+        setCurrentImage(product.promotion_image);
+      }
+      if (product.variants?.[0] && !currentVariant) {
+        setCurrentVariant(product.variants[0]);
+      }
+    }
+  }, [product, navigate, selectedImage, currentVariant]);
 
   useEffect(() => {
     if (!product) {
@@ -157,7 +181,9 @@ const ProductPage: React.FC = () => {
 
   // Update the current image when the selected image changes
   useEffect(() => {
-    setCurrentImage(selectedImage);
+    if (selectedImage) {
+      setCurrentImage(selectedImage);
+    }
   }, [selectedImage]);
 
   useEffect(() => {
@@ -174,20 +200,27 @@ const ProductPage: React.FC = () => {
   useEffect(() => {
     if (storeStatus === "idle" || !store) {
       // Fetch the store information when the component mounts
-      const promise = dispatch(fetchStore(parseInt(product.store.id)));
+      if (product) {
+        const promise = dispatch(fetchStore(parseInt(product.store.id)));
 
-      return () => {
-        promise.abort();
-      };
+        return () => {
+          promise.abort();
+        };
+      }
     }
-  }, []);
+  }, [product]);
+
+  // Return null or loading state if product is not found
+  if (!product) {
+    return null; // Component will unmount and navigate will redirect
+  }
 
   return (
     <div className="bg-gray-100">
       <header>
         <BuyerHeader />
       </header>
-      <nav className="ml-16 mt-4 text-lg">
+      <nav className="hidden md:block ml-16 pt-[56px] md:pt-[124px] text-lg">
         <Link to="/">Shopp</Link>
         {product.category_hierarchy?.map(
           (category: { id: number; name: string; slug: string }) => (
@@ -198,18 +231,18 @@ const ProductPage: React.FC = () => {
           )
         )}
       </nav>
-      <main className="mx-8 my-4">
-        <div className="w-full flex">
+      <main className="md:mx-8 my-4">
+        <div className="w-full flex flex-col md:flex-row">
           {/* Product and Variants */}
-          <div className="w-2/3 flex bg-white pb-4">
+          <div className="w-full md:w-2/3 flex flex-col md:flex-row bg-white pb-4">
             {/* Images */}
             <div>
               <img
-                src={currentImage.url}
-                alt={currentImage.alt_text ?? "Product Image"}
+                src={currentImage?.url || product.promotion_image?.url || ""}
+                alt={currentImage?.alt_text ?? "Product Image"}
                 className="w-100 h-100"
               />
-              <div className="mt-6 px-4">
+              <div className="hidden md:block mt-6 px-4">
                 <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4 shadow-sm">
                   {/* Previous Button */}
                   <button
@@ -324,8 +357,12 @@ const ProductPage: React.FC = () => {
                   <img src={Share} alt="Share" className="cursor-pointer" />
                 </div>
               </div>
-              <p className="text-2xl mt-4 font-bold">${currentVariant.price}</p>
-              <p className="mt-4">Remain: {currentVariant.stock_quantity}</p>
+              <p className="text-2xl mt-4 font-bold">
+                ${currentVariant?.price || 0}
+              </p>
+              <p className="mt-4">
+                Remain: {currentVariant?.stock_quantity || 0}
+              </p>
               {product.variants.length > 1 && (
                 <div className="flex gap-4 mt-2">
                   <div className="flex">
@@ -333,7 +370,7 @@ const ProductPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-blue-500">
-                      {currentVariant.variant_name}
+                      {currentVariant?.variant_name || "No variant selected"}
                     </p>
                     <div className="flex gap-2 mt-4">
                       {product.variants.map((variant: ItemVariant) => (
@@ -379,7 +416,7 @@ const ProductPage: React.FC = () => {
           </div>
 
           {/* Shop Information */}
-          <div className="w-1/3 bg-blue-100 px-4 py-4">
+          <div className="w-full md:w-1/3 bg-blue-100 px-4 py-4">
             <h3 className="text-lg text-gray-600">Delivery Options</h3>
 
             {/* Location */}
@@ -450,7 +487,7 @@ const ProductPage: React.FC = () => {
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
+                <button className="hidden md:block bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
                   Chat Now
                 </button>
                 <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
@@ -480,7 +517,7 @@ const ProductPage: React.FC = () => {
 
         {/* --------------------------------------------Product Details----------------------------------------------------------------- */}
 
-        <div className="flex gap-6 mt-20">
+        <div className="flex flex-col-reverse md:flex-row gap-6 mt-20">
           <div>
             {/* Description */}
             <div className="px-4 py-6 bg-white mb-12">
@@ -491,13 +528,18 @@ const ProductPage: React.FC = () => {
               <div className="flex justify-between items-center mb-4">
                 <p>Category</p>
                 <nav className="">
-                  <Link to="/" className="text-blue-500">Shopp</Link>
+                  <Link to="/" className="text-blue-500">
+                    Shopp
+                  </Link>
                   {product.category_hierarchy?.map(
                     (category: { id: number; name: string; slug: string }) => (
                       <>
                         {" "}
                         /{" "}
-                        <Link to={`/category/${category.slug}`} className="text-blue-500">
+                        <Link
+                          to={`/category/${category.slug}`}
+                          className="text-blue-500"
+                        >
                           {category.name}
                         </Link>
                       </>
@@ -510,7 +552,8 @@ const ProductPage: React.FC = () => {
                 <p>Total Amounts</p>
                 <p className="">
                   {product.variants.reduce(
-                    (total: number, variant: ItemVariant) => total + variant.stock_quantity,
+                    (total: number, variant: ItemVariant) =>
+                      total + variant.stock_quantity,
                     0
                   )}
                 </p>
@@ -520,16 +563,25 @@ const ProductPage: React.FC = () => {
                 <h2 className="text-lg">Description</h2>
               </div>
               <p>{product.description}</p>
-
             </div>
 
             {/* Rating */}
-            <Review total_reviews={product.total_reviews} average_rating={product.average_rating} countStars={countStars} stars_5={product.stars_5} stars_4={product.stars_4} stars_3={product.stars_3} stars_2={product.stars_2} stars_1={product.stars_1} have_comment={product.have_comment} have_image={product.have_image} />
-            
+            <Review
+              total_reviews={product.total_reviews}
+              average_rating={product.average_rating}
+              countStars={countStars}
+              stars_5={product.stars_5}
+              stars_4={product.stars_4}
+              stars_3={product.stars_3}
+              stars_2={product.stars_2}
+              stars_1={product.stars_1}
+              have_comment={product.have_comment}
+              have_image={product.have_image}
+            />
           </div>
 
           <div>
-            <StoreDiscount store_id={product.store.id}/>
+            <StoreDiscount store_id={product.store.id} />
             <StoreHotProduct store_id={product.store.id} />
           </div>
         </div>

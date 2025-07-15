@@ -8,6 +8,7 @@ import review from '../features/Review/ReviewSlice';
 import discount from '../features/StoreDiscount/StoreDiscountSlice';
 import storeProducts from '../features/StoreProducts/StoreProductSlice';
 import storeHotProducts from '../features/StoreHotProduct/StoreHotProductSlice';
+import search from '../features/Search/SearchSlice';
 
 export const store = configureStore({
     reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
         review,
         discount,
         storeProducts,
-        storeHotProducts
+        storeHotProducts,
+        search
     },
 });
 

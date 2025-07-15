@@ -17,7 +17,7 @@ import CreateProduct from "./pages/seller/CreateProduct.tsx";
 import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
-
+import SearchPage from "./pages/buyer/SearchPage.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,24 +25,29 @@ const router = createBrowserRouter(
       <Route index element={<Navigate to="/home" replace />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/seller" element={<SellerLandingPage />} />
       <Route path="/home" element={<HomePage />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route path="/product/:id" element={<ProductPage />} />
       <Route
         path="/new-store"
         element={<PrivateRoute component={CreateStorePage} />}
       />
-      <Route
-        path="/seller/dashboard"
-        element={
-          <PrivateRoute
-            allowedRoles={["seller", "admin"]}
-            component={SellerDashboard}
-          />
-        }
-      />
-      {/* Route /seller/create is using for testing, changes will be made later */}
-      <Route path="/seller/create" element={<CreateProduct />} />
+
+      <Route path="/seller">
+        <Route index element={<SellerLandingPage />} />
+        <Route
+          path="dashboard"
+          element={
+            <PrivateRoute
+              allowedRoles={["seller", "admin"]}
+              component={SellerDashboard}
+            />
+          }
+        />
+        {/* Route /seller/create is using for testing, changes will be made later */}
+        <Route path="create" element={<CreateProduct />} />
+      </Route>
+
       {/* Catch-all route for 404 errors */}
       <Route path="*" element={<ErrorPage />} />
     </Route>
