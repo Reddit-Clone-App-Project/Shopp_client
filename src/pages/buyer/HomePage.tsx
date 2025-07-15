@@ -13,7 +13,7 @@ const HomePage: React.FC = () => {
       <header>
         <BuyerHeader />
       </header>
-      <div>
+      <div className="mt-[56px] md:mt-[86px]">
         <Hero />
         <BeforeCategory />
         <Category />

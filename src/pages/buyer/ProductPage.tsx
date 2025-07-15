@@ -144,11 +144,11 @@ const ProductPage: React.FC = () => {
     for (let i = 0; i < 5; i++) {
       if (i < rating) {
         stars.push(
-          <img key={i} src={DarkStar} alt="Dark Star" className="w-4 h-4" />
+          <img key={i} src={DarkStar} alt="Dark Star" className="w-2 h-2 md:w-4 md:h-4" />
         );
       } else {
         stars.push(
-          <img key={i} src={LightStar} alt="Light Star" className="w-4 h-4" />
+          <img key={i} src={LightStar} alt="Light Star" className="w-2 h-2 md:w-4 md:h-4" />
         );
       }
     }
@@ -220,7 +220,7 @@ const ProductPage: React.FC = () => {
       <header>
         <BuyerHeader />
       </header>
-      <nav className="ml-16 mt-4 text-lg">
+      <nav className="hidden md:block ml-16 pt-[56px] md:pt-[124px] text-lg">
         <Link to="/">Shopp</Link>
         {product.category_hierarchy?.map(
           (category: { id: number; name: string; slug: string }) => (
@@ -231,10 +231,10 @@ const ProductPage: React.FC = () => {
           )
         )}
       </nav>
-      <main className="mx-8 my-4">
-        <div className="w-full flex">
+      <main className="md:mx-8 my-4">
+        <div className="w-full flex flex-col md:flex-row">
           {/* Product and Variants */}
-          <div className="w-2/3 flex bg-white pb-4">
+          <div className="w-full md:w-2/3 flex flex-col md:flex-row bg-white pb-4">
             {/* Images */}
             <div>
               <img
@@ -242,7 +242,7 @@ const ProductPage: React.FC = () => {
                 alt={currentImage?.alt_text ?? "Product Image"}
                 className="w-100 h-100"
               />
-              <div className="mt-6 px-4">
+              <div className="hidden md:block mt-6 px-4">
                 <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4 shadow-sm">
                   {/* Previous Button */}
                   <button
@@ -416,7 +416,7 @@ const ProductPage: React.FC = () => {
           </div>
 
           {/* Shop Information */}
-          <div className="w-1/3 bg-blue-100 px-4 py-4">
+          <div className="w-full md:w-1/3 bg-blue-100 px-4 py-4">
             <h3 className="text-lg text-gray-600">Delivery Options</h3>
 
             {/* Location */}
@@ -487,7 +487,7 @@ const ProductPage: React.FC = () => {
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
+                <button className="hidden md:block bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
                   Chat Now
                 </button>
                 <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
@@ -517,7 +517,7 @@ const ProductPage: React.FC = () => {
 
         {/* --------------------------------------------Product Details----------------------------------------------------------------- */}
 
-        <div className="flex gap-6 mt-20">
+        <div className="flex flex-col-reverse md:flex-row gap-6 mt-20">
           <div>
             {/* Description */}
             <div className="px-4 py-6 bg-white mb-12">

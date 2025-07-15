@@ -34,11 +34,12 @@ const Review: React.FC<ReviewProps> = ({ total_reviews, average_rating, countSta
                     <div>
                         <p>{user_name}</p>
                         <div className='flex'>{countStars(stars)}</div>
-                        <p>{created_at}</p>
+                        <p className='hidden md:block'>{created_at}</p>
                     </div>
                 </div>
                 {comment && <p>{comment}</p>}
                 {img_url && <img className='w-50 mt-4' src={img_url} alt="Review" />}
+                <p className='block md:hidden mt-1 text-sm'>{created_at}</p>
             </div>
         )
     }
@@ -108,17 +109,18 @@ const Review: React.FC<ReviewProps> = ({ total_reviews, average_rating, countSta
     }, []);
 
   return (
-    <div className='bg-white py-6 px-4'>
-        <h2 className='text-lg mb-4'>Ratings</h2>
+    <div className='bg-white md:py-6 md:px-4'>
+        <h2 className='hidden md:block text-lg mb-4'>Ratings</h2>
         {/* Rating bar */}
-        <div className='flex items-center justify-between bg-blue-100 px-4 py-4'>
+        <div className='flex flex-col md:flex-row md:items-center md:justify-between bg-blue-100 px-4 py-4'>
+            <h2 className='block md:hidden text-lg'>Ratings</h2>
             <div className='flex flex-col'>
-                <p className='text-lg'>{average_rating} out of 5</p>
+                <p className='text-sm md:text-lg'>{average_rating} out of 5</p>
                 <div className='flex'>{countStars(average_rating)}</div>
             </div>
 
             {/* AI start here */}
-            <div className='flex flex-wrap gap-2 w-xl'>
+            <div className='hidden md:flex flex-wrap gap-2 w-xl'>
                 <button className='w-20 py-1 bg-white cursor-pointer' onClick={() => handleReviewTypeChange('all')}>All</button>
                 <button className='w-20 py-1 bg-white cursor-pointer' onClick={() => handleReviewTypeChange('5')}>5 stars ({stars_5})</button>
                 <button className='w-20 py-1 bg-white cursor-pointer' onClick={() => handleReviewTypeChange('4')}>4 stars ({stars_4})</button>
