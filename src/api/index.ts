@@ -23,7 +23,7 @@ export const logout = () => API.post('/users/logout');
 // Privacy information
 export const getProfile = () => API.get("/users/me");
 
-// All users
+//! All users
 export const getActiveCategories = () => API.get("/categories/active");
 export const getHot = (offset:number) => API.get(`/products/hot?offset=${offset}`);
 export const getStoreProducts = (storeId: number, limit: number, offset: number) => API.get(`/store/${storeId}/products?limit=${limit}&offset=${offset}`);
@@ -36,5 +36,9 @@ export const getProductsReviewByImage = (productId: number, offset: number) => A
 export const getStore = (storeId: number) => API.get(`/store/${storeId}`);
 export const getStoreReleasedRuledDiscounts = (storeId: number) => API.get(`/store/${storeId}/discounts`);
 
-// Buyers
+// Search
+export const searchProducts = (q: string, limit: number = 20, offset: number = 0) => API.get(`/products/search?q=${q}&limit=${limit}&offset=${offset}`);
+export const searchByCategory = (categoryId: number, limit: number = 20, offset: number = 0) => API.get(`/category/products/${categoryId}?limit=${limit}&offset=${offset}`);
+
+//! Buyers
 export const getBuyerAddress = () => API.get("/users/me/address");
