@@ -288,6 +288,42 @@ const ProductPage: React.FC = () => {
               )}
             </div>
             
+            {product.variants.length > 1 && (
+              <div className="md:hidden pl-2 py-2">
+                <p className="text-sm font-semibold">{product.variants.length} variants available</p>
+                <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+                  {product.variants.map((variant: ItemVariant) => {
+                    if (!variant.images || variant.images.length === 0)
+                      return null;
+
+                    const variantImage = variant.images[0];
+                    const imageIndex = allImages.findIndex(
+                      (img) => img.id === variantImage.id
+                    );
+                    const isSelected = currentSlide === imageIndex;
+
+                    return (
+                      <img
+                        src={variantImage.url}
+                        alt={variant.variant_name}
+                        key={variant.id}
+                        onClick={() => {
+                          if (emblaApi && imageIndex !== -1) {
+                            emblaApi.scrollTo(imageIndex);
+                          }
+                        }}
+                        className={`w-12 h-12 object-cover rounded-md cursor-pointer transition-all duration-200 ${
+                          isSelected
+                            ? "border-2 border-purple-500 ring-2 ring-purple-200"
+                            : "border border-gray-300"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Images for desktop */}
             <div className="hidden md:block">
               <img
@@ -549,16 +585,16 @@ const ProductPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="flex items-center justify-between">
+            <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 mt-4 text-sm">
+              <div className="flex items-center gap-2">
                 <p>Ratings</p>
                 <p className="text-blue-500">{store?.total_reviews ?? 0}</p>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <p>Average Rating</p>
                 <p className="text-blue-500">{store?.average_rating ?? 0}</p>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <p>Join</p>
                 <p className="text-blue-500">
                   {store?.created_at ? countTime(store.created_at) : "N/A"}
@@ -570,7 +606,7 @@ const ProductPage: React.FC = () => {
 
         {/* --------------------------------------------Product Details----------------------------------------------------------------- */}
 
-        <div className="flex flex-col-reverse md:flex-row gap-6 mt-20">
+        <div className="flex flex-col-reverse md:flex-row gap-6 mt-6 md:mt-20">
           <div>
             {/* Description */}
             <div className="px-4 py-6 bg-white mb-12">
