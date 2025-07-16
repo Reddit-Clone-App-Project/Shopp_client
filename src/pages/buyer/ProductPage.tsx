@@ -2,12 +2,19 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { useParams, useNavigate } from "react-router-dom";
+import useEmblaCarousel from "embla-carousel-react";
 import { Item, ItemImage, ItemVariant } from "../../types/Item";
 import BuyerHeader from "../../features/BuyerHeader/BuyerHeader";
 import Footer from "../../components/Footer";
 import { Link } from "react-router-dom";
 import { fetchBuyerAddress } from "../../features/BuyerAddress/BuyerAddressSlice";
 import { fetchStore } from "../../features/StoreSlice/StoreSlice";
+import { countTime } from "../../utility/countTime";
+import Review from "../../features/Review/Review";
+import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
+import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
+import StoreProducts from "../../features/StoreProducts/StoreProducts";
+import SuggestionOfTheDay from "../../features/SuggestionOfTheDay/SuggestionOfTheDay";
 
 // SVG
 import ChevronLeft from "../../assets/HomePage/Category/chevron-left.svg";
@@ -19,12 +26,8 @@ import DeliveryTruck from "../../assets/Product/LightDeliveryTruck.svg";
 import DarkStar from "../../assets/Product/DarkStar.svg";
 import LightStar from "../../assets/Product/LightStar.svg";
 import DefaultAvatar from "../../assets/generic-avatar.svg";
-import { countTime } from "../../utility/countTime";
-import Review from "../../features/Review/Review";
-import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
-import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
-import StoreProducts from "../../features/StoreProducts/StoreProducts";
-import SuggestionOfTheDay from "../../features/SuggestionOfTheDay/SuggestionOfTheDay";
+import AddCart from "../../assets/Product/AddCartLight.svg";
+import Chat from "../../assets/chat.svg";
 
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -90,6 +93,9 @@ const ProductPage: React.FC = () => {
     return allImages;
   };
 
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false}); //This is used for mobile image carousel
+  const [currentSlide, setCurrentSlide] = useState(0); //This is used for mobile image carousel
   const allImages = getAllImages();
   const imagesPerView = 3; // Number of thumbnails to show at once
 
@@ -198,29 +204,53 @@ const ProductPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (storeStatus === "idle" || !store) {
-      // Fetch the store information when the component mounts
-      if (product) {
-        const promise = dispatch(fetchStore(parseInt(product.store.id)));
-
-        return () => {
-          promise.abort();
-        };
-      }
-    }
-  }, [product]);
+  if (product?.store?.id) {
+    const promise = dispatch(fetchStore(product.store.id));
+    return () => {
+      promise.abort();
+    };
+  }
+}, [dispatch, product?.store?.id]);
 
   // Return null or loading state if product is not found
   if (!product) {
     return null; // Component will unmount and navigate will redirect
   }
 
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => {
+      setCurrentSlide(emblaApi.selectedScrollSnap());
+    };
+    emblaApi.on("select", onSelect);
+    onSelect(); // Lấy slide index ban đầu
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi]);
+
   return (
     <div className="bg-gray-100">
       <header>
         <BuyerHeader />
       </header>
-      <nav className="hidden md:block ml-16 pt-[56px] md:pt-[124px] text-lg">
+
+      {/* Mobile product bottom panel */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center h-16">
+        <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
+          <img src={AddCart} alt="Add to Cart" className="inline-block mr-1 w-4" />
+          <p>Add to Cart</p>
+        </button>
+        <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
+          <img src={Chat} alt="Chat" className="inline-block mr-1 w-4" />
+          <p>Chat Now</p>
+        </button>
+        <button className="flex-3 h-full py-2 text-center text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700">
+          Buy Now
+        </button>
+      </div>
+
+      <nav className="hidden md:block ml-16 pt-[124px] text-lg">
         <Link to="/">Shopp</Link>
         {product.category_hierarchy?.map(
           (category: { id: number; name: string; slug: string }) => (
@@ -231,16 +261,75 @@ const ProductPage: React.FC = () => {
           )
         )}
       </nav>
-      <main className="md:mx-8 my-4">
+      <main className="pt-10 md:pt-0 md:mx-8 my-4">
         <div className="w-full flex flex-col md:flex-row">
           {/* Product and Variants */}
           <div className="w-full md:w-2/3 flex flex-col md:flex-row bg-white pb-4">
-            {/* Images */}
-            <div>
+            {/* Carousel cho Mobile */}
+            <div className="md:hidden relative">
+              <div className="overflow-hidden" ref={emblaRef}>
+                <div className="flex">
+                  {allImages.map((image, index) => (
+                    <div className="flex-[0_0_100%] min-w-0" key={index}>
+                      <img
+                        src={image.url}
+                        alt={image.alt_text || `Product Image ${index + 1}`}
+                        className="w-full aspect-square object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+      
+              {allImages.length > 1 && (
+                <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white text-xs px-2.5 py-1 rounded-full">
+                  {currentSlide + 1} / {allImages.length}
+                </div>
+              )}
+            </div>
+            
+            {product.variants.length > 1 && (
+              <div className="md:hidden pl-2 py-2">
+                <p className="text-sm font-semibold">{product.variants.length} variants available</p>
+                <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+                  {product.variants.map((variant: ItemVariant) => {
+                    if (!variant.images || variant.images.length === 0)
+                      return null;
+
+                    const variantImage = variant.images[0];
+                    const imageIndex = allImages.findIndex(
+                      (img) => img.id === variantImage.id
+                    );
+                    const isSelected = currentSlide === imageIndex;
+
+                    return (
+                      <img
+                        src={variantImage.url}
+                        alt={variant.variant_name}
+                        key={variant.id}
+                        onClick={() => {
+                          if (emblaApi && imageIndex !== -1) {
+                            emblaApi.scrollTo(imageIndex);
+                          }
+                        }}
+                        className={`w-12 h-12 object-cover rounded-md cursor-pointer transition-all duration-200 ${
+                          isSelected
+                            ? "border-2 border-purple-500 ring-2 ring-purple-200"
+                            : "border border-gray-300"
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Images for desktop */}
+            <div className="hidden md:block">
               <img
                 src={currentImage?.url || product.promotion_image?.url || ""}
                 alt={currentImage?.alt_text ?? "Product Image"}
-                className="w-100 h-100"
+                className="w-full md:w-100 md:h-100"
               />
               <div className="hidden md:block mt-6 px-4">
                 <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4 shadow-sm">
@@ -330,8 +419,8 @@ const ProductPage: React.FC = () => {
             </div>
 
             {/* Other info */}
-            <div className="pt-4">
-              <h1 className="text-xl">{product.name}</h1>
+            <div className="pt-4 px-1 md:px-0">
+              <h1 className="text-md">{product.name}</h1>
               <div className="flex justify-between items-center mt-4">
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
@@ -360,11 +449,11 @@ const ProductPage: React.FC = () => {
               <p className="text-2xl mt-4 font-bold">
                 ${currentVariant?.price || 0}
               </p>
-              <p className="mt-4">
+              <p className="mt-4 hidden md:inline">
                 Remain: {currentVariant?.stock_quantity || 0}
               </p>
               {product.variants.length > 1 && (
-                <div className="flex gap-4 mt-2">
+                <div className="hidden md:flex gap-4 mt-2">
                   <div className="flex">
                     <p>Variants</p>
                   </div>
@@ -386,7 +475,7 @@ const ProductPage: React.FC = () => {
                   </div>
                 </div>
               )}
-              <div className="flex gap-4 mt-4">
+              <div className="hidden md:flex gap-4 mt-4">
                 <p>Quantity</p>
                 <div className="flex items-center gap-4">
                   <div
@@ -404,7 +493,7 @@ const ProductPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-4 mt-4">
+              <div className="hidden md:flex gap-4 mt-4">
                 <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
                   Buy Now
                 </button>
@@ -496,16 +585,16 @@ const ProductPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mt-4">
-              <div className="flex items-center justify-between">
+            <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 mt-4 text-sm">
+              <div className="flex items-center gap-2">
                 <p>Ratings</p>
                 <p className="text-blue-500">{store?.total_reviews ?? 0}</p>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <p>Average Rating</p>
                 <p className="text-blue-500">{store?.average_rating ?? 0}</p>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <p>Join</p>
                 <p className="text-blue-500">
                   {store?.created_at ? countTime(store.created_at) : "N/A"}
@@ -517,7 +606,7 @@ const ProductPage: React.FC = () => {
 
         {/* --------------------------------------------Product Details----------------------------------------------------------------- */}
 
-        <div className="flex flex-col-reverse md:flex-row gap-6 mt-20">
+        <div className="flex flex-col-reverse md:flex-row gap-6 mt-6 md:mt-20">
           <div>
             {/* Description */}
             <div className="px-4 py-6 bg-white mb-12">
@@ -593,6 +682,7 @@ const ProductPage: React.FC = () => {
       <footer>
         <Footer />
       </footer>
+      <div className="md:hidden w-full h-10"></div>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, {JSX, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState, AppDispatch } from '../../redux/store';
 import { useParams } from 'react-router-dom';
-import { fetchProductsReview, fetchProductsReviewByComment, fetchProductsReviewByImage, fetchProductsReviewByStars } from './ReviewSlice';
+import { fetchProductsReview, fetchProductsReviewByComment, fetchProductsReviewByImage, fetchProductsReviewByStars, removeAllReviews } from './ReviewSlice';
 
 // SVG
 import GenericAvatar from '../../assets/generic-avatar.svg';
@@ -24,7 +24,7 @@ const Review: React.FC<ReviewProps> = ({ total_reviews, average_rating, countSta
     const [currentReviews, setCurrentReviews] = React.useState<'all' | '5' | '4' | '3' | '2' | '1' | 'comment' | 'image'>('all');
     const dispatch: AppDispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
-    const { reviews: AllReviews, reviews_5_stars, reviews_4_stars, reviews_3_stars, reviews_2_stars, reviews_1_stars, reviews_have_comment, reviews_have_image, offset, offset_5_stars, offset_4_stars, offset_3_stars, offset_2_stars, offset_1_stars, offset_have_comment, offset_have_image } = useSelector((state: RootState) => state.review);
+    const { reviews: AllReviews, reviews_5_stars, reviews_4_stars, reviews_3_stars, reviews_2_stars, reviews_1_stars, reviews_have_comment, reviews_have_image, offset, offset_5_stars, offset_4_stars, offset_3_stars, offset_2_stars, offset_1_stars, offset_have_comment, offset_have_image, productId } = useSelector((state: RootState) => state.review);
 
     const reviewTemplate = (profile_img: string, user_name: string, stars: number, created_at: string, comment: string | null, img_url: string | null,  ) : JSX.Element => {
         return (
@@ -100,13 +100,16 @@ const Review: React.FC<ReviewProps> = ({ total_reviews, average_rating, countSta
     };
 
     useEffect(() => {
-        if(AllReviews.length === 0){
-            const promise = dispatch(fetchProductsReview({ productId: Number(id), offset: 0 }));
-            return () => {
-                promise.abort(); // Clean up the promise if the component unmounts
-            }
+        if (productId !== Number(id)) {
+        dispatch(removeAllReviews());
         }
-    }, []);
+
+        const promise = dispatch(fetchProductsReview({ productId: Number(id), offset: 0 }));
+        
+        return () => {
+            promise.abort();
+        };
+    }, [dispatch, id, productId]); 
 
   return (
     <div className='bg-white md:py-6 md:px-4'>
