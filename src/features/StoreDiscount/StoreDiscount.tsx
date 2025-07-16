@@ -14,7 +14,7 @@ const ShopDiscount : React.FC<{ store_id: number }> = ({ store_id }) => {
     return () => {
       promise.abort(); // Clean up the promise if the component unmounts
     }
-  }, []);
+  }, [dispatch, store_id]);
 
   return (
     <div className='bg-white p-6'>

@@ -6,7 +6,7 @@ export const fetchProductsReview = createAsyncThunk(
   async ({ productId, offset }: { productId: number; offset: number }, thunkAPI) => {
     try {
         const response = await getProductsReview(productId, offset);
-        return response.data;
+        return { productId, result: response.data };
     } catch (error: any) {
         const errorMsg =
             error.response?.data?.error ||
@@ -22,7 +22,7 @@ export const fetchProductsReviewByStars = createAsyncThunk(
     async ({ productId, stars, offset }: { productId: number; stars: number; offset: number }, thunkAPI) => {
         try {
             const response = await getProductsReviewByStars(productId, stars, offset);
-            return { star: stars, data: response.data };
+            return { productId, star: stars, data: response.data };
         } catch (error: any) {
             const errorMsg =
                 error.response?.data?.error ||
@@ -38,7 +38,7 @@ export const fetchProductsReviewByComment = createAsyncThunk(
     async ({ productId, offset }: { productId: number; offset: number }, thunkAPI) => {
         try {
             const response = await getProductsReviewByComment(productId, offset);
-            return response.data;
+            return { productId, result: response.data };
         } catch (error: any) {
             const errorMsg =
                 error.response?.data?.error ||
@@ -54,7 +54,7 @@ export const fetchProductsReviewByImage = createAsyncThunk(
     async ({ productId, offset }: { productId: number; offset: number }, thunkAPI) => {
         try {
             const response = await getProductsReviewByImage(productId, offset);
-            return response.data;
+            return { productId, result: response.data };
         } catch (error: any) {
             const errorMsg =
                 error.response?.data?.error ||
@@ -66,6 +66,7 @@ export const fetchProductsReviewByImage = createAsyncThunk(
 );
 
 interface ReviewState {
+  productId: number;
   reviews: any[];
   reviews_5_stars: any[];
   reviews_4_stars: any[];
@@ -87,6 +88,7 @@ interface ReviewState {
 }
 
 const initialState: ReviewState = {
+  productId: -1,
   reviews: [],
   reviews_5_stars: [],
   reviews_4_stars: [],
@@ -110,7 +112,26 @@ const initialState: ReviewState = {
 const reviewSlice = createSlice({
     name: "review",
     initialState,
-    reducers: {},
+    reducers: {
+        removeAllReviews: (state) => {
+            state.reviews = [];
+            state.reviews_5_stars = [];
+            state.reviews_4_stars = [];
+            state.reviews_3_stars = [];
+            state.reviews_2_stars = [];
+            state.reviews_1_stars = [];
+            state.reviews_have_comment = [];
+            state.reviews_have_image = [];
+            state.offset = 0;
+            state.offset_5_stars = 0;
+            state.offset_4_stars = 0;
+            state.offset_3_stars = 0;
+            state.offset_2_stars = 0;
+            state.offset_1_stars = 0;
+            state.offset_have_comment = 0;
+            state.offset_have_image = 0;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchProductsReview.pending, (state) => {
@@ -120,7 +141,7 @@ const reviewSlice = createSlice({
             .addCase(fetchProductsReview.fulfilled, (state, action) => {
                 state.status = "succeeded";
                 state.offset += 25; // Increment offset by 25 for the next fetch
-                state.reviews = state.reviews.concat(action.payload);
+                state.reviews = state.reviews.concat(action.payload.result);
             })
             .addCase(fetchProductsReview.rejected, (state, action) => {
                 state.status = "failed";
@@ -165,8 +186,9 @@ const reviewSlice = createSlice({
             })
             .addCase(fetchProductsReviewByComment.fulfilled, (state, action) => {
                 state.status = "succeeded";
+                state.productId = action.payload.productId; // Update productId in state
                 state.offset_have_comment += 25; // Increment offset by 25 for the next fetch
-                state.reviews_have_comment = state.reviews_have_comment.concat(action.payload);
+                state.reviews_have_comment = state.reviews_have_comment.concat(action.payload.result);
             })
             .addCase(fetchProductsReviewByComment.rejected, (state, action) => {
                 state.status = "failed";
@@ -178,8 +200,9 @@ const reviewSlice = createSlice({
             })
             .addCase(fetchProductsReviewByImage.fulfilled, (state, action) => {
                 state.status = "succeeded";
+                state.productId = action.payload.productId; // Update productId in state
                 state.offset_have_image += 25; // Increment offset by 25 for the next fetch
-                state.reviews_have_image = state.reviews_have_image.concat(action.payload);
+                state.reviews_have_image = state.reviews_have_image.concat(action.payload.result);
             })
             .addCase(fetchProductsReviewByImage.rejected, (state, action) => {
                 state.status = "failed";
@@ -188,4 +211,5 @@ const reviewSlice = createSlice({
     }
 });
 
+export const { removeAllReviews } = reviewSlice.actions;
 export default reviewSlice.reducer;
