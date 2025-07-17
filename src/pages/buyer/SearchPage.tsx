@@ -21,6 +21,7 @@ import LightStar from "../../assets/Product/LightStar.svg";
 
 const SearchPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const { results, offset } = useSelector((state: RootState) => state.search);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -42,7 +43,6 @@ const SearchPage = () => {
     setPriceDropdown(false);
   };
 
-  // Filter input
   const initialFilterState = {
     shippingTypes: [] as string[],
     minPrice: "",
@@ -63,7 +63,6 @@ const SearchPage = () => {
           : prev.shippingTypes.filter((type) => type !== value),
       }));
     } else {
-      // Handle text inputs and radio buttons
       setFilters((prev) => ({
         ...prev,
         [name]: value,
@@ -82,6 +81,7 @@ const SearchPage = () => {
         rating: parseInt(filters.rating) || null,
       })
     );
+    setIsFilterOpen(false); // Close the filter sidebar on mobile after applying filters
   };
 
   const handleClearFilters = () => {
@@ -149,18 +149,35 @@ const SearchPage = () => {
         promise.abort();
       };
     }
-  }, [dispatch, searchTerm]);
+  }, [dispatch, searchTerm, sortOrder, filters]);
 
   return (
     <div>
       <header>
         <BuyerHeader />
       </header>
-      <div className="mt-[56px] md:mt-30 flex justify-center gap-4 md:mx-4">
-        {/* Filter */}
-        <div className="hidden md:block p-4 bg-blue-100">
+      <div className="mt-[56px] md:mt-30 flex flex-col md:flex-row justify-center gap-4 md:mx-4">
+        {/* Filter Trigger Button for Mobile */}
+        <div className="md:hidden p-4">
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="flex items-center justify-center w-full py-2 px-4 bg-purple-500 text-white rounded-md hover:bg-purple-600"
+          >
+            <span>{isFilterOpen ? "Close Filters" : "Show Filters"}</span>
+          </button>
+        </div>
+
+        {/* Filter Sidebar */}
+        <div
+          className={`
+            ${isFilterOpen ? "block" : "hidden"} md:block 
+            w-full md:w-auto p-4 bg-blue-100 
+            md:sticky md:top-24 md:self-start
+            transition-all duration-300 ease-in-out
+          `}
+        >
           <h2 className="text-lg font-bold">
-            <img src={Filter} alt="Filter" className="inline-block mr-2 w-3" />{" "}
+            <img src={Filter} alt="Filter" className="inline-block mr-2 w-3" />
             SEARCH FILTER
           </h2>
           <div className="mt-4">
@@ -227,7 +244,7 @@ const SearchPage = () => {
                   htmlFor={`rating-${starValue}`}
                   className="flex items-center"
                 >
-                  {countStars(starValue)}{" "}
+                  {countStars(starValue)}
                   <span className="text-gray-600 ml-1">up</span>
                 </label>
               </div>
@@ -259,15 +276,15 @@ const SearchPage = () => {
                   alt="Search results"
                   className="inline-block mr-3 w-6 h-6"
                 />
-                Search results for{" "}
+                Search results for
                 <span className="text-blue-600 font-bold ml-1">
                   "{searchTerm}"
                 </span>
               </h2>
 
               {/* Sorting bar */}
-              <div className="flex items-center gap-4 mt-6">
-                <h4 className="text-sm font-medium text-gray-600 mr-2">
+              <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 mt-6">
+                <h4 className="text-sm font-medium text-gray-600 mr-2 hidden md:block">
                   Sort by:
                 </h4>
 
@@ -313,7 +330,7 @@ const SearchPage = () => {
                       sortOrder === "Price: High to Low"
                         ? "text-purple-600"
                         : "text-gray-700"
-                    } bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors min-w-[200px] cursor-pointer`}
+                    } bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors w-full md:min-w-[200px] cursor-pointer`}
                   >
                     {sortOrder === "Price: Low to High"
                       ? "Price: Low to High"
@@ -352,8 +369,7 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 ml-auto">
-                  {/* Because there are not many product in the database, so for now leave this function unimplemented */}
+                <div className="flex items-center gap-2 md:ml-auto">
                   <button className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors cursor-pointer">
                     <img
                       src={ChevronLeft}
