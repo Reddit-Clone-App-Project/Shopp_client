@@ -3,9 +3,9 @@ import { searchProducts } from "../../api";
 
 export const searchProductsAsync = createAsyncThunk(
     'search/searchProducts',
-    async ({ query, limit, offset }: { query: string; limit?: number; offset?: number }, thunkAPI) => {
+    async ({ query, limit, offset, sortBy, minPrice, maxPrice, rating }: { query: string; limit?: number; offset?: number; sortBy?: string; minPrice?: number | null; maxPrice?: number | null; rating?: number | null }, thunkAPI) => {
         try {
-            const response = await searchProducts(query, limit, offset);
+            const response = await searchProducts(query, limit, offset, sortBy, minPrice, maxPrice, rating);
             return { query, results: response.data };
         } catch (error: any) {
             const errorMsg =
@@ -36,7 +36,13 @@ const initialState: SearchState = {
 const SearchSlice = createSlice({
     name: 'search',
     initialState,
-    reducers: {},
+    reducers: {
+        clearSearchResults: (state) => {
+            state.results = [];
+            state.query = '';
+            state.offset = 0;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(searchProductsAsync.pending, (state) => {
@@ -67,4 +73,5 @@ const SearchSlice = createSlice({
     },
 });
 
+export const { clearSearchResults } = SearchSlice.actions;
 export default SearchSlice.reducer;
