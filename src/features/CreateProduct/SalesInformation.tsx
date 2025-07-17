@@ -1,8 +1,6 @@
 import { ProductDataType } from "../../pages/seller/CreateProduct";
-import SellerBlackHeader from "../../components/SellerBlackHeader";
 import { useForm } from "react-hook-form";
-import { useRef, useState } from "react";
-import ToggleSwitch from "../../components/ToggleSwitch";
+import { useState } from "react";
 
 
 type SalesInfoProps = {
@@ -19,11 +17,16 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
         length,
         width,
         height,
-        express,
-        fast,
-        economical,
-        bulky,
         sku,
+        variant: {
+            variantName,
+            variantPrice,
+            variantWeight,
+            variantLength,
+            variantWidth,
+            variantHeight,
+            variantSku,
+        }
     } = data;
 
     const [variant, setVariant] = useState(false);
@@ -51,18 +54,76 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                 Variants
                         </p>
                     </div>
+
+                    {!variant &&
+                    <>
+                        <h3 className='font-semibold text-lg mb-2.5'>Price</h3>
+                        <div className='flex flex-col gap-4 mb-4'>
+                            <label htmlFor='product-price' className='font-semibold text-[0.9rem]'>
+                                <span className='text-red-500'>*</span>
+                                Price in US dollar
+                            </label>
+                            <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[50%]' 
+                                type="text"
+                                id='product-price'
+                                placeholder="Enter price here" 
+                                value={price} 
+                                onChange={e => onChange(prev => ({...prev, price: e.target.value}))}
+                            />
+                        </div>
+                    </>
+                    }
+
+                    {variant &&
+                    <>
+                        <div className='flex flex-col gap-4 mb-4'>
+                            <label htmlFor='variant-name' className='font-semibold text-[0.9rem]'>
+                                <span className='text-red-500'>*</span>
+                                At least 2 variants and max 10 variants
+                            </label>
+                            <div className='flex'>
+                                <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[50%] mr-6' 
+                                    type="text"
+                                    id='variant-name'
+                                    placeholder="Enter variant name here" 
+                                    value={variantName} 
+
+                                />
+                                <button 
+                                    className="border border-slate-400 p-2 text-slate-400 rounded-xl hover:cursor-pointer active:text-white active:border-white"
+                                    onClick={() => )}
+                                    >
+                                        Create
+                                </button>
+                            </div>
+                        </div>
+
+                        <h3 className='font-semibold text-lg mb-2.5'>Price</h3>
+                        <div className='flex flex-col gap-4 mb-4'>
+                            <label htmlFor='product-price' className='font-semibold text-[0.9rem]'>
+                                <span className='text-red-500'>*</span>
+                                Price in US dollar
+                            </label>
+                            <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[50%]' 
+                                type="text"
+                                id='product-price'
+                                placeholder="Enter price here" 
+                                value={price} 
+                                onChange={e => onChange(prev => ({...prev, price: e.target.value}))}
+                            />
+                        </div>
+                    </>
+                    }
+
                     <h3 className='font-semibold text-lg mb-2.5'>Shipping</h3>
                     <div className='flex flex-col gap-4 mb-4'>
                         <label htmlFor='product-weight' className='font-semibold text-[0.9rem]'>
                             <span className='text-red-500'>*</span>
-                            Weight(lbs) - After packing
+                            Weight (lbs) - After packing
                         </label>
                         <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[50%]' 
                             type="text"
-                            id='product-weight'
-                            {...register('weight', {
-                                required: 'Weight required',
-                            })} 
+                            id='product-weight' 
                             placeholder="Enter weight here" 
                             value={weight} 
                             onChange={e => onChange(prev => ({...prev, weight: e.target.value}))}
@@ -71,7 +132,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                     <div className='flex flex-col gap-4 mb-4'>
                         <label htmlFor='product-length' className='font-semibold text-[0.9rem]'>
                             <span className='text-red-500'>*</span>
-                            Packing size(cm) - Actual shipping fee will vary if you enter wrong size
+                            Packing size (cm) - Actual shipping fee will vary if you enter wrong size
                         </label>
                         <div className='flex justify-between w-[80%]'>
                             <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[30%]' 
@@ -95,6 +156,48 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                             />
                         </div>
                     </div>
+
+                    <h3 className='font-semibold text-lg mb-2.5'>Other information</h3>
+                    <div className='flex flex-col gap-4 mb-4'>
+                        <label htmlFor='product-sku' className='font-semibold text-[0.9rem]'>
+                            <span className='text-red-500'>*</span>
+                            Product's Sku
+                        </label>
+                        <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[80%]' 
+                            type="text" 
+                            id='product-sku' 
+                            placeholder="Enter Sku" 
+                            value={sku} 
+                            onChange={e => onChange(prev => ({...prev, sku: e.target.value}))}
+                        /> 
+                    </div>
+
+                    <div className="flex justify-end items-center mt-10">
+                        <button
+                            onClick={onBack}
+                            className='mr-4 border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800'
+                        >
+                            Back
+                        </button>
+                        <button
+                            onClick={onSubmit}
+                            disabled={!price || !weight || !length || !width || !height } 
+                            className='border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#A567C6]'
+                        >
+                            Create Product
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default SalesInformation;
+
+
+/* Old shipping methdod code with switch deprecated
+
                     <div className="border border-slate-400 p-2 rounded-lg">
                          <div className='flex justify-between mb-5 items-center'> 
                             <p className='text-[1.2rem] font-normal'>Express</p>
@@ -130,25 +233,4 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                             />
                         </div>  
                     </div>
-                    <div className="flex justify-end items-center mt-10">
-                        <button
-                            onClick={onBack}
-                            className='mr-4 border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800'
-                        >
-                            Back
-                        </button>
-                        <button
-                            onClick={onSubmit}
-                            /* disabled={!weight || !length || !width || !height || !(express || fast || economical || bulky)} */
-                            className='border-[#A567C6] rounded-lg px-3 py-1 bg-[#A567C6] hover:cursor-pointer hover:bg-purple-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-[#A567C6]'
-                        >
-                            Create Product
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-export default SalesInformation;
+*/

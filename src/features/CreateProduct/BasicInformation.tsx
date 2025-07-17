@@ -1,6 +1,5 @@
 import React, { useRef } from 'react'
 import { toast } from 'react-toastify';
-import SellerBlackHeader from '../../components/SellerBlackHeader';
 import AddImage from '../../assets/addImage.svg';
 import CategoryInput from '../../components/CategoryInput';
 import { ProductDataType } from '../../pages/seller/CreateProduct';
