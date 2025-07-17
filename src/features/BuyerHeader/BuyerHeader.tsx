@@ -12,6 +12,7 @@ import CloseIcon from "../../assets/HomePage/Header/Close.svg";
 import Logo from "../../assets/Logo.svg";
 import GenericAvatar from "../../assets/generic-avatar.svg";
 import axios from "axios";
+import CollapsibleSheet from "../../components/CollapsibleSheet";
 
 /* A custom hook for debouncing
  * @param value - The value to debounce
@@ -50,6 +51,7 @@ const BuyerHeader: React.FC = () => {
     useState<number>(-1);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+
 
   // Handle search
   const handleSearch = () => {
@@ -220,12 +222,12 @@ const BuyerHeader: React.FC = () => {
               </div>
             )}
           </div>
-          <img
-            src={ShoppingCart}
-            alt="Shopping Cart"
-            className="w-6 h-6 text-white cursor-pointer hover:opacity-80"
-          />
-        </div>
+            {/* Calling the CollapsibleSheet component */}
+            <CollapsibleSheet
+            imageSrc={ShoppingCart}
+            imageAlt="View Shopping Cart"
+            />
+          </div>
       </div>
 
       {/* Mobile Header (shown on mobile) */}
