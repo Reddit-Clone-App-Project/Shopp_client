@@ -93,8 +93,7 @@ const ProductPage: React.FC = () => {
     return allImages;
   };
 
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false}); //This is used for mobile image carousel
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }); //This is used for mobile image carousel
   const [currentSlide, setCurrentSlide] = useState(0); //This is used for mobile image carousel
   const allImages = getAllImages();
   const imagesPerView = 3; // Number of thumbnails to show at once
@@ -150,11 +149,21 @@ const ProductPage: React.FC = () => {
     for (let i = 0; i < 5; i++) {
       if (i < rating) {
         stars.push(
-          <img key={i} src={DarkStar} alt="Dark Star" className="w-2 h-2 md:w-4 md:h-4" />
+          <img
+            key={i}
+            src={DarkStar}
+            alt="Dark Star"
+            className="w-2 h-2 md:w-4 md:h-4"
+          />
         );
       } else {
         stars.push(
-          <img key={i} src={LightStar} alt="Light Star" className="w-2 h-2 md:w-4 md:h-4" />
+          <img
+            key={i}
+            src={LightStar}
+            alt="Light Star"
+            className="w-2 h-2 md:w-4 md:h-4"
+          />
         );
       }
     }
@@ -167,16 +176,18 @@ const ProductPage: React.FC = () => {
       // If product not found, redirect to home page
       navigate("/");
     } else {
-      // Initialize states when product is available
-      if (product.promotion_image && !selectedImage) {
+      // Initialize states when product is available - reset for new product
+      if (product.promotion_image) {
         setSelectedImage(product.promotion_image);
         setCurrentImage(product.promotion_image);
       }
-      if (product.variants?.[0] && !currentVariant) {
+      if (product.variants?.[0]) {
         setCurrentVariant(product.variants[0]);
       }
+      // Reset image carousel index for new product
+      setCurrentImageIndex(0);
     }
-  }, [product, navigate, selectedImage, currentVariant]);
+  }, [product, navigate]);
 
   useEffect(() => {
     if (!product) {
@@ -204,13 +215,13 @@ const ProductPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-  if (product?.store?.id) {
-    const promise = dispatch(fetchStore(product.store.id));
-    return () => {
-      promise.abort();
-    };
-  }
-}, [dispatch, product?.store?.id]);
+    if (product?.store?.id) {
+      const promise = dispatch(fetchStore(product.store.id));
+      return () => {
+        promise.abort();
+      };
+    }
+  }, [dispatch, product?.store?.id]);
 
   // Return null or loading state if product is not found
   if (!product) {
@@ -238,7 +249,11 @@ const ProductPage: React.FC = () => {
       {/* Mobile product bottom panel */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center h-16">
         <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
-          <img src={AddCart} alt="Add to Cart" className="inline-block mr-1 w-4" />
+          <img
+            src={AddCart}
+            alt="Add to Cart"
+            className="inline-block mr-1 w-4"
+          />
           <p>Add to Cart</p>
         </button>
         <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
@@ -280,17 +295,19 @@ const ProductPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-      
+
               {allImages.length > 1 && (
                 <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white text-xs px-2.5 py-1 rounded-full">
                   {currentSlide + 1} / {allImages.length}
                 </div>
               )}
             </div>
-            
+
             {product.variants.length > 1 && (
               <div className="md:hidden pl-2 py-2">
-                <p className="text-sm font-semibold">{product.variants.length} variants available</p>
+                <p className="text-sm font-semibold">
+                  {product.variants.length} variants available
+                </p>
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
                   {product.variants.map((variant: ItemVariant) => {
                     if (!variant.images || variant.images.length === 0)
