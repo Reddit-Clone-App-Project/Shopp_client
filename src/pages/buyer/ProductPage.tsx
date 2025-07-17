@@ -93,6 +93,7 @@ const ProductPage: React.FC = () => {
     return allImages;
   };
 
+
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }); //This is used for mobile image carousel
   const [currentSlide, setCurrentSlide] = useState(0); //This is used for mobile image carousel
   const allImages = getAllImages();
@@ -215,6 +216,7 @@ const ProductPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+
     if (product?.store?.id) {
       const promise = dispatch(fetchStore(product.store.id));
       return () => {
@@ -249,11 +251,7 @@ const ProductPage: React.FC = () => {
       {/* Mobile product bottom panel */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center h-16">
         <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
-          <img
-            src={AddCart}
-            alt="Add to Cart"
-            className="inline-block mr-1 w-4"
-          />
+          <img src={AddCart} alt="Add to Cart" className="inline-block mr-1 w-4" />
           <p>Add to Cart</p>
         </button>
         <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
@@ -305,9 +303,7 @@ const ProductPage: React.FC = () => {
 
             {product.variants.length > 1 && (
               <div className="md:hidden pl-2 py-2">
-                <p className="text-sm font-semibold">
-                  {product.variants.length} variants available
-                </p>
+                <p className="text-sm font-semibold">{product.variants.length} variants available</p>
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
                   {product.variants.map((variant: ItemVariant) => {
                     if (!variant.images || variant.images.length === 0)

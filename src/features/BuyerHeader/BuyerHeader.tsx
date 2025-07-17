@@ -299,6 +299,14 @@ const BuyerHeader: React.FC = () => {
           <div className="bg-purple-600 px-4 py-3">
             <div className="space-y-4">
               <Link
+                to="/"
+                className="block text-white hover:bg-purple-700 p-2 rounded"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+
+              <Link
                 to="/seller"
                 className="block text-white hover:bg-purple-700 p-2 rounded"
                 onClick={() => setIsMobileMenuOpen(false)}
