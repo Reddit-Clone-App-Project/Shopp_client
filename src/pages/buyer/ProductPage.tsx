@@ -94,7 +94,7 @@ const ProductPage: React.FC = () => {
   };
 
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false}); //This is used for mobile image carousel
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }); //This is used for mobile image carousel
   const [currentSlide, setCurrentSlide] = useState(0); //This is used for mobile image carousel
   const allImages = getAllImages();
   const imagesPerView = 3; // Number of thumbnails to show at once
@@ -150,11 +150,21 @@ const ProductPage: React.FC = () => {
     for (let i = 0; i < 5; i++) {
       if (i < rating) {
         stars.push(
-          <img key={i} src={DarkStar} alt="Dark Star" className="w-2 h-2 md:w-4 md:h-4" />
+          <img
+            key={i}
+            src={DarkStar}
+            alt="Dark Star"
+            className="w-2 h-2 md:w-4 md:h-4"
+          />
         );
       } else {
         stars.push(
-          <img key={i} src={LightStar} alt="Light Star" className="w-2 h-2 md:w-4 md:h-4" />
+          <img
+            key={i}
+            src={LightStar}
+            alt="Light Star"
+            className="w-2 h-2 md:w-4 md:h-4"
+          />
         );
       }
     }
@@ -167,16 +177,18 @@ const ProductPage: React.FC = () => {
       // If product not found, redirect to home page
       navigate("/");
     } else {
-      // Initialize states when product is available
-      if (product.promotion_image && !selectedImage) {
+      // Initialize states when product is available - reset for new product
+      if (product.promotion_image) {
         setSelectedImage(product.promotion_image);
         setCurrentImage(product.promotion_image);
       }
-      if (product.variants?.[0] && !currentVariant) {
+      if (product.variants?.[0]) {
         setCurrentVariant(product.variants[0]);
       }
+      // Reset image carousel index for new product
+      setCurrentImageIndex(0);
     }
-  }, [product, navigate, selectedImage, currentVariant]);
+  }, [product, navigate]);
 
   useEffect(() => {
     if (!product) {
@@ -204,13 +216,14 @@ const ProductPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-  if (product?.store?.id) {
-    const promise = dispatch(fetchStore(product.store.id));
-    return () => {
-      promise.abort();
-    };
-  }
-}, [dispatch, product?.store?.id]);
+
+    if (product?.store?.id) {
+      const promise = dispatch(fetchStore(product.store.id));
+      return () => {
+        promise.abort();
+      };
+    }
+  }, [dispatch, product?.store?.id]);
 
   // Return null or loading state if product is not found
   if (!product) {
@@ -280,14 +293,14 @@ const ProductPage: React.FC = () => {
                   ))}
                 </div>
               </div>
-      
+
               {allImages.length > 1 && (
                 <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white text-xs px-2.5 py-1 rounded-full">
                   {currentSlide + 1} / {allImages.length}
                 </div>
               )}
             </div>
-            
+
             {product.variants.length > 1 && (
               <div className="md:hidden pl-2 py-2">
                 <p className="text-sm font-semibold">{product.variants.length} variants available</p>
