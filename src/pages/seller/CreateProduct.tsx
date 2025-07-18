@@ -23,10 +23,11 @@ export type ProductDataType = {
     width: string;
     height: string;
     sku: string;
-    variant: VariantDataType;
+    variant: VariantDataType[];
 };
 
 export type VariantDataType = {
+    id: number;
     variantName: string;
     variantPrice: string;
     variantWeight: string;
@@ -53,7 +54,8 @@ const CreateProduct = () => {
         width: '',
         height: '',
         sku: '',
-        variant: {
+        variant: [{
+            id: 1,
             variantName: '',
             variantPrice: '',
             variantWeight: '',
@@ -61,7 +63,7 @@ const CreateProduct = () => {
             variantWidth: '',
             variantHeight: '',
             variantSku: '',
-        },
+        },],
     });
 
     const {

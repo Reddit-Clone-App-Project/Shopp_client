@@ -1,6 +1,5 @@
-import { ProductDataType } from "../../pages/seller/CreateProduct";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { ProductDataType, VariantDataType } from "../../pages/seller/CreateProduct";
+import React, { useState } from "react";
 
 
 type SalesInfoProps = {
@@ -19,6 +18,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
         height,
         sku,
         variant: {
+            id,
             variantName,
             variantPrice,
             variantWeight,
@@ -30,7 +30,47 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
     } = data;
 
     const [variant, setVariant] = useState(false);
-    const { register, handleSubmit, formState: {errors} } = useForm<ProductDataType>();
+    const [newVariant, setNewVariant] = useState<Omit<VariantDataType, "id">>({
+        variantName: '',
+        variantPrice: '',
+        variantWeight: '',
+        variantLength: '',
+        variantWidth: '',
+        variantHeight: '',
+        variantSku: '',
+    });
+    const [variantList, setVariantList] = useState<VariantDataType[]>([]);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
+    const [nextId, setNextId] = useState(1);
+    
+
+    const handleCreateVariant = () => {
+        if (!newVariant.variantName.trim()) return;
+        setVariantList(prev => [...prev, 
+            {id: nextId, ...newVariant}
+        ]);
+        setNextId(prev => prev + 1);
+        setNewVariant({variantName: '',
+            variantPrice: '',
+            variantWeight: '',
+            variantLength: '',
+            variantWidth: '',
+            variantHeight: '',
+            variantSku: '',
+        });
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') handleCreateVariant();
+    };
+
+    const handleChangeVariant = (idx: number, field: keyof Omit<VariantDataType, "id">, value: string) => {
+        setVariantList(prev =>
+            prev.map((v, i) => 
+                i === idx ? { ...v, [field]: value } : v
+            )
+        );
+    };
 
     return (
         <div>
@@ -86,15 +126,21 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                     type="text"
                                     id='variant-name'
                                     placeholder="Enter variant name here" 
-                                    value={variantName} 
-
+                                    value={newVariant} 
+                                    onChange={e => setNewVariant(e.target.value)}
+                                    onKeyDown={handleKeyDown}
                                 />
                                 <button 
-                                    className="border border-slate-400 p-2 text-slate-400 rounded-xl hover:cursor-pointer active:text-white active:border-white"
-                                    onClick={() => )}
-                                    >
-                                        Create
+                                    className="border border-slate-400 px-3 py-1 text-slate-400 rounded-xl hover:cursor-pointer active:text-white active:border-white"
+                                    onClick={handleCreateVariant}
+                                >
+                                    Create
                                 </button>
+                            </div>
+                            <div className="flex">
+                                {variantList.map((variant, idx) => (
+                                    <p key={idx} className="mr-2 border border-slate-400 py-0.5 px-3 text-slate-400 rounded-xl hover:cursor-pointer active:text-white active:border-white" onClick={handleClickVariant(id)}>{variant}</p>
+                                ))}
                             </div>
                         </div>
 
