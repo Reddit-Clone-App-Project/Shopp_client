@@ -1,6 +1,9 @@
 import axios from "axios";
 import { store } from "../redux/store";
-const API = axios.create({baseURL: "http://localhost:3000" });
+const API = axios.create({
+    baseURL: "http://localhost:3000",
+    withCredentials: true
+});
 
 // Add token for every request
 API.interceptors.request.use((config) => {
