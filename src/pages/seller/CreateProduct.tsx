@@ -1,12 +1,10 @@
-import React, { useRef, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-toastify';
-import { useForm } from 'react-hook-form';
 import SellerBlackHeader from '../../components/SellerBlackHeader';
 // SVG
 import AddImage from '../../assets/addImage.svg';
 import Chat from '../../assets/chat.svg';
 import Cart from '../../assets/HomePage/Header/shopping-cart.svg';
-import CategoryInput from '../../components/CategoryInput';
 import BasicInformation from '../../features/CreateProduct/BasicInformation';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
@@ -24,12 +22,22 @@ export type ProductDataType = {
     length: string;
     width: string;
     height: string;
-    express: boolean;
-    fast: boolean;
-    economical: boolean;
-    bulky: boolean;
     sku: string;
-}
+    variant: VariantDataType[];
+};
+
+export type VariantDataType = {
+    id: number;
+    variantName: string;
+    variantPrice: string;
+    variantWeight: string;
+    variantLength: string;
+    variantWidth: string;
+    variantHeight: string;
+    variantSku: string;
+};
+
+
 
 const CreateProduct = () => {
     const [step, setStep] = useState(1);
@@ -45,11 +53,17 @@ const CreateProduct = () => {
         length: '',
         width: '',
         height: '',
-        express: false,
-        fast: false,
-        economical: false,
-        bulky: false,
         sku: '',
+        variant: [{
+            id: 1,
+            variantName: '',
+            variantPrice: '',
+            variantWeight: '',
+            variantLength: '',
+            variantWidth: '',
+            variantHeight: '',
+            variantSku: '',
+        },],
     });
 
     const {
@@ -57,6 +71,7 @@ const CreateProduct = () => {
         description,
         promotionImage,
         productImage,
+        price,
     } = productData;
 
     const handleFinalSubmit = async () => {
@@ -122,7 +137,8 @@ const CreateProduct = () => {
                             />
                         ))}
                     </div>
-                    
+
+                    <h6 className='font-medium mb-2'>{price} $</h6>
                     <h6 className='font-medium mb-2'>Description</h6>
                     <p className='font-extralight text-[0.75rem]'>{description}</p>
                     
