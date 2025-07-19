@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 
 // SVG
 import ChevronLeft from "../../assets/HomePage/Category/chevron-left.svg";
-import ChevronRight from "../../assets/HomePage/Category/chevron-right.svg";
+import ChevronRight from "../../assets/HomePage/Category/chevron-right.svg"; 
 
 const FlashSale = () => {
   const flashSaleItems: FlashSaleItem[] = [

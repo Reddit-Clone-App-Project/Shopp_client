@@ -6,10 +6,17 @@
 import React from "react";
 import type { FlashSaleItem, Item } from "../types/Item";
 import { replace, useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, item: Item | null }) => { // !The item and the flashSaleItem must be the same type, but for now for some reason I have to separate them
   const discountedPrice = (flashSaleItem?.price ?? 0) * (1 - (flashSaleItem?.discount ?? 0) / 100);
   const prices = item?.variants?.map((variant) => variant.price);
+
+  const { cartItems, addToCart, removeFromCart } = useCart();
+  const isItemInCart = (itemName: string) => {  
+    return cartItems.some((item) => item.name === itemName); 
+};
+
 
   const navigate = useNavigate();
   // Function to check if the item is a Item
@@ -77,6 +84,7 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
     </div>
   );
   }else if(flashSaleItem && !item){
+    const inCart = isItemInCart(flashSaleItem.name);
     progressPercentage = Math.min(
       (flashSaleItem.sold / flashSaleItem.sold + 200) * 100, // Assuming a max of 1000 sold for demonstration
       100
@@ -129,6 +137,22 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
             style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>
+         {/* Added Add/Remove Cart Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              inCart
+                ? removeFromCart(flashSaleItem.name)
+                : addToCart(flashSaleItem);
+            }}
+            className={`mt-2 px-3 py-1 rounded text-sm font-semibold ${
+              inCart
+                ? "bg-red-500 text-white hover:bg-red-600"
+                : "border border-purple-500 text-purple-600 hover:bg-purple-100"
+            }`}
+          >
+            {inCart ? "Remove from Cart" : "Add to Cart"}
+          </button>
       </div>
     </div>
   );
