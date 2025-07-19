@@ -18,6 +18,7 @@ import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
 import SearchPage from "./pages/buyer/SearchPage.tsx";
+import CategoryPage from "./pages/buyer/CategoryPage.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,10 @@ const router = createBrowserRouter(
       <Route path="/home" element={<HomePage />} />
       <Route path="/search" element={<SearchPage />} />
       <Route path="/product/:id" element={<ProductPage />} />
+      <Route path="/category">
+        <Route path=":slug" element={<CategoryPage />} />
+      </Route>
+
       <Route
         path="/new-store"
         element={

@@ -9,6 +9,8 @@ import discount from '../features/StoreDiscount/StoreDiscountSlice';
 import storeProducts from '../features/StoreProducts/StoreProductSlice';
 import storeHotProducts from '../features/StoreHotProduct/StoreHotProductSlice';
 import search from '../features/Search/SearchSlice';
+import category from '../features/Category/CategorySlice';
+import categoryProducts from '../features/Category/CategoryProductsSlice';
 
 export const store = configureStore({
     reducer: {
@@ -21,7 +23,9 @@ export const store = configureStore({
         discount,
         storeProducts,
         storeHotProducts,
-        search
+        search,
+        category,
+        categoryProducts
     },
 });
 
