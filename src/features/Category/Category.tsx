@@ -3,6 +3,10 @@ import React, { useState, useEffect, useCallback } from "react";
 // Import Embla Carousel
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { RootState, AppDispatch } from "../../redux/store";
+import { fetchActiveCategories } from "./CategorySlice";
 // SVG
 import Beauty from "../../assets/HomePage/Category/beauty.svg";
 import Book from "../../assets/HomePage/Category/book.svg";
@@ -52,6 +56,10 @@ const useResponsiveSlides = () => {
 
 const Category: React.FC = () => {
   const itemsPerPage = useResponsiveSlides();
+  const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { categories: categoryList, status, error } = useSelector((state: RootState) => state.category);
 
   // Embla Carousel setup with the Autoplay plugin
   // It stops on hover/interaction by default.
@@ -90,30 +98,36 @@ const Category: React.FC = () => {
   }, [emblaApi]);
 
 
-  const categories: { icon: string; title: string }[] = [
+  const categories: { icon: string; title: string, slug: string }[] = [
     // Your category data remains the same...
-    { icon: MenFashion, title: "Men's Fashion" },
-    { icon: Phone, title: "Phones & Accessories" },
-    { icon: TV, title: "Electronic equipment" },
-    { icon: Laptop, title: "PC & Laptop" },
-    { icon: Camera, title: "Cameras and Camcorders" },
-    { icon: Watch, title: "Watch" },
-    { icon: MenShoes, title: "Men's shoes" },
-    { icon: Electric, title: "Household electrical appliances" },
-    { icon: TennisRacket, title: "Sports and travel" },
-    { icon: Motorbike, title: "Cars & Motorcycles & Bicycles" },
-    { icon: WomenFashion, title: "Women's Fashion" },
-    { icon: Kid, title: "Mother and Baby" },
-    { icon: Home, title: "Home & Life" },
-    { icon: Beauty, title: "Beauty" },
-    { icon: Yoga, title: "Health" },
-    { icon: HighHeels, title: "Women's shoes" },
-    { icon: PurseWallet, title: "Women's bags and wallets" },
-    { icon: Bracelet, title: "Women's accessories and jewelry" },
-    { icon: ConvenienceStore, title: "Online Grocery" },
-    { icon: Book, title: "Online Bookstore" },
+    { icon: MenFashion, title: "Men's Fashion", slug: "" },
+    { icon: Phone, title: "Phones & Accessories", slug: "" },
+    { icon: TV, title: "Electronic equipment", slug: "" },
+    { icon: Laptop, title: "PC & Laptop", slug: "" },
+    { icon: Camera, title: "Cameras and Camcorders", slug: "" },
+    { icon: Watch, title: "Watch", slug: "" },
+    { icon: MenShoes, title: "Men's shoes", slug: "" },
+    { icon: Electric, title: "Household electrical appliances", slug: "" },
+    { icon: TennisRacket, title: "Sports and travel", slug: "" },
+    { icon: Motorbike, title: "Cars & Motorcycles & Bicycles", slug: "" },
+    { icon: WomenFashion, title: "Women's Fashion", slug: "" },
+    { icon: Kid, title: "Mother and Baby", slug: "" },
+    { icon: Home, title: "Home & Life", slug: "" },
+    { icon: Beauty, title: "Beauty", slug: "" },
+    { icon: Yoga, title: "Health", slug: "" },
+    { icon: HighHeels, title: "Women's shoes", slug: "" },
+    { icon: PurseWallet, title: "Women's bags and wallets", slug: "" },
+    { icon: Bracelet, title: "Women's accessories and jewelry", slug: "" },
+    { icon: ConvenienceStore, title: "Online Grocery", slug: "" },
+    { icon: Book, title: "Online Bookstore", slug: "" },
   ];
-  
+
+  if (categoryList) {
+    for(let i = 0; i < categoryList.length; i++) {
+      categories[i].slug = categoryList[i].slug;
+    }
+  }
+
   // Chunk categories into pages. Each page will be one slide.
   const categoryPages = [];
   for (let i = 0; i < categories.length; i += itemsPerPage) {
@@ -126,6 +140,16 @@ const Category: React.FC = () => {
     if (itemsPerPage === 8) return 'grid-rows-2 grid-cols-4';  // Tablet
     return 'grid-rows-2 grid-cols-3';                          // Mobile
   };
+
+  useEffect(() => {
+    // Fetch active categories when component mounts
+    const promise = dispatch(fetchActiveCategories());
+
+    return () => {
+      // Cleanup if needed
+      promise.abort();
+    };
+  }, [dispatch]);
 
   return (
     <section className="w-full py-8 md:py-12 bg-white relative">
@@ -143,6 +167,9 @@ const Category: React.FC = () => {
                   <div className={`grid ${gridClasses()} gap-3 md:gap-6 px-1 md:px-2`}>
                     {page.map((category, itemIndex) => (
                       <div
+                        onClick={() => {
+                          navigate(`/category/${category.slug}`, { replace: true });
+                        }}
                         key={pageIndex * itemsPerPage + itemIndex}
                         className="flex flex-col items-center justify-center p-3 md:p-4 rounded-lg hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1 group/item"
                       >
