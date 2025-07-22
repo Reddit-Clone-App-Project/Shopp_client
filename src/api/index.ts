@@ -1,6 +1,6 @@
 import axios from "axios";
 import { store } from "../redux/store";
-import { fetchNewAccessToken, handleLogout, handleLogout as logoutaction } from "../features/Auth/AuthSlice";
+import { fetchNewAccessToken, logoutClientSide } from "../features/Auth/AuthSlice";
 import history from "../history";
 
 const API = axios.create({
@@ -20,56 +20,44 @@ API.interceptors.request.use((config) => {
 });
 
 // This interceptor ADDS the token to every request
-API.interceptors.request.use((config) => {
-    const token = store.getState().auth.accessToken;
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
-
-// This interceptor RESPONDS to errors
 API.interceptors.response.use(
-  (response) => response, // Simply return the successful response
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const status = error.response ? error.response.status : null;
 
-    // Check if the error is because the token expired (e.g., status 401)
-    // and if we haven't already tried to refresh the token for this request
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark that we've tried to refresh
+    if (status === 401 && !originalRequest._retry) {
+      if (originalRequest.url.endsWith('/refresh')) {
+          console.error("Refresh token is invalid, logging out.");
+          store.dispatch(logoutClientSide()); 
+          history.push('/login');
+          return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
 
       try {
-        // Attempt to get a new access token
         const resultAction = await store.dispatch(fetchNewAccessToken());
 
-        // Check if the refresh was successful
         if (fetchNewAccessToken.fulfilled.match(resultAction)) {
           const newAccessToken = resultAction.payload.accessToken;
           API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-          
-          // Retry the original request with the new token
           return API(originalRequest);
         } else {
-            // If the refresh fails, redirect to login
-            await store.dispatch(handleLogout());
-            history.push('/login');
-            // For now, we'll just reject the promise
-            return Promise.reject(resultAction);
+          console.error("fetchNewAccessToken was rejected, logging out.");
+          store.dispatch(logoutClientSide());
+          history.push('/login');
+          return Promise.reject(resultAction);
         }
-
       } catch (refreshError) {
-        // Handle failed refresh (e.g., logout user, redirect to login)
-        await store.dispatch(handleLogout());
+        console.error("A critical error occurred during token refresh, logging out.");
+        store.dispatch(logoutClientSide());
         history.push('/login');
         return Promise.reject(refreshError);
       }
     }
-
-    // For any other errors, just pass them on
+    
     return Promise.reject(error);
   }
 );
