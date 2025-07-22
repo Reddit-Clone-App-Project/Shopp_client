@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../redux/store";
+import axios from "axios";
+import { handleLogout } from "../Auth/AuthSlice";
 // SVG
 import Bell from "../../assets/HomePage/Header/bell.svg";
 import GitHub from "../../assets/HomePage/Header/github-white.svg";
@@ -11,7 +13,7 @@ import Menu from "../../assets/HomePage/Header/hamburger_menu.svg";
 import CloseIcon from "../../assets/HomePage/Header/Close.svg";
 import Logo from "../../assets/Logo.svg";
 import GenericAvatar from "../../assets/generic-avatar.svg";
-import axios from "axios";
+import { deleteProfile } from "../UserProfile/UserProfileSlice";
 
 /* A custom hook for debouncing
  * @param value - The value to debounce
@@ -36,9 +38,11 @@ const useDebounce = (value: string, delay: number) => {
 
 const BuyerHeader: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { status, error, user } = useSelector(
     (state: RootState) => state.profile
   );
@@ -50,6 +54,7 @@ const BuyerHeader: React.FC = () => {
     useState<number>(-1);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle search
   const handleSearch = () => {
@@ -84,6 +89,30 @@ const BuyerHeader: React.FC = () => {
     }
   };
 
+  const handleClickLogout = async () => {
+    try {
+      await dispatch(handleLogout());
+      dispatch(deleteProfile());
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  }
+
+  // Handle Escape key to close dropdown
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
   useEffect(() => {
     if (debouncedSearchTerm) {
       axios
@@ -107,18 +136,32 @@ const BuyerHeader: React.FC = () => {
 
   // Handle click outside to close suggestions
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: Event) => {
+      const target = event.target as Element;
+
       if (
         searchContainerRef.current &&
-        !searchContainerRef.current.contains(event.target as Node)
+        target &&
+        !searchContainerRef.current.contains(target)
       ) {
         setSuggestions([]);
+      }
+
+      if (
+        dropdownRef.current &&
+        target &&
+        !dropdownRef.current.contains(target)
+      ) {
+        setIsDropdownOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, []);
 
@@ -158,9 +201,9 @@ const BuyerHeader: React.FC = () => {
                 Notification
               </span>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="relative" ref={dropdownRef}>
               {status !== "succeeded" ? (
-                <>
+                <div className="flex items-center space-x-4">
                   <Link to="/register" className="hover:underline">
                     Register
                   </Link>
@@ -168,13 +211,56 @@ const BuyerHeader: React.FC = () => {
                   <Link to="/login" className="hover:underline">
                     Login
                   </Link>
-                </>
+                </div>
               ) : (
-                <img
-                  className="h-8"
-                  src={user?.profile_img ?? GenericAvatar}
-                  alt="Profile image"
-                />
+                <>
+                  <div
+                    className="flex items-center gap-2 cursor-pointer"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <span className="text-white">{user?.username}</span>
+                    <img
+                      className="h-6 cursor-pointer hover:opacity-80"
+                      src={user?.profile_img ?? GenericAvatar}
+                      alt="Profile image"
+                    />
+                  </div>
+
+                  {isDropdownOpen && (
+                    <>
+                      {/* Invisible backdrop to capture outside clicks */}
+                      <div
+                        className="fixed inset-0 z-5"
+                        onClick={() => setIsDropdownOpen(false)}
+                      />
+                      <div className="absolute flex flex-col bg-white text-black top-8 right-0 shadow-lg rounded-md overflow-hidden min-w-[120px] z-10">
+                        <Link
+                          to="/profile"
+                          className="px-4 py-2 hover:bg-gray-100 text-sm"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          My Account
+                        </Link>
+                        <Link
+                          to="/carts"
+                          className="px-4 py-2 hover:bg-gray-100 text-sm"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          My Orders
+                        </Link>
+                        <button
+                          className="px-4 py-2 hover:bg-gray-100 text-sm text-left"
+                          onClick={() => {
+                            setIsDropdownOpen(false)
+                            handleClickLogout();
+                          }}
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -347,11 +433,39 @@ const BuyerHeader: React.FC = () => {
                     </Link>
                   </>
                 ) : (
-                  <img
-                    className="h-8"
-                    src={user?.profile_img ?? GenericAvatar}
-                    alt="Profile image"
-                  />
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 p-2">
+                      <span className="text-white">{user?.username}</span>
+                      <img
+                        className="h-6 cursor-pointer hover:opacity-80"
+                        src={user?.profile_img ?? GenericAvatar}
+                        alt="Profile image"
+                      />
+                    </div>
+                    <Link
+                      to="/profile"
+                      className="block text-white hover:bg-purple-700 p-2 rounded"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Account
+                    </Link>
+                    <Link
+                      to="/carts"
+                      className="block text-white hover:bg-purple-700 p-2 rounded"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    <button
+                      className="block text-white hover:bg-purple-700 p-2 rounded w-full text-left"
+                      onClick={() => {
+                        setIsMobileMenuOpen(false)
+                        handleClickLogout();
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

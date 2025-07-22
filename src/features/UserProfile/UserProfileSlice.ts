@@ -28,7 +28,8 @@ export interface Profile {
         date_of_birth: Date,
         role: "buyer" | "seller",
         phone_number: string,
-        nationality: string
+        nationality: string,
+        username: string
     } | null
 }
 
@@ -42,6 +43,11 @@ const ProfileSlice = createSlice({
     name: 'profile',
     initialState,
     reducers: {  
+        deleteProfile: (state) => {
+            state.user = null;
+            state.status = 'idle';
+            state.error = null;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -61,4 +67,5 @@ const ProfileSlice = createSlice({
     }
 })
 
+export const { deleteProfile } = ProfileSlice.actions;
 export default ProfileSlice.reducer;
