@@ -1,7 +1,7 @@
 import axios from "axios";
 import { store } from "../redux/store";
 import { fetchNewAccessToken, handleLogout, handleLogout as logoutaction } from "../features/Auth/AuthSlice";
-import { useNavigate } from "react-router-dom";
+import history from "../history";
 
 const API = axios.create({
     baseURL: "http://localhost:3000",
@@ -56,7 +56,7 @@ API.interceptors.response.use(
         } else {
             // If the refresh fails, redirect to login
             await store.dispatch(handleLogout());
-            // navigate('/login');
+            history.push('/login');
             // For now, we'll just reject the promise
             return Promise.reject(resultAction);
         }
@@ -64,7 +64,7 @@ API.interceptors.response.use(
       } catch (refreshError) {
         // Handle failed refresh (e.g., logout user, redirect to login)
         await store.dispatch(handleLogout());
-        // navigate('/login');
+        history.push('/login');
         return Promise.reject(refreshError);
       }
     }
