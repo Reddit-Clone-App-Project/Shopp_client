@@ -146,9 +146,6 @@ const AuthSlice = createSlice({
   },
 });
 
-<<<<<<< HEAD
 export const { logoutClientSide } = AuthSlice.actions;
 
-=======
->>>>>>> ec339a4 (Patch/Refresh_Token_#1)
 export default AuthSlice.reducer;
