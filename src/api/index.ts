@@ -43,6 +43,11 @@ export const getStoreReleasedRuledDiscounts = (storeId: number) => API.get(`/sto
 export const searchProducts = (q: string, limit: number = 60, offset: number = 0, sortBy: string = 'Relevance', minPrice: number | null = null, maxPrice: number | null = null, rating: number | null = null) => API.get(`/products/search?q=${q}&limit=${limit}&offset=${offset}&sortBy=${sortBy}${minPrice !== null ? `&minPrice=${minPrice}` : ''}${maxPrice !== null ? `&maxPrice=${maxPrice}` : ''}${rating !== null ? `&rating=${rating}` : ''}`);
 export const searchByCategory = (categoryId: number, limit: number = 60, offset: number = 0, sortBy: string = 'Most Popular', minPrice: number | null = null, maxPrice: number | null = null, rating: number | null = null) => API.get(`/categories/products/${categoryId}?limit=${limit}&offset=${offset}&sortBy=${sortBy}${minPrice !== null ? `&minPrice=${minPrice}` : ''}${maxPrice !== null ? `&maxPrice=${maxPrice}` : ''}${rating !== null ? `&rating=${rating}` : ''}`);
 
+// ----------Important--------------------
+
+export const getNewAccessToken = () => API.get("/refresh");
+
+// ---------------------------------------
 
 //! Buyers
 export const getBuyerAddress = () => API.get("/users/me/address");
