@@ -88,6 +88,7 @@ const initialState: AuthState = {
 const AuthSlice = createSlice({
   name: "auth",
   initialState,
+
   reducers: {
     logoutClientSide: (state) => {
       state.accessToken = null;
@@ -145,6 +146,9 @@ const AuthSlice = createSlice({
   },
 });
 
+<<<<<<< HEAD
 export const { logoutClientSide } = AuthSlice.actions;
 
+=======
+>>>>>>> ec339a4 (Patch/Refresh_Token_#1)
 export default AuthSlice.reducer;
