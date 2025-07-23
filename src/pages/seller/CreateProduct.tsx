@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
 import SellerBlackHeader from '../../components/SellerBlackHeader';
 // SVG
@@ -6,14 +6,16 @@ import AddImage from '../../assets/addImage.svg';
 import Chat from '../../assets/chat.svg';
 import Cart from '../../assets/HomePage/Header/shopping-cart.svg';
 import BasicInformation from '../../features/CreateProduct/BasicInformation';
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../redux/store";
+import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
 import axios from "axios";
 import SalesInformation from '../../features/CreateProduct/SalesInformation';
 
 export type ProductDataType = {
     name: string;
     category: string;
+    store_id: number;
     description: string;
     productImage: (string | File)[];
     promotionImage: string | File;
@@ -42,9 +44,13 @@ export type VariantDataType = {
 const CreateProduct = () => {
     const [step, setStep] = useState(1);
     const { accessToken } = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch<AppDispatch>();
+    const stores = useSelector((state: RootState) => state.stores.stores);
+    const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
     const [productData, setProductData] = useState<ProductDataType>({
         name: '',
         category: '',
+        store_id: 0,
         description: '',
         productImage: [],
         promotionImage: '',
@@ -74,6 +80,18 @@ const CreateProduct = () => {
         price,
     } = productData;
 
+    useEffect(() => {
+        dispatch(fetchStoreOwned());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (stores.length > 0 && selectedStoreId == null) {
+            dispatch(setSelectedStoreId(stores[0].id));
+        };
+    }, [stores, selectedStoreId, dispatch]);
+
+    
+
     const handleFinalSubmit = async () => {
         try {
             await axios.post('http://localhost:3000/products/create', productData,
@@ -101,7 +119,7 @@ const CreateProduct = () => {
         <>
             <SellerBlackHeader section={'Product Management > Add a Product'} />
             <div className='w-full min-h-screen flex gap-3 justify-between items-start text-white bg-gray-950 pt-20 px-6'>
-                <div className='w-1/6 bg-slate-700 px-2.5 pt-2.5 pb-4 mt-4'>
+                <div className='w-1.5/6 bg-slate-700 px-2.5 pt-2.5 pb-4 mt-4'>
                     <h3 className='font-semibold mb-2.5 text-sm'>Suggested information filling</h3>
                     <ul className='space-y-2 text-[0.8rem] font-light'>
                         <li>✓ Add at least 3 images</li>
@@ -115,11 +133,15 @@ const CreateProduct = () => {
                         </li>
                     </ul>
                 </div>
-                {step === 1 && <BasicInformation data={productData} onChange={setProductData} onNext={goNext} />}
-                {step === 2 && <SalesInformation data={productData} onChange={setProductData} onBack={goBack} onSubmit={handleFinalSubmit} />}
+                <div className='w-5/6'>
+                    {step === 1 && <BasicInformation data={productData} onChange={setProductData} onNext={goNext} />}
+                    {step === 2 && <SalesInformation data={productData} onChange={setProductData} onBack={goBack} onSubmit={handleFinalSubmit} />}
+                </div>
+                
+                
                 {/* Preview */}
 
-                <div className='w-1/4 bg-slate-700 px-2.5 py-2 mt-4'>
+                <div className='w-1.5/6 bg-slate-700 px-2.5 py-2 mt-4'>
                     <p className='font-semibold'>Preview</p>
                     <img
                         src={promotionImage ? (typeof promotionImage === 'string' ? promotionImage : URL.createObjectURL(promotionImage)) : AddImage}

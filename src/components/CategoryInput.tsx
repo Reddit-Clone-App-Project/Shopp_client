@@ -47,7 +47,7 @@ const CategoryInput: FC<ComboboxProps> = ({ options, placeholder, onSelect }) =>
     // --- DATA & DERIVED STATE ---
     // Filter options based on the input value.
     const filteredOptions = options.filter(option => 
-        option.toLowerCase().includes(inputValue.toLowerCase())
+        option.toLowerCase().startsWith(inputValue.toLowerCase())
     );
 
     // --- EVENT HANDLERS ---
@@ -89,8 +89,8 @@ const CategoryInput: FC<ComboboxProps> = ({ options, placeholder, onSelect }) =>
                     selectOption(filteredOptions[highlightedIndex]);
                 }
                 break;
-        }
-    }
+        };
+    };
 
     return (
         <div className='relative' ref={containerRef}>
@@ -103,7 +103,7 @@ const CategoryInput: FC<ComboboxProps> = ({ options, placeholder, onSelect }) =>
                     onFocus={handleInputFocus}
                     onKeyDown={handleKeyDown}
                     placeholder={placeholder}
-                    className='w-full pl-4 pr-12 py-3 border border-slate-400 text-slate-400 rounded-md focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all duration-200'
+                    className='w-full pl-2 pr-12 py-3 border border-slate-400 rounded-md focus:outline-none focus:ring-1 focus:ring-white focus:border-white transition-all duration-200'
                     role='combobox'
                     aria-haspopup="listbox"
                     aria-expanded={isOpen}
@@ -130,6 +130,7 @@ const CategoryInput: FC<ComboboxProps> = ({ options, placeholder, onSelect }) =>
                         filteredOptions.map((option, index) => (
                             <li
                                 key={option}
+                                onMouseDown={() => selectOption(option)}
                                 id={`${comboboxId}-option-${index}`}
                                 role='option'
                                 aria-selected={index === highlightedIndex}

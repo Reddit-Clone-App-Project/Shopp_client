@@ -81,7 +81,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
             <div className='mt-4'>
                 <div className='flex bg-slate-700 h-12'>
                     <div className='flex-1 flex justify-start items-center'>
-                        <p className='ml-5'>Basic information</p>
+                        <p className='ml-5 hover:cursor-pointer hover:text-[#A567C6]' onClick={onBack}>Basic information</p>
                         <p className='ml-5 text-[#A567C6]'>Sales information</p>
                         <div className='bg-[#A567C6] ml-39 h-0.5 w-36 absolute self-end'></div>
                     </div>
@@ -183,7 +183,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                 At least 2 variants and max 10 variants
                             </label>
                             <div className='flex'>
-                                <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 text-slate-400 w-[50%] mr-6' 
+                                <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[50%] mr-6' 
                                     type="text"
                                     id='variant-name'
                                     placeholder="Enter variant name here" 
@@ -192,7 +192,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                     onKeyDown={handleKeyDown}
                                 />
                                 <button 
-                                    className="border border-slate-400 px-3 py-1 text-slate-400 rounded-xl hover:cursor-pointer active:text-white active:border-white"
+                                    className="border border-slate-400 px-3 py-1 text-slate-400 rounded-xl hover:cursor-pointer hover:text-white hover:border-white active:text-[#A567C6] active:border-[#A567C6]"
                                     disabled={variantList.length >= 10}
                                     type="button"
                                     onClick={handleCreateVariant}
@@ -317,7 +317,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 value={variant.variantSku}
                                                 onChange={e => handleChangeVariant(idx, "variantSku", e.target.value)}
                                                 />
-                                                <button className="ml-auto mr-1 border border-slate-400 text-slate-400 py-1 px-2 rounded-lg hover:cursor-pointer hover:bg-[#A567C6] hover:border-[#A567C6] hover:text-white"
+                                                <button className="ml-auto mr-1 border border-slate-400 text-slate-400 py-1 px-2 rounded-lg hover:cursor-pointer hover:text-white hover:border-white active:text-[#A567C6] active:border-[#A567C6]"
                                                     onClick={() => handleRemoveVariant(variant.id)}
                                                     type="button">
                                                     Delete Variant
