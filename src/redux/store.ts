@@ -29,7 +29,7 @@ export const store = configureStore({
         search,
         category,
         categoryProducts,
-        stores
+        stores,
         productDetail
     },
 });
