@@ -46,7 +46,7 @@ const CreateProduct = () => {
         name: '',
         category: '',
         description: '',
-        productImage: [''],
+        productImage: [],
         promotionImage: '',
         price: '',
         weight: '',

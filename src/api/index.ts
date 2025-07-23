@@ -84,6 +84,7 @@ export const getProductsReviewByComment = (productId: number, offset: number) =>
 export const getProductsReviewByImage = (productId: number, offset: number) => API.get(`/products/${productId}/reviews/image?limit=25&offset=${offset}`);
 
 export const getStore = (storeId: number) => API.get(`/store/${storeId}`);
+export const getStoreOwned = () => API.get('store/my-store');
 export const getStoreReleasedRuledDiscounts = (storeId: number) => API.get(`/store/${storeId}/discounts`);
 
 // Search

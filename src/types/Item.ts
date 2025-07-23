@@ -16,6 +16,22 @@ interface Store {
     profile_img: string | null;
 }
 
+export interface StoreType {
+    id: number,
+    name: string,
+    address_id: number,
+    profile_img: string,
+    phone_number: string,
+    email: string,
+    express_shipping: boolean,
+    fast_shipping: boolean,
+    economical_shipping: boolean,
+    bulky_shipping: boolean,
+    created_at: string,
+    updated_at: string,
+    is_active: boolean,
+};
+
 interface Category {
     id: number;
     name: string;
