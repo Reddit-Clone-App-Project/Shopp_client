@@ -4,12 +4,12 @@
   Therefore the code will not break
 */
 import React from "react";
-import type { FlashSaleItem, Item } from "../types/Item";
+import type { FlashSaleItem, ProductCard } from "../types/Item";
 import { replace, useNavigate } from "react-router-dom";
 
-const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, item: Item | null }) => { // !The item and the flashSaleItem must be the same type, but for now for some reason I have to separate them
+const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, item: ProductCard | null }) => { // !The item and the flashSaleItem must be the same type, but for now for some reason I have to separate them
   const discountedPrice = (flashSaleItem?.price ?? 0) * (1 - (flashSaleItem?.discount ?? 0) / 100);
-  const prices = item?.variants?.map((variant) => variant.price);
+
 
   const navigate = useNavigate();
   // Function to check if the item is a Item
@@ -33,7 +33,6 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
   }
   */
 
-  const stock_quantity = item?.variants?.reduce((total, variant) => total + variant.stock_quantity, 0);
 
   const formatSoldCount = (sold: number): string => {
     if (sold >= 1000) {
@@ -46,11 +45,6 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
   let progressPercentage
 
   if(item && !flashSaleItem){
-    progressPercentage = Math.min(
-      ((item?.bought ?? 0) / (stock_quantity ?? 1)) * 100,
-      100
-    );
-
     return (
     <div onClick={() => {navigate(`/product/${item.id}`, { replace: true })}} className={`bg-white rounded-sm overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-purple-500`}>
       <div className="relative">
@@ -70,7 +64,7 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
         </p>
         <div className="flex items-baseline mb-2">
           <span className="text-purple-600 text-xl font-semibold">
-            ${Math.max(...prices ?? [0]).toFixed(2) === Math.min(...prices ?? [0]).toFixed(2) ? Math.max(...prices ?? [0]).toFixed(2) : `${Math.max(...prices ?? [0]).toFixed(2)} - ${Math.min(...prices ?? [0]).toFixed(2)}`}
+            ${item.price}
           </span>
         </div>
       </div>
