@@ -85,7 +85,7 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
                 <div className='flex-1 flex justify-start items-center'>
                     <p className='ml-5 text-[#A567C6]'>Basic information</p>
                     <div className='bg-[#A567C6] h-0.5 w-39 absolute self-end'></div>
-                    <p className='ml-5'>Sales information</p>
+                    <p className='ml-5 hover:cursor-pointer hover:text-[#A567C6]' onClick={onNext}>Sales information</p>
                 </div>
             </div>
             <div className='bg-slate-700 px-4 py-4 mt-4'>
@@ -191,7 +191,7 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
 
                 <div className='flex flex-col gap-4 mb-4'>
                     <label htmlFor='product-name'><span className='text-red-500'>*</span>Product Name</label>
-                    <input className='border border-slate-400 focus:border-slate-200 focus:outline-none rounded-md p-2 text-slate-400' type="text" id='product-name' placeholder="Product's name + Brand name + Model + Specifications" value={name} onChange={e => onChange(prev => ({...prev, name: e.target.value}))}/>
+                    <input className='border border-slate-400 focus:border-slate-200 focus:outline-none rounded-md p-2' type="text" id='product-name' placeholder="Product's name + Brand name + Model + Specifications" value={name} onChange={e => onChange(prev => ({...prev, name: e.target.value}))}/>
                 </div>
 
                 <div className='flex flex-col gap-2 mb-2'>
@@ -205,7 +205,7 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
 
                 <div className='flex flex-col gap-2'>
                     <label htmlFor='product-description'><span className='text-red-500'>*</span>Product Description</label>
-                    <textarea className='border border-slate-400 p-2 rounded-md text-slate-400' id='product-description' placeholder='Product description' rows={5} value={description} onChange={e => onChange(prev => ({...prev, description: e.target.value}))}></textarea>
+                    <textarea className='border border-slate-400 p-2 rounded-md' id='product-description' placeholder='Product description' rows={5} value={description} onChange={e => onChange(prev => ({...prev, description: e.target.value}))}></textarea>
                     <p className='text-slate-400 self-start ml-1'>{description.length}/3000</p>
                 </div>
                 <button

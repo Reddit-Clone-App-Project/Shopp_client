@@ -49,7 +49,7 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section}) => {
           <img 
             src={SellerLogo} 
             alt="Seller Logo" 
-            className="ml-7"
+            className="w-[100%]"
           />
           
           {/* Breadcrumb - hidden on mobile, visible from md upwards */}
