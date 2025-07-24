@@ -14,7 +14,6 @@ import { handleLogout } from "../features/Auth/AuthSlice";
 import { AppDispatch } from "../redux/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { milliseconds } from "date-fns";
 
 type HeaderProps = {
     section: string;
