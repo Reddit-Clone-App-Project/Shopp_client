@@ -15,7 +15,6 @@ import SalesInformation from '../../features/CreateProduct/SalesInformation';
 export type ProductDataType = {
     name: string;
     category: string;
-    store_id: number;
     description: string;
     productImage: (string | File)[];
     promotionImage: string | File;
@@ -50,7 +49,6 @@ const CreateProduct = () => {
     const [productData, setProductData] = useState<ProductDataType>({
         name: '',
         category: '',
-        store_id: 0,
         description: '',
         productImage: [],
         promotionImage: '',
@@ -94,11 +92,15 @@ const CreateProduct = () => {
 
     const handleFinalSubmit = async () => {
         try {
-            await axios.post('http://localhost:3000/products/create', productData,
+            await axios.post('http://localhost:3000/products/create', 
+                {
+                    ...productData,
+                    store_id: selectedStoreId,
+                },
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
-                    }
+                    },
                 }
             );
             toast.success('Product created successfully!');
@@ -117,7 +119,11 @@ const CreateProduct = () => {
 
     return (
         <>
-            <SellerBlackHeader section={'Product Management > Add a Product'} />
+            <SellerBlackHeader 
+                section={'Product Management > Add a Product'}
+                mLogo={1}
+                mSection={6}
+            />
             <div className='w-full min-h-screen flex gap-3 justify-between items-start text-white bg-gray-950 pt-20 px-6'>
                 <div className='w-1.5/6 bg-slate-700 px-2.5 pt-2.5 pb-4 mt-4'>
                     <h3 className='font-semibold mb-2.5 text-sm'>Suggested information filling</h3>

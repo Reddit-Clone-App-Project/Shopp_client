@@ -17,9 +17,11 @@ import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
     section: string;
+    mLogo: number;
+    mSection: number;
 };
 
-const SellerBlackHeader: React.FC<HeaderProps> = ({section}) => {
+const SellerBlackHeader: React.FC<HeaderProps> = ({section, mLogo, mSection}) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,13 +51,13 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section}) => {
           <img 
             src={SellerLogo} 
             alt="Seller Logo" 
-            className="w-[100%]"
+            className={`w-[100%] ml-${mLogo}`}
           />
           
           {/* Breadcrumb - hidden on mobile, visible from md upwards */}
         </div>
 
-          <div className="text-white text-2xl ml-20">
+          <div className={`text-white text-2xl ml-${mSection}`}>
             {section}
           </div>
 

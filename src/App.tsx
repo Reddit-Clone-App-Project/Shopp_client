@@ -44,14 +44,15 @@ const router = createBrowserRouter(
 
       <Route path="/seller">
         <Route index element={<SellerLandingPage />} />
-        <Route
+        <Route path="dashboard" element={<SellerDashboard />} />
+        {/*<Route
           path="dashboard"
           element={
             <PrivateRoute allowedRoles={['seller', 'admin']}>
               <SellerDashboard />
             </PrivateRoute>
           }
-        />
+        />*/}
         {/* Route /seller/create is using for testing, changes will be made later */}
         <Route path="create" element={<CreateProduct />} />
       </Route>
