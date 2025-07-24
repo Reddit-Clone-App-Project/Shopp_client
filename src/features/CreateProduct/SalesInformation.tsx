@@ -213,7 +213,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                         className="cursor-pointer flex justify-between items-center"
                                         onClick={() => setActiveIndex(activeIndex === idx ? null : idx)}
                                     >
-                                        <span className="text-lg font-semibold">
+                                        <span className="text-lg font-semibold text-[#A567C6]">
                                             {variant.variantName}
                                         </span>
                                         <span>{activeIndex === idx ? "▲" : "▼"}</span>
@@ -225,7 +225,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 <span className='text-red-500'>*</span>
                                                 Variant name
                                             </label>
-                                            <label htmlFor={`variant-price-${idx}`} className='font-semibold text-[0.8rem] ml-34'>
+                                            <label htmlFor={`variant-price-${idx}`} className='font-semibold text-[0.8rem] ml-85'>
                                                 <span className='text-red-500'>*</span>
                                                 Price in US dollar
                                             </label>
@@ -238,7 +238,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                             >
                                                 
                                                 <input
-                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2"
+                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[52%]"
                                                 id={`variant-name-${idx}`}
                                                 placeholder="Enter Name"
                                                 type="text"
@@ -246,7 +246,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 onChange={e => handleChangeVariant(idx, "variantName", e.target.value)}
                                                 />
                                                 <input
-                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2"
+                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 ml-6"
                                                 id={`variant-price-${idx}`}
                                                 placeholder="Enter Price"
                                                 type="text"
@@ -260,7 +260,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                         <span className='text-red-500'>*</span>
                                                         Weight (lbs) - After packing
                                                     </label>
-                                                    <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[50%]' 
+                                                    <input className='border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[52%]' 
                                                         type="text"
                                                         id={`variant-weight-${idx}`} 
                                                         placeholder="Enter weight here" 
@@ -310,7 +310,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                             >
                                                 
                                                 <input
-                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2"
+                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[52%]"
                                                 id={`variant-sku-${idx}`}
                                                 placeholder="Enter Sku"
                                                 type="text"
