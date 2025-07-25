@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { fetchBuyerAddress } from "../../features/BuyerAddress/BuyerAddressSlice";
 import { fetchStore } from "../../features/StoreSlice/StoreSlice";
 import { countTime } from "../../utility/countTime";
+import { fetchProductById, clearProduct } from "../../features/ProductDetail/ProductDetailSlice";
 import Review from "../../features/Review/Review";
 import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
 import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
@@ -32,12 +33,13 @@ import Chat from "../../assets/chat.svg";
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const { products } = useSelector(
-    (state: RootState) => state.suggestionOfTheDay
-  );
+  
+  const product = useSelector((state: RootState) => state.productDetail.product);
+
   const { address, status: addressStatus } = useSelector(
     (state: RootState) => state.buyerAddress
   );
+
   const { store, status: storeStatus } = useSelector(
     (state: RootState) => state.storeProfile
   );
@@ -46,9 +48,6 @@ const ProductPage: React.FC = () => {
 
   const { id } = useParams<{ id: string }>();
 
-  const product = products.find(
-    (product: Item) => product.id.toString() === id
-  );
 
   // This is the selected image for the product
   const [selectedImage, setSelectedImage] = useState<ItemImage | null>(
@@ -128,7 +127,7 @@ const ProductPage: React.FC = () => {
       setSelectedImage(variant.images[0]);
     } else {
       // If the variant has no images, fallback to the product's promotion image
-      setSelectedImage(product.promotion_image || null);
+      setSelectedImage(product?.promotion_image || null);
     }
   };
 
@@ -264,15 +263,21 @@ const ProductPage: React.FC = () => {
       </div>
 
       <nav className="hidden md:block ml-16 pt-[124px] text-lg">
-        <Link to="/">Shopp</Link>
-        {product.category_hierarchy?.map(
-          (category: { id: number; name: string; slug: string }) => (
-            <>
-              {" "}
-              / <Link to={`/category/${category.slug}`}>{category.name}</Link>
+        {product ? (
+          <>
+            <Link to="/">Shopp</Link>
+            {product.category_hierarchy?.map(
+              (category: { id: number | null; name: string | null; slug: string | null }) => (
+                <>
+                  {" "}
+                  / <Link to={`/category/${category.slug}`}>{category.name}</Link>
             </>
           )
-        )}
+        )}</>) 
+        :
+        (
+          <div className="bg-[#d9d9d9] h-5 w-16 rounded-lg"></div>
+        ) }
       </nav>
       <main className="pt-10 md:pt-0 md:mx-8 my-4">
         <div className="w-full flex flex-col md:flex-row">
@@ -280,28 +285,34 @@ const ProductPage: React.FC = () => {
           <div className="w-full md:w-2/3 flex flex-col md:flex-row bg-white pb-4">
             {/* Carousel cho Mobile */}
             <div className="md:hidden relative">
-              <div className="overflow-hidden" ref={emblaRef}>
-                <div className="flex">
-                  {allImages.map((image, index) => (
-                    <div className="flex-[0_0_100%] min-w-0" key={index}>
-                      <img
-                        src={image.url}
-                        alt={image.alt_text || `Product Image ${index + 1}`}
-                        className="w-full aspect-square object-cover"
-                      />
+              {allImages.length > 0 ? (
+                <>
+                  <div className="overflow-hidden" ref={emblaRef}>
+                    <div className="flex">
+                      {allImages.map((image, index) => (
+                        <div className="flex-[0_0_100%] min-w-0" key={index}>
+                          <img
+                            src={image.url}
+                            alt={image.alt_text || `Product Image ${index + 1}`}
+                            className="w-full aspect-square object-cover"
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
+                  </div>
 
-              {allImages.length > 1 && (
-                <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white text-xs px-2.5 py-1 rounded-full">
-                  {currentSlide + 1} / {allImages.length}
-                </div>
-              )}
+                  {allImages.length > 1 && (
+                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white text-xs px-2.5 py-1 rounded-full">
+                    {currentSlide + 1} / {allImages.length}
+                    </div>
+                  )}
+                </>
+                )
+              :<div className="bg-[#d9d9d9]"></div>
+              }
             </div>
 
-            {product.variants.length > 1 && (
+            {product.variants ? (product.variants.length > 1 ? (
               <div className="md:hidden pl-2 py-2">
                 <p className="text-sm font-semibold">{product.variants.length} variants available</p>
                 <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
@@ -335,7 +346,15 @@ const ProductPage: React.FC = () => {
                   })}
                 </div>
               </div>
-            )}
+            ) : <></>) : <div className="flex items-center justify-center">
+               <div className="bg-[#d9d9d9] w-5 h-5"></div>
+               <div className="bg-[#d9d9d9] w-5 h-5"></div>
+               <div className="bg-[#d9d9d9] w-5 h-5"></div>
+               <div className="bg-[#d9d9d9] w-5 h-5"></div>
+               <div className="bg-[#d9d9d9] w-5 h-5"></div>
+            </div>}
+
+            
 
             {/* Images for desktop */}
             <div className="hidden md:block">
@@ -438,7 +457,7 @@ const ProductPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
                     <div className="flex items-center">
-                      {countStars(product.average_rating)}
+                      {product.average_rating ? countStars(Number(product.average_rating)) : countStars(0)}
                     </div>{" "}
                     <span className="text-blue-500">
                       {product.average_rating ?? 0}
@@ -465,7 +484,7 @@ const ProductPage: React.FC = () => {
               <p className="mt-4 hidden md:inline">
                 Remain: {currentVariant?.stock_quantity || 0}
               </p>
-              {product.variants.length > 1 && (
+              {product.variants && (product.variants.length > 1 && (
                 <div className="hidden md:flex gap-4 mt-2">
                   <div className="flex">
                     <p>Variants</p>
@@ -487,7 +506,7 @@ const ProductPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              )}
+              ))}
               <div className="hidden md:flex gap-4 mt-4">
                 <p>Quantity</p>
                 <div className="flex items-center gap-4">
@@ -634,7 +653,7 @@ const ProductPage: React.FC = () => {
                     Shopp
                   </Link>
                   {product.category_hierarchy?.map(
-                    (category: { id: number; name: string; slug: string }) => (
+                    (category: { id: number; name: string; slug: string | null }) => (
                       <>
                         {" "}
                         /{" "}
@@ -653,11 +672,11 @@ const ProductPage: React.FC = () => {
               <div className="flex justify-between items-center mb-4">
                 <p>Total Amounts</p>
                 <p className="">
-                  {product.variants.reduce(
+                  {product.variants && (product.variants.reduce(
                     (total: number, variant: ItemVariant) =>
                       total + variant.stock_quantity,
                     0
-                  )}
+                  ))}
                 </p>
               </div>
 
@@ -670,7 +689,7 @@ const ProductPage: React.FC = () => {
             {/* Rating */}
             <Review
               total_reviews={product.total_reviews}
-              average_rating={product.average_rating}
+              average_rating={Number(product.average_rating)}
               countStars={countStars}
               stars_5={product.stars_5}
               stars_4={product.stars_4}
@@ -683,12 +702,16 @@ const ProductPage: React.FC = () => {
           </div>
 
           <div>
-            <StoreDiscount store_id={product.store.id} />
-            <StoreHotProduct store_id={product.store.id} />
+            {product.store ? (
+              <>
+                <StoreDiscount store_id={product.store.id} />
+                <StoreHotProduct store_id={product.store.id} />
+              </>
+            ) : <></>}
           </div>
         </div>
 
-        <StoreProducts store_id={product.store.id} />
+        {product.store ? <StoreProducts store_id={product.store.id} /> : <></>}
         <SuggestionOfTheDay />
       </main>
 

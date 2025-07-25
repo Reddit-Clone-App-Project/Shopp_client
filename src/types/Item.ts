@@ -70,6 +70,15 @@ export interface Item {
     created_at: Date;
     updated_at: Date;
     is_published: boolean;
+    average_rating: string; 
+    total_reviews: number;
+    stars_5: number;
+    stars_4: number;
+    stars_3: number;
+    stars_2: number;
+    stars_1: number;
+    have_comment: number;
+    have_image: number;
     views: string;
     bought: number;
     sku: string;
