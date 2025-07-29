@@ -26,6 +26,12 @@ API.interceptors.response.use(
     const originalRequest = error.config;
     const status = error.response ? error.response.status : null;
 
+    const accessToken = store.getState().auth.accessToken;
+    if (status === 401 && !accessToken) {
+        console.log("User is not authenticated. No refresh attempt needed.");
+        return Promise.reject(error);
+    }
+
     if (status === 401 && !originalRequest._retry) {
       if (originalRequest.url.endsWith('/refresh')) {
           console.error("Refresh token is invalid, logging out.");
@@ -41,7 +47,7 @@ API.interceptors.response.use(
 
         if (fetchNewAccessToken.fulfilled.match(resultAction)) {
           const newAccessToken = resultAction.payload.accessToken;
-          API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
+          // API.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
           originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
           return API(originalRequest);
         } else {

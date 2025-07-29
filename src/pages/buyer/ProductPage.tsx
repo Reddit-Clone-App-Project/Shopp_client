@@ -174,7 +174,7 @@ const ProductPage: React.FC = () => {
   useEffect(() => {
     if (!product) {
       // If product not found, redirect to home page
-      navigate("/");
+      // navigate("/");
     } else {
       // Initialize states when product is available - reset for new product
       if (product.promotion_image) {
@@ -192,7 +192,7 @@ const ProductPage: React.FC = () => {
   useEffect(() => {
     if (!product) {
       // If product not found, redirect to home page
-      navigate("/");
+      // navigate("/");
     }
   }, []);
 
