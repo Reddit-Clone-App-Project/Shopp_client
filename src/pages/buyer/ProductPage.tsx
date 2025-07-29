@@ -215,6 +215,11 @@ const ProductPage: React.FC = () => {
     }
   }, [dispatch, id]);
 
+  // Scroll to top when component mounts or product ID changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
+
   // Update the current image when the selected image changes
   useEffect(() => {
     if (selectedImage) {
@@ -254,9 +259,256 @@ const ProductPage: React.FC = () => {
     };
   }, [emblaApi]);
 
-  // Return null or loading state if product is not found
+  // Skeleton Loading Component
+  const ProductSkeleton = () => (
+    <div className="bg-gray-100 animate-pulse">
+      <header>
+        <BuyerHeader />
+      </header>
+
+      {/* Mobile product bottom panel skeleton */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center h-16 bg-gray-300">
+        <div className="flex-2 h-full bg-gray-400"></div>
+        <div className="flex-2 h-full bg-gray-400"></div>
+        <div className="flex-3 h-full bg-gray-500"></div>
+      </div>
+
+      {/* Navigation skeleton */}
+      <nav className="hidden md:block ml-16 pt-[124px] text-lg">
+        <div className="flex items-center gap-2">
+          <div className="bg-gray-300 h-6 w-12 rounded"></div>
+          <div className="bg-gray-300 h-6 w-1 rounded"></div>
+          <div className="bg-gray-300 h-6 w-20 rounded"></div>
+          <div className="bg-gray-300 h-6 w-1 rounded"></div>
+          <div className="bg-gray-300 h-6 w-24 rounded"></div>
+        </div>
+      </nav>
+
+      <main className="pt-10 md:pt-0 md:mx-8 my-4">
+        <div className="w-full flex flex-col md:flex-row">
+          {/* Product skeleton */}
+          <div className="w-full md:w-2/3 flex flex-col md:flex-row bg-white pb-4">
+            {/* Mobile image skeleton */}
+            <div className="md:hidden relative">
+              <div className="w-full aspect-square bg-gray-300"></div>
+            </div>
+
+            {/* Desktop image skeleton */}
+            <div className="hidden md:block w-full md:w-1/2">
+              <div className="w-full h-96 bg-gray-300 rounded"></div>
+              <div className="mt-6 px-4">
+                <div className="flex justify-between items-center bg-gray-50 rounded-lg p-4">
+                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                  <div className="flex gap-3">
+                    <div className="w-20 h-20 bg-gray-300 rounded-lg"></div>
+                    <div className="w-20 h-20 bg-gray-300 rounded-lg"></div>
+                    <div className="w-20 h-20 bg-gray-300 rounded-lg"></div>
+                  </div>
+                  <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Product info skeleton */}
+            <div className="pt-4 px-4 md:px-4 w-full md:w-1/2">
+              <div className="bg-gray-300 h-6 w-3/4 rounded mb-4"></div>
+
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-4 h-4 bg-gray-300 rounded"
+                      ></div>
+                    ))}
+                  </div>
+                  <div className="bg-gray-300 h-4 w-8 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-1 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-16 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-1 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-12 rounded"></div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                  <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+
+              <div className="bg-gray-300 h-8 w-24 rounded mt-4"></div>
+              <div className="bg-gray-300 h-4 w-32 rounded mt-4 hidden md:block"></div>
+
+              {/* Variants skeleton */}
+              <div className="hidden md:flex gap-4 mt-4">
+                <div className="bg-gray-300 h-4 w-16 rounded"></div>
+                <div>
+                  <div className="bg-gray-300 h-4 w-24 rounded mb-2"></div>
+                  <div className="flex gap-2">
+                    <div className="bg-gray-300 h-8 w-16 rounded"></div>
+                    <div className="bg-gray-300 h-8 w-16 rounded"></div>
+                    <div className="bg-gray-300 h-8 w-16 rounded"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quantity skeleton */}
+              <div className="hidden md:flex gap-4 mt-4 items-center">
+                <div className="bg-gray-300 h-4 w-16 rounded"></div>
+                <div className="flex items-center gap-4">
+                  <div className="bg-gray-300 h-8 w-8 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-4 rounded"></div>
+                  <div className="bg-gray-300 h-8 w-8 rounded"></div>
+                </div>
+              </div>
+
+              {/* Buttons skeleton */}
+              <div className="hidden md:flex gap-4 mt-4">
+                <div className="bg-gray-300 h-10 w-24 rounded"></div>
+                <div className="bg-gray-300 h-10 w-28 rounded"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Shop Information skeleton */}
+          <div className="w-full md:w-1/3 bg-blue-100 px-4 py-4">
+            <div className="bg-gray-300 h-6 w-32 rounded mb-4"></div>
+
+            {/* Location skeleton */}
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-2 w-2/3">
+                <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                <div className="bg-gray-300 h-4 w-48 rounded"></div>
+              </div>
+              <div className="bg-gray-300 h-4 w-16 rounded"></div>
+            </div>
+
+            {/* Delivery skeleton */}
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                <div className="bg-gray-300 h-4 w-40 rounded"></div>
+              </div>
+            </div>
+
+            {/* Store info skeleton */}
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex items-center gap-4 w-1/2">
+                <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+                <div className="bg-gray-300 h-4 w-24 rounded"></div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="bg-gray-300 h-6 w-16 rounded"></div>
+                <div className="bg-gray-300 h-6 w-20 rounded"></div>
+              </div>
+            </div>
+
+            {/* Store stats skeleton */}
+            <div className="flex md:grid md:grid-cols-2 gap-2 md:gap-4 mt-4">
+              <div className="bg-gray-300 h-4 w-16 rounded"></div>
+              <div className="bg-gray-300 h-4 w-20 rounded"></div>
+              <div className="bg-gray-300 h-4 w-12 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Details skeleton */}
+        <div className="flex flex-col-reverse md:flex-row gap-6 mt-6 md:mt-20">
+          <div className="flex-1">
+            {/* Description skeleton */}
+            <div className="px-4 py-6 bg-white mb-12">
+              <div className="bg-blue-100 px-4 py-2 mb-4">
+                <div className="bg-gray-300 h-6 w-32 rounded"></div>
+              </div>
+
+              <div className="space-y-4 mb-4">
+                <div className="flex justify-between">
+                  <div className="bg-gray-300 h-4 w-16 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-48 rounded"></div>
+                </div>
+                <div className="flex justify-between">
+                  <div className="bg-gray-300 h-4 w-24 rounded"></div>
+                  <div className="bg-gray-300 h-4 w-12 rounded"></div>
+                </div>
+              </div>
+
+              <div className="bg-blue-100 px-4 py-2 mt-16 mb-4">
+                <div className="bg-gray-300 h-6 w-24 rounded"></div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="bg-gray-300 h-4 w-full rounded"></div>
+                <div className="bg-gray-300 h-4 w-full rounded"></div>
+                <div className="bg-gray-300 h-4 w-3/4 rounded"></div>
+              </div>
+            </div>
+
+            {/* Review skeleton */}
+            <div className="bg-white p-4 rounded">
+              <div className="bg-gray-300 h-6 w-32 rounded mb-4"></div>
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="bg-gray-300 h-16 w-full rounded"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full md:w-1/3">
+            {/* Store sections skeleton */}
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded">
+                <div className="bg-gray-300 h-6 w-32 rounded mb-4"></div>
+                <div className="space-y-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="bg-gray-300 h-20 w-full rounded"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Store products skeleton */}
+        <div className="mt-6">
+          <div className="bg-white p-4 rounded">
+            <div className="bg-gray-300 h-6 w-40 rounded mb-4"></div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-gray-300 h-48 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Suggestion skeleton */}
+        <div className="mt-6">
+          <div className="bg-white p-4 rounded">
+            <div className="bg-gray-300 h-6 w-48 rounded mb-4"></div>
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-gray-300 h-32 rounded"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer>
+        <Footer />
+      </footer>
+      <div className="md:hidden w-full h-10"></div>
+    </div>
+  );
+
+  // Return skeleton or loading state if product is not found
   if (!product) {
-    return null; // Component will unmount and navigate will redirect
+    return <ProductSkeleton />;
   }
 
   return (
