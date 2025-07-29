@@ -10,7 +10,10 @@ import { Link } from "react-router-dom";
 import { fetchBuyerAddress } from "../../features/BuyerAddress/BuyerAddressSlice";
 import { fetchStore } from "../../features/StoreSlice/StoreSlice";
 import { countTime } from "../../utility/countTime";
-import { fetchProductById, clearProduct } from "../../features/ProductDetail/ProductDetailSlice";
+import {
+  fetchProductById,
+  clearProduct,
+} from "../../features/ProductDetail/ProductDetailSlice";
 import Review from "../../features/Review/Review";
 import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
 import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
@@ -33,21 +36,20 @@ import Chat from "../../assets/chat.svg";
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  
-  const product = useSelector((state: RootState) => state.productDetail.product);
+
+  const product = useSelector(
+    (state: RootState) => state.productDetail.product
+  );
 
   const { address, status: addressStatus } = useSelector(
     (state: RootState) => state.buyerAddress
   );
 
-  const { store, status: storeStatus } = useSelector(
-    (state: RootState) => state.storeProfile
-  );
+  const { store } = useSelector((state: RootState) => state.storeProfile);
 
   const { user } = useSelector((state: RootState) => state.profile);
 
   const { id } = useParams<{ id: string }>();
-
 
   // This is the selected image for the product
   const [selectedImage, setSelectedImage] = useState<ItemImage | null>(
@@ -91,7 +93,6 @@ const ProductPage: React.FC = () => {
 
     return allImages;
   };
-
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false }); //This is used for mobile image carousel
   const [currentSlide, setCurrentSlide] = useState(0); //This is used for mobile image carousel
@@ -196,6 +197,24 @@ const ProductPage: React.FC = () => {
     }
   }, []);
 
+  // Clear previous product and fetch new product by ID
+  useEffect(() => {
+    if (id) {
+      // Clear the previous product first
+      dispatch(clearProduct());
+
+      // Then fetch the new product (convert string id to number)
+      const productId = parseInt(id, 10);
+      if (!isNaN(productId)) {
+        const promise = dispatch(fetchProductById(productId));
+
+        return () => {
+          promise.abort();
+        };
+      }
+    }
+  }, [dispatch, id]);
+
   // Update the current image when the selected image changes
   useEffect(() => {
     if (selectedImage) {
@@ -215,7 +234,6 @@ const ProductPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-
     if (product?.store?.id) {
       const promise = dispatch(fetchStore(product.store.id));
       return () => {
@@ -223,11 +241,6 @@ const ProductPage: React.FC = () => {
       };
     }
   }, [dispatch, product?.store?.id]);
-
-  // Return null or loading state if product is not found
-  if (!product) {
-    return null; // Component will unmount and navigate will redirect
-  }
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -241,6 +254,11 @@ const ProductPage: React.FC = () => {
     };
   }, [emblaApi]);
 
+  // Return null or loading state if product is not found
+  if (!product) {
+    return null; // Component will unmount and navigate will redirect
+  }
+
   return (
     <div className="bg-gray-100">
       <header>
@@ -250,7 +268,11 @@ const ProductPage: React.FC = () => {
       {/* Mobile product bottom panel */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center h-16">
         <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
-          <img src={AddCart} alt="Add to Cart" className="inline-block mr-1 w-4" />
+          <img
+            src={AddCart}
+            alt="Add to Cart"
+            className="inline-block mr-1 w-4"
+          />
           <p>Add to Cart</p>
         </button>
         <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
@@ -267,17 +289,22 @@ const ProductPage: React.FC = () => {
           <>
             <Link to="/">Shopp</Link>
             {product.category_hierarchy?.map(
-              (category: { id: number | null; name: string | null; slug: string | null }) => (
+              (category: {
+                id: number | null;
+                name: string | null;
+                slug: string | null;
+              }) => (
                 <>
                   {" "}
-                  / <Link to={`/category/${category.slug}`}>{category.name}</Link>
-            </>
-          )
-        )}</>) 
-        :
-        (
+                  /{" "}
+                  <Link to={`/category/${category.slug}`}>{category.name}</Link>
+                </>
+              )
+            )}
+          </>
+        ) : (
           <div className="bg-[#d9d9d9] h-5 w-16 rounded-lg"></div>
-        ) }
+        )}
       </nav>
       <main className="pt-10 md:pt-0 md:mx-8 my-4">
         <div className="w-full flex flex-col md:flex-row">
@@ -303,58 +330,64 @@ const ProductPage: React.FC = () => {
 
                   {allImages.length > 1 && (
                     <div className="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white text-xs px-2.5 py-1 rounded-full">
-                    {currentSlide + 1} / {allImages.length}
+                      {currentSlide + 1} / {allImages.length}
                     </div>
                   )}
                 </>
-                )
-              :<div className="bg-[#d9d9d9]"></div>
-              }
+              ) : (
+                <div className="bg-[#d9d9d9]"></div>
+              )}
             </div>
 
-            {product.variants ? (product.variants.length > 1 ? (
-              <div className="md:hidden pl-2 py-2">
-                <p className="text-sm font-semibold">{product.variants.length} variants available</p>
-                <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
-                  {product.variants.map((variant: ItemVariant) => {
-                    if (!variant.images || variant.images.length === 0)
-                      return null;
+            {product.variants ? (
+              product.variants.length > 1 ? (
+                <div className="md:hidden pl-2 py-2">
+                  <p className="text-sm font-semibold">
+                    {product.variants.length} variants available
+                  </p>
+                  <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+                    {product.variants.map((variant: ItemVariant) => {
+                      if (!variant.images || variant.images.length === 0)
+                        return null;
 
-                    const variantImage = variant.images[0];
-                    const imageIndex = allImages.findIndex(
-                      (img) => img.id === variantImage.id
-                    );
-                    const isSelected = currentSlide === imageIndex;
+                      const variantImage = variant.images[0];
+                      const imageIndex = allImages.findIndex(
+                        (img) => img.id === variantImage.id
+                      );
+                      const isSelected = currentSlide === imageIndex;
 
-                    return (
-                      <img
-                        src={variantImage.url}
-                        alt={variant.variant_name}
-                        key={variant.id}
-                        onClick={() => {
-                          if (emblaApi && imageIndex !== -1) {
-                            emblaApi.scrollTo(imageIndex);
-                          }
-                        }}
-                        className={`w-12 h-12 object-cover rounded-md cursor-pointer transition-all duration-200 ${
-                          isSelected
-                            ? "border-2 border-purple-500 ring-2 ring-purple-200"
-                            : "border border-gray-300"
-                        }`}
-                      />
-                    );
-                  })}
+                      return (
+                        <img
+                          src={variantImage.url}
+                          alt={variant.variant_name}
+                          key={variant.id}
+                          onClick={() => {
+                            if (emblaApi && imageIndex !== -1) {
+                              emblaApi.scrollTo(imageIndex);
+                            }
+                          }}
+                          className={`w-12 h-12 object-cover rounded-md cursor-pointer transition-all duration-200 ${
+                            isSelected
+                              ? "border-2 border-purple-500 ring-2 ring-purple-200"
+                              : "border border-gray-300"
+                          }`}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
+              ) : (
+                <></>
+              )
+            ) : (
+              <div className="flex items-center justify-center">
+                <div className="bg-[#d9d9d9] w-5 h-5"></div>
+                <div className="bg-[#d9d9d9] w-5 h-5"></div>
+                <div className="bg-[#d9d9d9] w-5 h-5"></div>
+                <div className="bg-[#d9d9d9] w-5 h-5"></div>
+                <div className="bg-[#d9d9d9] w-5 h-5"></div>
               </div>
-            ) : <></>) : <div className="flex items-center justify-center">
-               <div className="bg-[#d9d9d9] w-5 h-5"></div>
-               <div className="bg-[#d9d9d9] w-5 h-5"></div>
-               <div className="bg-[#d9d9d9] w-5 h-5"></div>
-               <div className="bg-[#d9d9d9] w-5 h-5"></div>
-               <div className="bg-[#d9d9d9] w-5 h-5"></div>
-            </div>}
-
-            
+            )}
 
             {/* Images for desktop */}
             <div className="hidden md:block">
@@ -457,7 +490,9 @@ const ProductPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1.5">
                     <div className="flex items-center">
-                      {product.average_rating ? countStars(Number(product.average_rating)) : countStars(0)}
+                      {product.average_rating
+                        ? countStars(Number(product.average_rating))
+                        : countStars(0)}
                     </div>{" "}
                     <span className="text-blue-500">
                       {product.average_rating ?? 0}
@@ -484,7 +519,7 @@ const ProductPage: React.FC = () => {
               <p className="mt-4 hidden md:inline">
                 Remain: {currentVariant?.stock_quantity || 0}
               </p>
-              {product.variants && (product.variants.length > 1 && (
+              {product.variants && product.variants.length > 1 && (
                 <div className="hidden md:flex gap-4 mt-2">
                   <div className="flex">
                     <p>Variants</p>
@@ -506,7 +541,7 @@ const ProductPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+              )}
               <div className="hidden md:flex gap-4 mt-4">
                 <p>Quantity</p>
                 <div className="flex items-center gap-4">
@@ -653,7 +688,11 @@ const ProductPage: React.FC = () => {
                     Shopp
                   </Link>
                   {product.category_hierarchy?.map(
-                    (category: { id: number; name: string; slug: string | null }) => (
+                    (category: {
+                      id: number;
+                      name: string;
+                      slug: string | null;
+                    }) => (
                       <>
                         {" "}
                         /{" "}
@@ -672,11 +711,12 @@ const ProductPage: React.FC = () => {
               <div className="flex justify-between items-center mb-4">
                 <p>Total Amounts</p>
                 <p className="">
-                  {product.variants && (product.variants.reduce(
-                    (total: number, variant: ItemVariant) =>
-                      total + variant.stock_quantity,
-                    0
-                  ))}
+                  {product.variants &&
+                    product.variants.reduce(
+                      (total: number, variant: ItemVariant) =>
+                        total + variant.stock_quantity,
+                      0
+                    )}
                 </p>
               </div>
 
@@ -707,7 +747,9 @@ const ProductPage: React.FC = () => {
                 <StoreDiscount store_id={product.store.id} />
                 <StoreHotProduct store_id={product.store.id} />
               </>
-            ) : <></>}
+            ) : (
+              <></>
+            )}
           </div>
         </div>
 
