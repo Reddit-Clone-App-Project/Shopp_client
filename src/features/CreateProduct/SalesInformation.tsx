@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ProductDataType, VariantDataType } from "../../pages/seller/CreateProduct";
 import React, { useState } from "react";
+import addImage from '../../assets/addImage.svg';
 
 
 type SalesInfoProps = {
@@ -25,6 +26,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
     const [newVariant, setNewVariant] = useState<Omit<VariantDataType, "id">>({
         variantName: '',
         variantPrice: '',
+        variantImage: [],
         variantWeight: '',
         variantLength: '',
         variantWidth: '',
@@ -44,6 +46,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
         setNextId(prev => prev + 1);
         setNewVariant({variantName: '',
             variantPrice: '',
+            variantImage: [],
             variantWeight: '',
             variantLength: '',
             variantWidth: '',
@@ -66,6 +69,13 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
 
     const handleRemoveVariant = (idToDelete: number) => {
         setVariantList(prev => prev.filter(variant => variant.id !== idToDelete));
+    };
+
+    const removeImage = (idToRemove: number) => {
+        onChange(prev => ({
+            ...prev,
+            variantImage: prev.variant.variantImage.filter((_, id) => id !== idToRemove),
+        }));
     };
 
     const handleSubmit = () => {
@@ -204,7 +214,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                             <div className="min-w-[42rem] transition-all">
                                 {variantList.length === 0 ? (
                                     <div className="ml-20 text-slate-400 italic">
-                                        Any variants generated
+                                        No variants generated
                                     </div>
                                 ) : (
                                 variantList.map((variant, idx) => (
@@ -221,6 +231,42 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                     <AnimatePresence initial={false}>
                                     {activeIndex === idx && (
                                         <>
+                                            <div className='flex gap-4 mb-4'>
+                                                <label
+                                                    htmlFor="product-image"
+                                                    className="flex w-48 h-48 mt-5 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                                                >
+                                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                        <img src={addImage} alt='Add Product' />
+                                                        <p className="mt-2 text-sm text-slate-400">
+                                                            <span className="font-semibold">Add image</span> ({variant.variantImage.length}/{maxFiles})
+                                                        </p>
+                                                        <p className='text-3xl text-slate-400'>+</p>
+                                                    </div>
+                                                </label>
+                                                <input 
+                                                    type="file" 
+                                                    accept="image/*" 
+                                                    id='product-image' 
+                                                    className='hidden'
+                                                    multiple
+                                                    onChange={handleProductFilesChange}
+                                                    ref={productFilesInputRef}
+                                                />
+                                                <div className='flex overflow-y-scroll pt-4 px-2'>
+                                                    {variant.variantImage.map((image, id) => 
+                                                        <>
+                                                            <img
+                                                                key={id}
+                                                                src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                                                                alt={`Image ${id + 1}`}
+                                                                className='w-48 h-48'
+                                                            />
+                                                            <span className='self-start hover:cursor-pointer ml-1 mr-6' onClick={() => removeImage(id)}>X</span>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
                                             <label htmlFor={`variant-name-${idx}`} className='font-semibold text-[0.8rem]'>
                                                 <span className='text-red-500'>*</span>
                                                 Variant name

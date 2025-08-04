@@ -31,6 +31,7 @@ export type VariantDataType = {
     id: number;
     variantName: string;
     variantPrice: string;
+    variantImage: (string | File)[];
     variantWeight: string;
     variantLength: string;
     variantWidth: string;
@@ -62,6 +63,7 @@ const CreateProduct = () => {
             id: 1,
             variantName: '',
             variantPrice: '',
+            variantImage: [],
             variantWeight: '',
             variantLength: '',
             variantWidth: '',
