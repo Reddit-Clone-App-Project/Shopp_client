@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ProductDataType, VariantDataType } from "../../pages/seller/CreateProduct";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import addImage from '../../assets/addImage.svg';
 
 
@@ -36,7 +36,8 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
     const [variantList, setVariantList] = useState<VariantDataType[]>([]);
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [nextId, setNextId] = useState(1);
-    
+    const variantFilesInputRef = useRef<HTMLInputElement | null>(null);
+    const maxFiles = 5;
 
     const handleCreateVariant = () => {
         if (!newVariant.variantName.trim()) return;
@@ -44,7 +45,8 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
             {id: nextId, ...newVariant}
         ]);
         setNextId(prev => prev + 1);
-        setNewVariant({variantName: '',
+        setNewVariant({
+            variantName: '',
             variantPrice: '',
             variantImage: [],
             variantWeight: '',
@@ -59,11 +61,21 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
         if (e.key === 'Enter') handleCreateVariant();
     };
 
-    const handleChangeVariant = (idx: number, field: keyof Omit<VariantDataType, "id">, value: string) => {
+    const handleChangeVariant = (idx: number, field: keyof Omit<VariantDataType, "id">, value: string | File | File[]) => {
         setVariantList(prev =>
-            prev.map((v, i) => 
-                i === idx ? { ...v, [field]: value } : v
-            )
+            prev.map((v, i) => { 
+                if (i !== idx) return v;
+
+                if (field === 'variantImage') {
+                    const files = Array.isArray(value) ? value : [value];
+                    return {
+                        ...v,
+                        variantImage: [...v.variantImage, ...files]
+                    };
+                };
+
+                return { ...v, [field]: value as string};     
+            })
         );
     };
 
@@ -71,11 +83,27 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
         setVariantList(prev => prev.filter(variant => variant.id !== idToDelete));
     };
 
-    const removeImage = (idToRemove: number) => {
+    const removeImage = (variantIdx: number, idToRemove: number) => {
         onChange(prev => ({
             ...prev,
-            variantImage: prev.variant.variantImage.filter((_, id) => id !== idToRemove),
+            variant: prev.variant.map((v, id) => {
+                if (id !== variantIdx) return v;
+                return {
+                    ...v,
+                    variantImage: v.variantImage.filter((_, imgIdx) => imgIdx !== idToRemove)
+                };
+            })
         }));
+    };
+
+    const removeAllImage = (variantIdx: number) => {
+        setVariantList(prev =>
+            prev.map((v, i) =>
+                i === variantIdx
+                    ? { ...v, variantImage: [] }
+                    : v
+            )
+        );
     };
 
     const handleSubmit = () => {
@@ -218,23 +246,35 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                     </div>
                                 ) : (
                                 variantList.map((variant, idx) => (
-                                <div key={variant.id} className="mb-2 border border-slate-400 p-2 rounded-xl">
+                                <div key={variant.id} className="mb-2 border border-slate-400 p-1 rounded-xl">
                                     <div
-                                        className="cursor-pointer flex justify-between items-center"
+                                        className="cursor-pointer flex justify-between items-center mx-2"
                                         onClick={() => setActiveIndex(activeIndex === idx ? null : idx)}
                                     >
-                                        <span className="text-lg font-semibold text-[#A567C6]">
+                                        <span className="text-2xl font-semibold text-[#A567C6] pb-2">
                                             {variant.variantName}
                                         </span>
                                         <span>{activeIndex === idx ? "▲" : "▼"}</span>
                                     </div>
                                     <AnimatePresence initial={false}>
                                     {activeIndex === idx && (
-                                        <>
-                                            <div className='flex gap-4 mb-4'>
+                                        <div className="p-2">  
+                                            <div className='flex items-center font-semibold text-[0.8rem]'>
+                                                <p><span className='text-red-500'>*</span>Product Image (1x1 image)</p>
+                                                {variant.variantImage?.length !== 0 && 
+                                                    <button 
+                                                        className='text-white border border-slate-600 rounded-lg px-2 bg-slate-600 ml-4 hover:cursor-pointer hover:bg-slate-400' 
+                                                        onClick={() => removeAllImage(idx)}
+                                                    >
+                                                        Remove All Images
+                                                    </button>
+                                                }
+                                            </div>
+
+                                            <div className='flex overflow-y-scroll pt-4 px-2 items-center'>
                                                 <label
-                                                    htmlFor="product-image"
-                                                    className="flex w-48 h-48 mt-5 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
+                                                    htmlFor={`variant-images-${idx}`}
+                                                    className="flex w-48 h-48 mt-5 mb-5 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
                                                 >
                                                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                                         <img src={addImage} alt='Add Product' />
@@ -247,34 +287,47 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 <input 
                                                     type="file" 
                                                     accept="image/*" 
-                                                    id='product-image' 
+                                                    id={`variant-images-${idx}`} 
                                                     className='hidden'
                                                     multiple
-                                                    onChange={handleProductFilesChange}
-                                                    ref={productFilesInputRef}
+                                                    onChange={(e) =>{
+                                                        const files = e.target.files ? Array.from(e.target.files) : [];
+                                                        handleChangeVariant(idx, "variantImage", files)
+                                                    }}
+                                                    ref={variantFilesInputRef}
                                                 />
-                                                <div className='flex overflow-y-scroll pt-4 px-2'>
-                                                    {variant.variantImage.map((image, id) => 
-                                                        <>
-                                                            <img
-                                                                key={id}
-                                                                src={typeof image === 'string' ? image : URL.createObjectURL(image)}
-                                                                alt={`Image ${id + 1}`}
-                                                                className='w-48 h-48'
-                                                            />
-                                                            <span className='self-start hover:cursor-pointer ml-1 mr-6' onClick={() => removeImage(id)}>X</span>
-                                                        </>
-                                                    )}
-                                                </div>
+                                                {variantList.map((variant, idx) => (
+                                                    <div key={variant.id} className="flex ml-4">
+                                                        {variant.variantImage.map((image, imageId) => (
+                                                            <div key={imageId} className="flex">
+                                                                <img
+                                                                    src={typeof image === 'string' ? image : URL.createObjectURL(image)}
+                                                                    alt={`Image ${imageId + 1}`}
+                                                                    className='w-48 h-48'
+                                                                />
+                                                                <span 
+                                                                    className='hover:cursor-pointer ml-2 mr-4' 
+                                                                    onClick={() => removeImage(idx, imageId)}
+                                                                >
+                                                                    X
+                                                                </span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <label htmlFor={`variant-name-${idx}`} className='font-semibold text-[0.8rem]'>
+
+                                            <label htmlFor={`variant-name-${idx}`} className='font-semibold text-[0.8rem] pt-4'>
                                                 <span className='text-red-500'>*</span>
                                                 Variant name
                                             </label>
-                                            <label htmlFor={`variant-price-${idx}`} className='font-semibold text-[0.8rem] ml-85'>
+
+                                            <label htmlFor={`variant-price-${idx}`} className='font-semibold text-[0.8rem] ml-143'>
                                                 <span className='text-red-500'>*</span>
                                                 Price in US dollar
                                             </label>
+
+
                                             <motion.div className="mt-2 gap-2 mb-4"
                                                 initial={{ opacity: 0, scaleY: 0.95 }}
                                                 animate={{ opacity: 1, scaleY: 1 }}
@@ -283,21 +336,27 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 style={{ originY: 0 }}
                                             >
                                                 
+                                                
+                                                
+                                                
                                                 <input
-                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[52%]"
-                                                id={`variant-name-${idx}`}
-                                                placeholder="Enter Name"
-                                                type="text"
-                                                value={variant.variantName}
-                                                onChange={e => handleChangeVariant(idx, "variantName", e.target.value)}
+                                                    className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 w-[52%]"
+                                                    id={`variant-name-${idx}`}
+                                                    placeholder="Enter Name"
+                                                    type="text"
+                                                    value={variant.variantName}
+                                                    onChange={e => handleChangeVariant(idx, "variantName", e.target.value)}
                                                 />
+                                                
+                                                
+
                                                 <input
-                                                className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 ml-6"
-                                                id={`variant-price-${idx}`}
-                                                placeholder="Enter Price"
-                                                type="text"
-                                                value={variant.variantPrice}
-                                                onChange={e => handleChangeVariant(idx, "variantPrice", e.target.value)}
+                                                    className="mr-2 border border-slate-400 focus:border-slate-200 focus:outline-none p-2 ml-6"
+                                                    id={`variant-price-${idx}`}
+                                                    placeholder="Enter Price"
+                                                    type="text"
+                                                    value={variant.variantPrice}
+                                                    onChange={e => handleChangeVariant(idx, "variantPrice", e.target.value)}
                                                 />
 
                                                 <h3 className='font-semibold text-[0.9rem] mb-2.5 mt-4'>Shipping</h3>
@@ -369,7 +428,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                     Delete Variant
                                                 </button>
                                             </motion.div>
-                                        </>
+                                        </div>
                                     )}
                                     </AnimatePresence>
                                 </div>
