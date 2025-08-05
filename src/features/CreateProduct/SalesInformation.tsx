@@ -271,7 +271,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 }
                                             </div>
 
-                                            <div className='flex overflow-y-scroll pt-4 px-2 items-center'>
+                                            <div className='flex overflow-y-scroll px-2 items-center'>
                                                 <label
                                                     htmlFor={`variant-images-${idx}`}
                                                     className="flex w-48 h-48 mt-5 mb-5 flex-col items-center justify-center aspect-square border-2 border-slate-400 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition-colors"
@@ -317,18 +317,18 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                 ))}
                                             </div>
 
-                                            <label htmlFor={`variant-name-${idx}`} className='font-semibold text-[0.8rem] pt-4'>
+                                            <label htmlFor={`variant-name-${idx}`} className='font-semibold text-[0.8rem]'>
                                                 <span className='text-red-500'>*</span>
                                                 Variant name
                                             </label>
 
-                                            <label htmlFor={`variant-price-${idx}`} className='font-semibold text-[0.8rem] ml-143'>
+                                            <label htmlFor={`variant-price-${idx}`} className='font-semibold text-[0.8rem] ml-84'>
                                                 <span className='text-red-500'>*</span>
                                                 Price in US dollar
                                             </label>
 
 
-                                            <motion.div className="mt-2 gap-2 mb-4"
+                                            <motion.div className="mt-2 gap-2 mb-2"
                                                 initial={{ opacity: 0, scaleY: 0.95 }}
                                                 animate={{ opacity: 1, scaleY: 1 }}
                                                 exit={{ opacity: 0, scaleY: 0.95 }}
@@ -359,8 +359,8 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                     onChange={e => handleChangeVariant(idx, "variantPrice", e.target.value)}
                                                 />
 
-                                                <h3 className='font-semibold text-[0.9rem] mb-2.5 mt-4'>Shipping</h3>
-                                                <div className='flex flex-col gap-4 mb-4'>
+                                                <h3 className='font-semibold text-[0.9rem] mb-2.5 mt-3'>Shipping</h3>
+                                                <div className='flex flex-col gap-2 mb-3'>
                                                     <label htmlFor={`variant-weight-${idx}`} className='font-semibold text-[0.8rem]'>
                                                         <span className='text-red-500'>*</span>
                                                         Weight (lbs) - After packing
@@ -373,7 +373,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                         onChange={e => handleChangeVariant(idx, "variantWeight", e.target.value)}
                                                     />
                                                 </div>
-                                                <div className='flex flex-col gap-4 mb-4'>
+                                                <div className='flex flex-col gap-2 mb-2'>
                                                     <label htmlFor={`variant-length-${idx}`} className='font-semibold text-[0.8rem]'>
                                                         <span className='text-red-500'>*</span>
                                                         Packing size (cm) - Actual shipping fee will vary if you enter wrong size
