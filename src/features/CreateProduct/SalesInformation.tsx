@@ -84,16 +84,13 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
     };
 
     const removeImage = (variantIdx: number, idToRemove: number) => {
-        onChange(prev => ({
-            ...prev,
-            variant: prev.variant.map((v, id) => {
-                if (id !== variantIdx) return v;
-                return {
-                    ...v,
-                    variantImage: v.variantImage.filter((_, imgIdx) => imgIdx !== idToRemove)
-                };
-            })
-        }));
+        setVariantList(prev => 
+            prev.map((v, i) => 
+                i === variantIdx
+                    ? { ...v, variantImage: v.variantImage.filter((_, imgIdx) => imgIdx !== idToRemove) }
+                    : v
+            )
+        );
     };
 
     const removeAllImage = (variantIdx: number) => {
@@ -251,7 +248,7 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                         className="cursor-pointer flex justify-between items-center mx-2"
                                         onClick={() => setActiveIndex(activeIndex === idx ? null : idx)}
                                     >
-                                        <span className="text-2xl font-semibold text-[#A567C6] pb-2">
+                                        <span className="text-2xl font-semibold text-[#A567C6]">
                                             {variant.variantName}
                                         </span>
                                         <span>{activeIndex === idx ? "▲" : "▼"}</span>
@@ -296,25 +293,25 @@ const SalesInformation: React.FC<SalesInfoProps> = ({ data, onChange, onBack, on
                                                     }}
                                                     ref={variantFilesInputRef}
                                                 />
-                                                {variantList.map((variant, idx) => (
-                                                    <div key={variant.id} className="flex ml-4">
-                                                        {variant.variantImage.map((image, imageId) => (
-                                                            <div key={imageId} className="flex">
-                                                                <img
+                                                {activeIndex !== null && variantList[activeIndex] && (
+                                                    <div className="flex overflow-x-scroll px-4">
+                                                        {variantList[activeIndex].variantImage.map((image, imageId) => (
+                                                            <React.Fragment key={imageId}>
+                                                                <img 
                                                                     src={typeof image === 'string' ? image : URL.createObjectURL(image)}
                                                                     alt={`Image ${imageId + 1}`}
-                                                                    className='w-48 h-48'
+                                                                    className="w-48 h-48"
                                                                 />
                                                                 <span 
-                                                                    className='hover:cursor-pointer ml-2 mr-4' 
-                                                                    onClick={() => removeImage(idx, imageId)}
+                                                                    className="self-start hover:cursor-pointer ml-1 mr-6"
+                                                                    onClick={() => removeImage(activeIndex, imageId)}
                                                                 >
                                                                     X
                                                                 </span>
-                                                            </div>
+                                                            </React.Fragment>
                                                         ))}
                                                     </div>
-                                                ))}
+                                                )}
                                             </div>
 
                                             <label htmlFor={`variant-name-${idx}`} className='font-semibold text-[0.8rem]'>

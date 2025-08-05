@@ -116,7 +116,7 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
                         onChange={handleProductFilesChange}
                         ref={productFilesInputRef}
                     />
-                    <div className='flex overflow-y-scroll pt-4 px-2'>
+                    <div className='flex overflow-x-scroll pt-4 px-2'>
                         {productImage.map((image, id) => 
                             <>
                                 <img
