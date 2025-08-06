@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import axios from "axios";
 import { handleLogout } from "../Auth/AuthSlice";
+import { fetchBuyerCart, removeFromCart } from "../Cart/CartSlice";
 // SVG
 import Bell from "../../assets/HomePage/Header/bell.svg";
 import GitHub from "../../assets/HomePage/Header/github-white.svg";
@@ -43,9 +44,10 @@ const BuyerHeader: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { status, error, user } = useSelector(
-    (state: RootState) => state.profile
-  );
+  const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
+  const { status, user } = useSelector((state: RootState) => state.profile);
+
+  const { cart } = useSelector((state: RootState) => state.cart);
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -55,6 +57,8 @@ const BuyerHeader: React.FC = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const cartDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileCartDropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle search
   const handleSearch = () => {
@@ -97,13 +101,35 @@ const BuyerHeader: React.FC = () => {
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  }
+  };
+
+  // Handle cart functions
+  const handleCartItemRemove = async (productVariantId: number) => {
+    try {
+      await dispatch(removeFromCart(productVariantId));
+    } catch (error) {
+      console.error("Failed to remove item from cart:", error);
+    }
+  };
+
+  const calculateCartTotal = () => {
+    return cart
+      .reduce((total: number, item: any) => {
+        return total + item.price_at_purchase * item.quantity;
+      }, 0)
+      .toFixed(2);
+  };
+
+  const getTotalCartItems = () => {
+    return cart.reduce((total: number, item: any) => total + item.quantity, 0);
+  };
 
   // Handle Escape key to close dropdown
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsDropdownOpen(false);
+        setIsCartDropdownOpen(false);
       }
     };
 
@@ -112,6 +138,13 @@ const BuyerHeader: React.FC = () => {
       document.removeEventListener("keydown", handleEscape);
     };
   }, []);
+
+  // Fetch cart data when component mounts and user is logged in
+  useEffect(() => {
+    if (status === "succeeded" && user) {
+      dispatch(fetchBuyerCart());
+    }
+  }, [dispatch, status, user]);
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -153,6 +186,17 @@ const BuyerHeader: React.FC = () => {
         !dropdownRef.current.contains(target)
       ) {
         setIsDropdownOpen(false);
+      }
+
+      // Check if click is outside both desktop and mobile cart dropdowns
+      const isOutsideDesktopCart =
+        cartDropdownRef.current && !cartDropdownRef.current.contains(target);
+      const isOutsideMobileCart =
+        mobileCartDropdownRef.current &&
+        !mobileCartDropdownRef.current.contains(target);
+
+      if (isOutsideDesktopCart && isOutsideMobileCart) {
+        setIsCartDropdownOpen(false);
       }
     };
 
@@ -251,7 +295,7 @@ const BuyerHeader: React.FC = () => {
                         <button
                           className="px-4 py-2 hover:bg-gray-100 text-sm text-left"
                           onClick={() => {
-                            setIsDropdownOpen(false)
+                            setIsDropdownOpen(false);
                             handleClickLogout();
                           }}
                         >
@@ -306,11 +350,179 @@ const BuyerHeader: React.FC = () => {
               </div>
             )}
           </div>
-          <img
-            src={ShoppingCart}
-            alt="Shopping Cart"
-            className="w-6 h-6 text-white cursor-pointer hover:opacity-80"
-          />
+          <div className="relative" ref={cartDropdownRef}>
+            <div
+              className="relative cursor-pointer hover:opacity-80"
+              onClick={() => setIsCartDropdownOpen(!isCartDropdownOpen)}
+            >
+              <img
+                src={ShoppingCart}
+                alt="Shopping Cart"
+                className="w-6 h-6 text-white"
+              />
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  {getTotalCartItems()}
+                </span>
+              )}
+            </div>
+
+            {isCartDropdownOpen && (
+              <>
+                {/* Invisible backdrop to capture outside clicks */}
+                <div
+                  className="fixed inset-0 z-5"
+                  onClick={() => setIsCartDropdownOpen(false)}
+                />
+                <div
+                  className="absolute top-8 right-0 bg-white shadow-xl rounded-lg overflow-hidden min-w-[380px] max-w-[420px] z-10 border border-gray-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-purple-800">
+                        Shopping Cart
+                      </h3>
+                      {status === "succeeded" && cart.length > 0 && (
+                        <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                          {getTotalCartItems()}{" "}
+                          {getTotalCartItems() === 1 ? "item" : "items"}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {status !== "succeeded" ? (
+                    <div className="p-8 text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                        <img
+                          src={ShoppingCart}
+                          alt="Cart"
+                          className="w-8 h-8 text-purple-600"
+                        />
+                      </div>
+                      <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                        Sign in to view your cart
+                      </h4>
+                      <p className="text-gray-500 text-sm mb-4">
+                        Please log in to see your saved items and continue
+                        shopping
+                      </p>
+                      <div className="space-y-2">
+                        <Link
+                          to="/login"
+                          className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
+                          onClick={() => setIsCartDropdownOpen(false)}
+                        >
+                          Sign In
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="block w-full bg-white text-purple-600 text-center py-3 rounded-lg hover:bg-purple-50 transition-all duration-200 font-semibold border border-purple-600"
+                          onClick={() => setIsCartDropdownOpen(false)}
+                        >
+                          Create Account
+                        </Link>
+                      </div>
+                    </div>
+                  ) : cart.length === 0 ? (
+                    <div className="p-8 text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <img
+                          src={ShoppingCart}
+                          alt="Empty Cart"
+                          className="w-8 h-8 opacity-50"
+                        />
+                      </div>
+                      <p className="text-gray-500 text-sm">
+                        Your cart is empty
+                      </p>
+                      <p className="text-gray-400 text-xs mt-1">
+                        Add some products to get started!
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="max-h-96 overflow-y-auto">
+                        {cart.map((item: any, index: number) => (
+                          <div
+                            key={index}
+                            className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                          >
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0">
+                                <img
+                                  src={
+                                    item.image_url || "/placeholder-image.jpg"
+                                  }
+                                  alt={item.product_name || "Product"}
+                                  className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
+                                  {item.product_name || "Unknown Product"}
+                                </h4>
+                                {item.variant_name && (
+                                  <p className="text-xs text-gray-400 mb-1">
+                                    Variant: {item.variant_name}
+                                  </p>
+                                )}
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                    Qty: {item.quantity}
+                                  </span>
+                                  <span className="text-sm font-bold text-purple-600">
+                                    $
+                                    {(
+                                      item.price_at_purchase * item.quantity
+                                    ).toFixed(2)}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() =>
+                                    handleCartItemRemove(
+                                      item.product_variant_id
+                                    )
+                                  }
+                                  className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="text-lg font-bold text-gray-800">
+                            Total:
+                          </span>
+                          <span className="text-xl font-bold text-purple-700 bg-purple-100 px-3 py-1 rounded-lg">
+                            ${calculateCartTotal()}
+                          </span>
+                        </div>
+                        <div className="space-y-3">
+                          <Link
+                            to="/carts"
+                            className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
+                            onClick={() => setIsCartDropdownOpen(false)}
+                          >
+                            View Full Cart
+                          </Link>
+                          <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                            Proceed to Checkout
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -338,7 +550,169 @@ const BuyerHeader: React.FC = () => {
             <button onClick={() => setIsSearchExpanded(!isSearchExpanded)}>
               <img src={Search} alt="Search" className="w-5 h-5" />
             </button>
-            <img src={ShoppingCart} alt="Shopping Cart" className="w-5 h-5" />
+            <div className="relative" ref={mobileCartDropdownRef}>
+              <div
+                className="relative cursor-pointer hover:opacity-80"
+                onClick={() => setIsCartDropdownOpen(!isCartDropdownOpen)}
+              >
+                <img
+                  src={ShoppingCart}
+                  alt="Shopping Cart"
+                  className="w-5 h-5"
+                />
+                {cart.length > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                    {getTotalCartItems()}
+                  </span>
+                )}
+              </div>
+
+              {isCartDropdownOpen && (
+                <>
+                  {/* Invisible backdrop to capture outside clicks */}
+                  <div
+                    className="fixed inset-0 z-5"
+                    onClick={() => setIsCartDropdownOpen(false)}
+                  />
+                  <div
+                    className="absolute top-8 right-0 bg-white shadow-xl rounded-lg overflow-hidden w-80 z-10 border border-gray-100"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="p-3 bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-base font-bold text-purple-800">
+                          Shopping Cart
+                        </h3>
+                        {status === "succeeded" && cart.length > 0 && (
+                          <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                            {getTotalCartItems()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {status !== "succeeded" ? (
+                      <div className="p-6 text-center">
+                        <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
+                          <img
+                            src={ShoppingCart}
+                            alt="Cart"
+                            className="w-6 h-6 text-purple-600"
+                          />
+                        </div>
+                        <h4 className="text-base font-semibold text-gray-800 mb-2">
+                          Sign in to view cart
+                        </h4>
+                        <p className="text-gray-500 text-xs mb-4">
+                          Please log in to see your items
+                        </p>
+                        <div className="space-y-2">
+                          <Link
+                            to="/login"
+                            className="block w-full bg-purple-600 text-white text-center py-2.5 rounded-lg hover:bg-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
+                            onClick={() => setIsCartDropdownOpen(false)}
+                          >
+                            Sign In
+                          </Link>
+                          <Link
+                            to="/register"
+                            className="block w-full bg-white text-purple-600 text-center py-2 rounded-lg hover:bg-purple-50 transition-all duration-200 text-xs font-semibold border border-purple-600"
+                            onClick={() => setIsCartDropdownOpen(false)}
+                          >
+                            Create Account
+                          </Link>
+                        </div>
+                      </div>
+                    ) : cart.length === 0 ? (
+                      <div className="p-6 text-center">
+                        <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
+                          <img
+                            src={ShoppingCart}
+                            alt="Empty Cart"
+                            className="w-6 h-6 opacity-50"
+                          />
+                        </div>
+                        <p className="text-gray-500 text-sm">
+                          Your cart is empty
+                        </p>
+                        <p className="text-gray-400 text-xs mt-1">
+                          Add products to get started!
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="max-h-72 overflow-y-auto">
+                          {cart.slice(0, 3).map((item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="p-3 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                            >
+                              <div className="flex items-start space-x-2">
+                                <div className="flex-shrink-0">
+                                  <img
+                                    src={
+                                      item.image_url || "/placeholder-image.jpg"
+                                    }
+                                    alt={item.product_name || "Product"}
+                                    className="w-12 h-12 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                  />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="text-xs font-semibold text-gray-900 truncate mb-1">
+                                    {item.product_name || "Unknown Product"}
+                                  </h4>
+                                  {item.variant_name && (
+                                    <p className="text-xs text-gray-400 mb-1">
+                                      {item.variant_name}
+                                    </p>
+                                  )}
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                      Qty: {item.quantity}
+                                    </span>
+                                    <span className="text-sm font-bold text-purple-600">
+                                      $
+                                      {(
+                                        item.price_at_purchase * item.quantity
+                                      ).toFixed(2)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          {cart.length > 3 && (
+                            <div className="p-2 text-center">
+                              <span className="text-xs text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+                                +{cart.length - 3} more items
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-sm font-bold text-gray-800">
+                              Total:
+                            </span>
+                            <span className="text-lg font-bold text-purple-700 bg-purple-100 px-2 py-1 rounded">
+                              ${calculateCartTotal()}
+                            </span>
+                          </div>
+                          <Link
+                            to="/carts"
+                            className="block w-full bg-purple-600 text-white text-center py-2.5 rounded-lg hover:bg-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
+                            onClick={() => setIsCartDropdownOpen(false)}
+                          >
+                            View Full Cart
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -459,7 +833,7 @@ const BuyerHeader: React.FC = () => {
                     <button
                       className="block text-white hover:bg-purple-700 p-2 rounded w-full text-left"
                       onClick={() => {
-                        setIsMobileMenuOpen(false)
+                        setIsMobileMenuOpen(false);
                         handleClickLogout();
                       }}
                     >

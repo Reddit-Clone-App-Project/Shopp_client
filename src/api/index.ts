@@ -106,3 +106,10 @@ export const getNewAccessToken = () => API.get("/refresh");
 
 //! Buyers
 export const getBuyerAddress = () => API.get("/users/me/address");
+export const getBuyerCart = () => API.get("/cart");
+export const addProductToCart = (productVariantId: number, quantity: number, priceAtPurchase: number) => API.post("/cart", {
+  productVariantId, quantity, priceAtPurchase
+});
+export const removeProductFromCart = (productVariantId: number) => API.delete(`/cart`, {
+  data: { productVariantId }
+});

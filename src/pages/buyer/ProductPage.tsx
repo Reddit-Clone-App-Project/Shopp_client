@@ -14,6 +14,7 @@ import {
   fetchProductById,
   clearProduct,
 } from "../../features/ProductDetail/ProductDetailSlice";
+import { addToCart } from "../../features/Cart/CartSlice";
 import Review from "../../features/Review/Review";
 import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
 import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
@@ -65,6 +66,12 @@ const ProductPage: React.FC = () => {
     product?.variants?.[0] || null
   );
   const [quantity, setQuantity] = useState<number>(1);
+
+  // Mobile variant selection modal state
+  const [isMobileModalOpen, setIsMobileModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState<"addToCart" | "buyNow">(
+    "addToCart"
+  );
 
   // Image carousel state
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
@@ -169,6 +176,55 @@ const ProductPage: React.FC = () => {
       }
     }
     return stars;
+  };
+
+  const handleAddToCart = async () => {
+    if (!currentVariant) return;
+
+    const productVariantId = currentVariant.id;
+    const priceAtPurchase = currentVariant.price * quantity;
+
+    try {
+      dispatch(
+        addToCart({
+          productVariantId,
+          quantity,
+          priceAtPurchase,
+        })
+      );
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+    }
+  };
+
+  // Handle mobile modal actions
+  const handleMobileAddToCart = () => {
+    if (product?.variants && product.variants.length > 1) {
+      setModalAction("addToCart");
+      setIsMobileModalOpen(true);
+    } else {
+      handleAddToCart();
+    }
+  };
+
+  const handleMobileBuyNow = () => {
+    if (product?.variants && product.variants.length > 1) {
+      setModalAction("buyNow");
+      setIsMobileModalOpen(true);
+    } else {
+      // Proceed with buy now logic
+      console.log("Buy now with current variant");
+    }
+  };
+
+  const handleModalConfirm = () => {
+    if (modalAction === "addToCart") {
+      handleAddToCart();
+    } else {
+      // Handle buy now logic
+      console.log("Buy now with selected variant");
+    }
+    setIsMobileModalOpen(false);
   };
 
   // Early return if product is not found
@@ -519,7 +575,10 @@ const ProductPage: React.FC = () => {
 
       {/* Mobile product bottom panel */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex items-center h-16">
-        <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
+        <button
+          onClick={handleMobileAddToCart}
+          className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600"
+        >
           <img
             src={AddCart}
             alt="Add to Cart"
@@ -531,7 +590,10 @@ const ProductPage: React.FC = () => {
           <img src={Chat} alt="Chat" className="inline-block mr-1 w-4" />
           <p>Chat Now</p>
         </button>
-        <button className="flex-3 h-full py-2 text-center text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700">
+        <button
+          onClick={handleMobileBuyNow}
+          className="flex-3 h-full py-2 text-center text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700"
+        >
           Buy Now
         </button>
       </div>
@@ -816,7 +878,10 @@ const ProductPage: React.FC = () => {
                 <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
                   Buy Now
                 </button>
-                <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
+                <button
+                  className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
+                  onClick={handleAddToCart}
+                >
                   Add to Cart
                 </button>
               </div>
@@ -1013,6 +1078,126 @@ const ProductPage: React.FC = () => {
         <Footer />
       </footer>
       <div className="md:hidden w-full h-10"></div>
+
+      {/* Mobile Variant Selection Modal */}
+      {isMobileModalOpen && (
+        <div className="fixed inset-0 z-[60] md:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black opacity-25"
+            onClick={() => setIsMobileModalOpen(false)}
+          ></div>
+
+          {/* Modal Content */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl max-h-[80vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-800">
+                {modalAction === "addToCart" ? "Select Variant" : "Buy Now"}
+              </h3>
+              <button
+                onClick={() => setIsMobileModalOpen(false)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
+              >
+                <span className="text-gray-500 text-xl">×</span>
+              </button>
+            </div>
+
+            {/* Product Info */}
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex items-start space-x-3">
+                <img
+                  src={
+                    currentVariant?.images?.[0]?.url ||
+                    product?.promotion_image?.url ||
+                    ""
+                  }
+                  alt={product?.name}
+                  className="w-20 h-20 object-cover rounded-lg border border-gray-200"
+                />
+                <div className="flex-1">
+                  <p className="text-lg font-bold text-blue-500">
+                    ${currentVariant?.price.toFixed(2)}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Stock: {currentVariant?.stock_quantity}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Variant Selection */}
+            <div className="p-4 max-h-60 overflow-y-auto">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                Variants
+              </h4>
+              <div className="grid grid-cols-3 gap-2">
+                {product?.variants?.map((variant: ItemVariant) => (
+                  <button
+                    key={variant.id}
+                    onClick={() => handleVariantChange(variant)}
+                    className={`p-3 border rounded-lg text-sm transition-all duration-200 ${
+                      currentVariant?.id === variant.id
+                        ? "border-purple-500 bg-purple-50 text-purple-600"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}
+                  >
+                    {variant.variant_name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Quantity Selection */}
+              <div className="mt-6">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">
+                  Quantity
+                </h4>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={decreaseQuantity}
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-l-lg"
+                    >
+                      -
+                    </button>
+                    <span className="w-16 h-10 flex items-center justify-center border-x border-gray-300 text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={increaseQuantity}
+                      className="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-r-lg"
+                    >
+                      +
+                    </button>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {currentVariant?.stock_quantity} available
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="p-4 border-t border-gray-200">
+              <button
+                onClick={handleModalConfirm}
+                disabled={
+                  !currentVariant || currentVariant.stock_quantity === 0
+                }
+                className={`w-full py-3 rounded-lg font-semibold text-white transition-all duration-200 ${
+                  currentVariant && currentVariant.stock_quantity > 0
+                    ? modalAction === "addToCart"
+                      ? "bg-purple-500 hover:bg-purple-600"
+                      : "bg-blue-500 hover:bg-blue-600"
+                    : "bg-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {modalAction === "addToCart" ? "Add to Cart" : "Buy Now"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
