@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import useEmblaCarousel from "embla-carousel-react";
 import { Item, ItemImage, ItemVariant } from "../../types/Item";
 import BuyerHeader from "../../features/BuyerHeader/BuyerHeader";
@@ -37,6 +38,7 @@ import Chat from "../../assets/chat.svg";
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const product = useSelector(
     (state: RootState) => state.productDetail.product
@@ -48,7 +50,7 @@ const ProductPage: React.FC = () => {
 
   const { store } = useSelector((state: RootState) => state.storeProfile);
 
-  const { user } = useSelector((state: RootState) => state.profile);
+  const { user, status: userStatus } = useSelector((state: RootState) => state.profile);
 
   const { id } = useParams<{ id: string }>();
 
@@ -178,6 +180,15 @@ const ProductPage: React.FC = () => {
     return stars;
   };
 
+  const handleProtectedAction = (action: () => void) => {
+    if(user){
+      action();
+    }else{
+      toast.info("Please log in to continue.");
+      navigate("/login", { state: { from: location } });
+    }
+  }
+
   const handleAddToCart = async () => {
     if (!currentVariant) return;
 
@@ -197,13 +208,17 @@ const ProductPage: React.FC = () => {
     }
   };
 
+  const handleBuyNow = () => {
+    console.log("Buy now with selected variant");
+  }
+
   // Handle mobile modal actions
   const handleMobileAddToCart = () => {
     if (product?.variants && product.variants.length > 1) {
       setModalAction("addToCart");
       setIsMobileModalOpen(true);
     } else {
-      handleAddToCart();
+      handleProtectedAction(handleAddToCart);
     }
   };
 
@@ -213,16 +228,16 @@ const ProductPage: React.FC = () => {
       setIsMobileModalOpen(true);
     } else {
       // Proceed with buy now logic
-      console.log("Buy now with current variant");
+      handleProtectedAction(handleBuyNow);
     }
   };
 
   const handleModalConfirm = () => {
     if (modalAction === "addToCart") {
-      handleAddToCart();
+      handleProtectedAction(handleAddToCart);
     } else {
       // Handle buy now logic
-      console.log("Buy now with selected variant");
+      handleProtectedAction(handleBuyNow);
     }
     setIsMobileModalOpen(false);
   };
@@ -875,12 +890,15 @@ const ProductPage: React.FC = () => {
                 </div>
               </div>
               <div className="hidden md:flex gap-4 mt-4">
-                <button className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer">
+                <button 
+                  className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
+                  onClick={() => handleProtectedAction(handleBuyNow)}
+                >
                   Buy Now
                 </button>
                 <button
                   className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
-                  onClick={handleAddToCart}
+                  onClick={() => handleProtectedAction(handleAddToCart)}
                 >
                   Add to Cart
                 </button>
@@ -915,9 +933,9 @@ const ProductPage: React.FC = () => {
               </div>
               <div>
                 {!address && !user && (
-                  <Link to="/login" className="text-purple-600 hover:underline">
+                  <p onClick={() => handleProtectedAction(() => {})} className="text-purple-600 hover:underline cursor-pointer">
                     Login
-                  </Link>
+                  </p>
                 )}
                 {!address && user && (
                   <Link
