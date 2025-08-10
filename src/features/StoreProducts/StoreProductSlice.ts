@@ -43,6 +43,10 @@ export const storeProductsSlice = createSlice({
                 state.products = action.payload;
             })
             .addCase(fetchStoreProducts.rejected, (state, action) => {
+                if(action.meta.aborted) {
+                    return;
+                }
+
                 state.status = "failed";
                 state.error = action.payload as string;
             });

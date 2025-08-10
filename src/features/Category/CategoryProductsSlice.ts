@@ -61,6 +61,10 @@ const CategoryProductsSlice = createSlice({
                 }
             })
             .addCase(fetchCategoryProducts.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = 'failed';
                 state.error = action.payload as string;
             });

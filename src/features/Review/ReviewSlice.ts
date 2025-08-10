@@ -144,6 +144,10 @@ const reviewSlice = createSlice({
                 state.reviews = state.reviews.concat(action.payload.result);
             })
             .addCase(fetchProductsReview.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = "failed";
                 state.error = action.payload as string;
             })
@@ -177,6 +181,10 @@ const reviewSlice = createSlice({
                 }
             })
             .addCase(fetchProductsReviewByStars.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = "failed";
                 state.error = action.payload as string;
             })
@@ -191,6 +199,10 @@ const reviewSlice = createSlice({
                 state.reviews_have_comment = state.reviews_have_comment.concat(action.payload.result);
             })
             .addCase(fetchProductsReviewByComment.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = "failed";
                 state.error = action.payload as string;
             })
@@ -205,6 +217,10 @@ const reviewSlice = createSlice({
                 state.reviews_have_image = state.reviews_have_image.concat(action.payload.result);
             })
             .addCase(fetchProductsReviewByImage.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = "failed";
                 state.error = action.payload as string;
             });

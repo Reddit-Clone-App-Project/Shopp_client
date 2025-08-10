@@ -10,9 +10,10 @@
 import React from 'react';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import { RootState } from '../redux/store';
+import Loading from './Loading';
 
 interface AccessGuardProps {
     allowedRoles?: string[];
@@ -21,32 +22,39 @@ interface AccessGuardProps {
 
 const AccessGuard: React.FC<AccessGuardProps> = ({ allowedRoles, children }) => {
     const navigate = useNavigate();
-    const { isLoggedIn, role } = useSelector((state: RootState) => state.auth);
+    const location = useLocation();
+    const { isLoggedIn, role, status } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
-        if (!isLoggedIn) {
-            toast.error('You must be logged in!', {
-                autoClose: false,
-                closeOnClick: true,
-                onClose: () => navigate('/login')
-            });
-            return;
-        };
+        if(status === 'succeeded' || status === 'failed'){
+            if (!isLoggedIn) {
+                toast.error('You must be logged in!', {
+                    autoClose: false,
+                    closeOnClick: true,
+                    onClose: () => navigate('/login', { state: { from: location } })
+                });
+                return;
+            };
+    
+            if (allowedRoles && !allowedRoles.includes(role || '')) {
+                toast.error('You do not have permission to access this page.', {
+                    autoClose: false,
+                    closeOnClick: true,
+                    onClose: () => navigate('/home')
+                });
+            };
+        }
+    }, [isLoggedIn, role, status, allowedRoles, navigate, location]);
 
-        if (allowedRoles && !allowedRoles.includes(role || '')) {
-            toast.error('You do not have permission to access this page.', {
-                autoClose: false,
-                closeOnClick: true,
-                onClose: () => navigate('/home')
-            });
-        };
-    }, [isLoggedIn, role, allowedRoles, navigate]);
+    if (status === 'loading' || status === 'idle') {
+        return <Loading />;
+    }
 
-    if (!isLoggedIn || (allowedRoles && !allowedRoles.includes(role || ''))) {
-        return null; /* This is to not render the page if the user is not logged in or don't have the role permission */
-    };
+    if (isLoggedIn && (!allowedRoles || allowedRoles.includes(role || ''))) {
+        return <>{children}</>;
+    }
 
-    return <>{children}</>; /* Return the render of the page that need the authorization */
+    return null;
 };
 
 export default AccessGuard;

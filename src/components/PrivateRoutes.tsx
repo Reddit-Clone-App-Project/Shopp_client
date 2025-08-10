@@ -13,34 +13,45 @@ import { RootState } from '../redux/store';
 import { useEffect } from 'react';
 
 interface PrivateRouteProps {
-    children: React.ReactNode; /* component that we render if the user have authorization */
+    children: React.ReactNode;
     allowedRoles?: string[];
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, allowedRoles }) => {
-    const { isLoggedIn, role } = useSelector((state: RootState) => state.auth);
+    const { isLoggedIn, role, status } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
     const location = useLocation();
 
      useEffect(() => {
-        if (!isLoggedIn) {
-        toast.error('You must be logged in!');
-        navigate('/login', { state: { from: location.pathname }, replace: true });
+        if (status === 'succeeded' || status === 'failed') {
+            if (!isLoggedIn) {
+                toast.error('You must be logged in!');
+                navigate('/login', { state: { from: location.pathname }, replace: true });
+                return;
+            }
+            if (allowedRoles && !allowedRoles.includes(role || '')) {
+                toast.error('You do not have permission to access this page.', {
+                    autoClose: false,
+                    closeOnClick: true,
+                    onClose: () => navigate('/home')
+                });
+            }
         }
-    }, [isLoggedIn, navigate, location]);
+    }, [isLoggedIn, role, status, allowedRoles, navigate, location]);
 
-    if (!isLoggedIn) return null;
-
-    if (allowedRoles && !allowedRoles.includes(role || '')) {
-        toast.error('You do not have permission to access this page.', {
-            autoClose: false,
-            closeOnClick: true,
-            onClose: () => navigate('/home')
-        });
-        return null;
+    if (status === 'loading' || status === 'idle') {
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div>Loading...</div>
+            </div>
+        );
     }
 
-    return <>{children}</>;
+    if (isLoggedIn && (!allowedRoles || allowedRoles.includes(role || ''))) {
+        return <>{children}</>;
+    }
+    
+    return null;
 };
 
 export default PrivateRoute;

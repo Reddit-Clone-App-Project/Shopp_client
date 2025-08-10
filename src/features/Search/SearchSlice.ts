@@ -67,6 +67,10 @@ const SearchSlice = createSlice({
                 }
             })
             .addCase(searchProductsAsync.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = 'failed';
                 state.error = action.payload as string;
             });

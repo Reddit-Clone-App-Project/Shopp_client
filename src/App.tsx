@@ -19,6 +19,8 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
 import SearchPage from "./pages/buyer/SearchPage.tsx";
 import CategoryPage from "./pages/buyer/CategoryPage.tsx";
+import CartPage from "./pages/buyer/CartPage.tsx";
+import AccessGuard from "./components/AccesGuard.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +34,12 @@ const router = createBrowserRouter(
       <Route path="/category">
         <Route path=":slug" element={<CategoryPage />} />
       </Route>
+      <Route path="/cart" element={
+        <AccessGuard>
+          <CartPage />
+        </AccessGuard>
+        } 
+      />
 
       <Route
         path="/new-store"

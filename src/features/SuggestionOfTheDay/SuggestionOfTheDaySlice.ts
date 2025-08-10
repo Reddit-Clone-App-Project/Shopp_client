@@ -47,6 +47,9 @@ const SuggestionOfTheDaySlice = createSlice({
         state.products = state.products.concat(action.payload);
       })
       .addCase(fetchSuggestionOfTheDay.rejected, (state, action) => {
+        if(action.meta.aborted) {
+          return;
+        }
         state.status = "failed";
         state.error = action.payload as string;
       });

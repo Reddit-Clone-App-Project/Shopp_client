@@ -75,6 +75,9 @@ const storeSlice = createSlice({
         state.store = action.payload;
       })
       .addCase(fetchStore.rejected, (state, action) => {
+        if (action.meta.aborted) {
+          return;
+        }
         state.status.fetchStore = "failed";
         state.error = action.payload as string;
       })
@@ -86,6 +89,9 @@ const storeSlice = createSlice({
         state.stores = action.payload;
       })
       .addCase(fetchStoreOwned.rejected, (state, action) => {
+        if (action.meta.aborted) {
+          return;
+        }
         state.status.fetchStoreOwned = 'failed';
         state.error = action.payload as string;
       })

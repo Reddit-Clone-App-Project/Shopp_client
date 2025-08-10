@@ -60,6 +60,10 @@ const ProfileSlice = createSlice({
             state.user = action.payload;
         })
         .addCase(handleGetProfile.rejected, (state, action) => {
+            if (action.meta.aborted) {
+                return;
+            }
+
             state.status = 'failed';
             state.user = null;
             state.error = action.payload as string;

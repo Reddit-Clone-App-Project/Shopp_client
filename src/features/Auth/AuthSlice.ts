@@ -137,6 +137,10 @@ const AuthSlice = createSlice({
       .addMatcher(
         isRejected(handleLogin, handleLogout, fetchNewAccessToken),
         (state, action) => {
+          if (action.meta.aborted){
+            return;
+          }
+
           state.status = "failed";
           state.isLoggedIn = false;
           state.accessToken = null;

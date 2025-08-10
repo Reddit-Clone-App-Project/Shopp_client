@@ -44,6 +44,10 @@ const StoreDiscountSlice = createSlice({
                 state.discounts = action.payload; // Assuming the payload is an array of discounts
             })
             .addCase(fetchStoreDiscounts.rejected, (state, action) => {
+                if (action.meta.aborted) {
+                    return;
+                }
+
                 state.status = "failed";
                 state.error = action.payload as string;
             });
