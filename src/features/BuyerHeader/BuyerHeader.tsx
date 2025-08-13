@@ -224,9 +224,15 @@ const BuyerHeader: React.FC = () => {
         {/* Top header */}
         <div className="flex justify-between items-center px-8 pt-2 pb-0.5 text-sm text-white">
           <div className="flex items-center space-x-6">
-            <Link to="/seller" className="hover:underline">
-              Seller channel
-            </Link>
+            {user?.role === 'seller' ?
+              <Link to="/seller/dashboard" className="hover:underline">
+                Seller channel
+              </Link> 
+              :
+              <Link to="/seller" className="hover:underline">
+                Seller channel
+              </Link>
+            }
             <div className="flex items-center space-x-2">
               <a
                 href="https://github.com/Reddit-Clone-App-Project/Shopp_client"
