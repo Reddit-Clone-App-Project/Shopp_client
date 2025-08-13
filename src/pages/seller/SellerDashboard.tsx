@@ -7,8 +7,8 @@ const SellerDashboard = () => {
             <div className="flex">
                 <SellerBlackHeader 
                     section='Home'
-                    mLogo={7}
-                    mSection={20}
+                    mLogo={'ml-7'}
+                    mSection={'ml-20'}
                 />
                 <SellerSideBar />
                 <div className="w-[0.5px] h-[100] z-100 bg-white opacity-50"/>

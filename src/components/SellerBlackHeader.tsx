@@ -17,8 +17,8 @@ import { useNavigate } from "react-router-dom";
 
 type HeaderProps = {
     section: string;
-    mLogo: number;
-    mSection: number;
+    mLogo: string;
+    mSection: string;
 };
 
 const SellerBlackHeader: React.FC<HeaderProps> = ({section, mLogo, mSection}) => {
@@ -51,13 +51,13 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section, mLogo, mSection}) =>
           <img 
             src={SellerLogo} 
             alt="Seller Logo" 
-            className={`w-[100%] ml-${mLogo}`}
+            className={`w-full ${mLogo}`}
           />
           
           {/* Breadcrumb - hidden on mobile, visible from md upwards */}
         </div>
 
-          <div className={`text-white text-2xl ml-${mSection}`}>
+          <div className={`text-white text-2xl ${mSection}`}>
             {section}
           </div>
 

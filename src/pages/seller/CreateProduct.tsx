@@ -123,8 +123,8 @@ const CreateProduct = () => {
         <>
             <SellerBlackHeader 
                 section={'Product Management > Add a Product'}
-                mLogo={1}
-                mSection={6}
+                mLogo={'ml-1'}
+                mSection={'ml-6'}
             />
             <div className='w-full min-h-screen flex gap-3 justify-between items-start text-white bg-gray-950 pt-20 px-6'>
                 <div className='w-1.5/6 bg-slate-700 px-2.5 pt-2.5 pb-4 mt-4'>
