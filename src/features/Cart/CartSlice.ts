@@ -4,12 +4,31 @@ import {
   isPending,
   isFulfilled,
   isRejected,
+  PayloadAction,
 } from "@reduxjs/toolkit";
 import {
   getBuyerCart,
   addProductToCart,
   removeProductFromCart,
+  removeAllProductsFromCart,
+  updateCartItemQuantity
 } from "../../api";
+
+export const clearCart = createAsyncThunk(
+  "cart/clearCart",
+  async (_, thunkAPI) => {
+    try {
+      await removeAllProductsFromCart();
+      return;
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to clear cart";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
 
 export const fetchBuyerCart = createAsyncThunk(
   "cart/fetchBuyerCart",
@@ -70,33 +89,135 @@ export const removeFromCart = createAsyncThunk(
   }
 );
 
+export const updateProductQuantityInCart = createAsyncThunk(
+  "cart/updateProductQuantityInCart",
+  async (
+    {
+      productVariantId,
+      quantity,
+    }: { productVariantId: number; quantity: number },
+    thunkAPI
+  ) => {
+    try {
+      const response = await updateCartItemQuantity(
+        productVariantId,
+        quantity
+      );
+      return response.data;
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Failed to update product quantity in cart";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
+
+interface CartItem {
+  product_variant_id: number;
+  product_name: string;
+  variant_name: string;
+  quantity: number;
+  price_at_purchase: number;
+  image_url: string;
+}
+
+interface CartStore {
+  store_id: number;
+  store_name: string;
+  items: CartItem[];
+}
+
+export interface CartData {
+  cart_id: number;
+  app_user_id: number;
+  stores: CartStore[];
+}
+
 interface CartState {
-  cart: any[];
+  cart: CartData | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
+  selectedItems: number[];
 }
 
 const initialState: CartState = {
-  cart: [],
+  cart: null,
   status: "idle",
   error: null,
+  selectedItems: [],
 };
 
 const CartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    clearCart: (state) => {
-      state.cart = [];
-      state.status = "idle";
-      state.error = null;
+    toggleSelectItem: (state, action: PayloadAction<number>) => {
+      const itemId = action.payload;
+      const isSelected = state.selectedItems.includes(itemId);
+
+      if (isSelected) {
+        state.selectedItems = state.selectedItems.filter((id) => id !== itemId);
+      } else {
+        state.selectedItems.push(itemId);
+      }
+    },
+
+    toggleSelectStore: (state, action: PayloadAction<number>) => {
+      const storeId = action.payload;
+      const store = state.cart?.stores.find((s) => s.store_id === storeId);
+
+      if (!store) return;
+
+      const storeItemIds = store.items.map((item) => item.product_variant_id);
+      const areAllSelected = storeItemIds.every((id) =>
+        state.selectedItems.includes(id)
+      );
+
+      if (areAllSelected) {
+        state.selectedItems = state.selectedItems.filter(
+          (id) => !storeItemIds.includes(id)
+        );
+      } else {
+        storeItemIds.forEach((id) => {
+          if (!state.selectedItems.includes(id)) {
+            state.selectedItems.push(id);
+          }
+        });
+      }
+    },
+
+    toggleSelectAll: (state) => {
+      if (!state.cart) return;
+      const allItemIds = state.cart.stores.flatMap((store) =>
+        store.items.map((item) => item.product_variant_id)
+      );
+
+      if (state.selectedItems.length === allItemIds.length) {
+        state.selectedItems = [];
+      } else {
+        state.selectedItems = allItemIds;
+      }
+    },
+
+    // This is use after finishing payment
+    clearSelectedItems: (state) => {
+      state.selectedItems = [];
     },
   },
   extraReducers: (builder) => {
     builder
+      // Handle specific case for clearCart.fulfilled (addCase must come before addMatcher)
+      .addCase(clearCart.fulfilled, (state) => {
+        state.status = "succeeded";
+        state.cart = null;
+        state.selectedItems = [];
+        state.error = null;
+      })
       // Handle pending states for all cart async thunks
       .addMatcher(
-        isPending(fetchBuyerCart, addToCart, removeFromCart),
+        isPending(fetchBuyerCart, addToCart, removeFromCart, clearCart, updateProductQuantityInCart),
         (state) => {
           state.status = "loading";
           state.error = null;
@@ -104,23 +225,21 @@ const CartSlice = createSlice({
       )
       // Handle fulfilled states for all cart async thunks
       .addMatcher(
-        isFulfilled(fetchBuyerCart, addToCart, removeFromCart),
+        isFulfilled(fetchBuyerCart, addToCart, removeFromCart, updateProductQuantityInCart),
         (state, action) => {
           state.status = "succeeded";
           // Update cart with items from response
-          if (action.payload?.items) {
-            state.cart = action.payload.items;
-          }
+          state.cart = action.payload;
         }
       )
       // Handle rejected states for all cart async thunks
       .addMatcher(
-        isRejected(fetchBuyerCart, addToCart, removeFromCart),
+        isRejected(fetchBuyerCart, addToCart, removeFromCart, clearCart, updateProductQuantityInCart),
         (state, action) => {
           if (action.meta.aborted) {
             return;
           }
-            
+
           state.status = "failed";
           state.error = action.payload as string;
         }
@@ -128,5 +247,10 @@ const CartSlice = createSlice({
   },
 });
 
-export const { clearCart } = CartSlice.actions;
+export const {
+  toggleSelectItem,
+  toggleSelectStore,
+  toggleSelectAll,
+  clearSelectedItems,
+} = CartSlice.actions;
 export default CartSlice.reducer;
