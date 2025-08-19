@@ -113,3 +113,7 @@ export const addProductToCart = (productVariantId: number, quantity: number, pri
 export const removeProductFromCart = (productVariantId: number) => API.delete(`/cart`, {
   data: { productVariantId }
 });
+export const removeAllProductsFromCart = () => API.delete(`/cart/all`);
+export const updateCartItemQuantity = (productVariantId: number, quantity: number) => API.put("/cart", {
+  productVariantId, quantity
+});

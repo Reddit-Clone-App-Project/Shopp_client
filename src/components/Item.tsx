@@ -5,7 +5,7 @@
 */
 import React from "react";
 import type { FlashSaleItem, ProductCard } from "../types/Item";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, item: ProductCard | null }) => { // !The item and the flashSaleItem must be the same type, but for now for some reason I have to separate them
   const discountedPrice = (flashSaleItem?.price ?? 0) * (1 - (flashSaleItem?.discount ?? 0) / 100);
@@ -46,7 +46,7 @@ const Item = ({ flashSaleItem, item }: { flashSaleItem: FlashSaleItem | null, it
 
   if(item && !flashSaleItem){
     return (
-    <div onClick={() => {navigate(`/product/${item.id}`, { replace: true })}} className={`bg-white rounded-sm overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-purple-500`}>
+    <div onClick={() => {navigate(`/product/${item.id}`)}} className={`bg-white rounded-sm overflow-hidden group cursor-pointer hover:shadow-lg transition-shadow duration-200 border border-gray-200 hover:border-purple-500`}>
       <div className="relative">
         <img
           src={item.promotion_image?.url}

@@ -168,7 +168,7 @@ const Category: React.FC = () => {
                     {page.map((category, itemIndex) => (
                       <div
                         onClick={() => {
-                          navigate(`/category/${category.slug}`, { replace: true });
+                          navigate(`/category/${category.slug}`);
                         }}
                         key={pageIndex * itemsPerPage + itemIndex}
                         className="flex flex-col items-center justify-center p-3 md:p-4 rounded-lg hover:bg-white hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1 group/item"

@@ -112,8 +112,32 @@ const BuyerHeader: React.FC = () => {
     }
   };
 
+  // Helper function to get all items from cart (supports both old and new structure)
+  const getAllCartItems = () => {
+    if (!cart) return [];
+
+    // New structure: cart has stores property
+    if ((cart as any).stores && Array.isArray((cart as any).stores)) {
+      return (cart as any).stores.flatMap((store: any) => store.items || []);
+    }
+
+    // Old structure: cart is an array of items
+    if (Array.isArray(cart)) {
+      return cart;
+    }
+
+    return [];
+  };
+
+  // Helper function to check if cart has items
+  const hasCartItems = () => {
+    const items = getAllCartItems();
+    return items.length > 0;
+  };
+
   const calculateCartTotal = () => {
-    return cart
+    const items = getAllCartItems();
+    return items
       .reduce((total: number, item: any) => {
         return total + item.price_at_purchase * item.quantity;
       }, 0)
@@ -121,7 +145,8 @@ const BuyerHeader: React.FC = () => {
   };
 
   const getTotalCartItems = () => {
-    return cart.reduce((total: number, item: any) => total + item.quantity, 0);
+    const items = getAllCartItems();
+    return items.reduce((total: number, item: any) => total + item.quantity, 0);
   };
 
   // Handle Escape key to close dropdown
@@ -224,15 +249,15 @@ const BuyerHeader: React.FC = () => {
         {/* Top header */}
         <div className="flex justify-between items-center px-8 pt-2 pb-0.5 text-sm text-white">
           <div className="flex items-center space-x-6">
-            {user?.role === 'seller' ?
+            {user?.role === "seller" ? (
               <Link to="/seller/dashboard" className="hover:underline">
                 Seller channel
-              </Link> 
-              :
+              </Link>
+            ) : (
               <Link to="/seller" className="hover:underline">
                 Seller channel
               </Link>
-            }
+            )}
             <div className="flex items-center space-x-2">
               <a
                 href="https://github.com/Reddit-Clone-App-Project/Shopp_client"
@@ -366,7 +391,7 @@ const BuyerHeader: React.FC = () => {
                 alt="Shopping Cart"
                 className="w-6 h-6 text-white"
               />
-              {cart.length > 0 && (
+              {hasCartItems() && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {getTotalCartItems()}
                 </span>
@@ -389,7 +414,7 @@ const BuyerHeader: React.FC = () => {
                       <h3 className="text-lg font-bold text-purple-800">
                         Shopping Cart
                       </h3>
-                      {status === "succeeded" && cart.length > 0 && (
+                      {status === "succeeded" && hasCartItems() && (
                         <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
                           {getTotalCartItems()}{" "}
                           {getTotalCartItems() === 1 ? "item" : "items"}
@@ -431,7 +456,7 @@ const BuyerHeader: React.FC = () => {
                         </Link>
                       </div>
                     </div>
-                  ) : cart.length === 0 ? (
+                  ) : !hasCartItems() ? (
                     <div className="p-8 text-center">
                       <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                         <img
@@ -450,55 +475,124 @@ const BuyerHeader: React.FC = () => {
                   ) : (
                     <>
                       <div className="max-h-96 overflow-y-auto">
-                        {cart.map((item: any, index: number) => (
-                          <div
-                            key={index}
-                            className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
-                          >
-                            <div className="flex items-start space-x-3">
-                              <div className="flex-shrink-0">
-                                <img
-                                  src={
-                                    item.image_url || "/placeholder-image.jpg"
-                                  }
-                                  alt={item.product_name || "Product"}
-                                  className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
-                                />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
-                                  {item.product_name || "Unknown Product"}
-                                </h4>
-                                {item.variant_name && (
-                                  <p className="text-xs text-gray-400 mb-1">
-                                    Variant: {item.variant_name}
-                                  </p>
+                        {/* Check if cart has the new structure with stores */}
+                        {(cart as any).stores
+                          ? // New structure: render by stores
+                            (cart as any).stores.map((store: any) => (
+                              <div key={store.store_id}>
+                                {(cart as any).stores.length > 1 && (
+                                  <div className="px-4 py-2 bg-gray-50 border-b border-gray-100">
+                                    <h5 className="text-xs font-semibold text-gray-600">
+                                      {store.store_name}
+                                    </h5>
+                                  </div>
                                 )}
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                    Qty: {item.quantity}
-                                  </span>
-                                  <span className="text-sm font-bold text-purple-600">
-                                    $
-                                    {(
-                                      item.price_at_purchase * item.quantity
-                                    ).toFixed(2)}
-                                  </span>
-                                </div>
-                                <button
-                                  onClick={() =>
-                                    handleCartItemRemove(
-                                      item.product_variant_id
-                                    )
-                                  }
-                                  className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
-                                >
-                                  Remove
-                                </button>
+                                {store.items.map((item: any) => (
+                                  <div
+                                    key={`${store.store_id}-${item.product_variant_id}`}
+                                    className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                                  >
+                                    <div className="flex items-start space-x-3">
+                                      <div className="flex-shrink-0">
+                                        <img
+                                          src={
+                                            item.image_url ||
+                                            "/placeholder-image.jpg"
+                                          }
+                                          alt={item.product_name || "Product"}
+                                          className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                        />
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
+                                          {item.product_name ||
+                                            "Unknown Product"}
+                                        </h4>
+                                        {item.variant_name && (
+                                          <p className="text-xs text-gray-400 mb-1">
+                                            Variant: {item.variant_name}
+                                          </p>
+                                        )}
+                                        <div className="flex items-center justify-between mb-2">
+                                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                            Qty: {item.quantity}
+                                          </span>
+                                          <span className="text-sm font-bold text-purple-600">
+                                            $
+                                            {(
+                                              item.price_at_purchase *
+                                              item.quantity
+                                            ).toFixed(2)}
+                                          </span>
+                                        </div>
+                                        <button
+                                          onClick={() =>
+                                            handleCartItemRemove(
+                                              item.product_variant_id
+                                            )
+                                          }
+                                          className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
+                                        >
+                                          Remove
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                            </div>
-                          </div>
-                        ))}
+                            ))
+                          : // Old structure: render items directly
+                            Array.isArray(cart) &&
+                            cart.map((item: any, index: number) => (
+                              <div
+                                key={index}
+                                className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                              >
+                                <div className="flex items-start space-x-3">
+                                  <div className="flex-shrink-0">
+                                    <img
+                                      src={
+                                        item.image_url ||
+                                        "/placeholder-image.jpg"
+                                      }
+                                      alt={item.product_name || "Product"}
+                                      className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
+                                      {item.product_name || "Unknown Product"}
+                                    </h4>
+                                    {item.variant_name && (
+                                      <p className="text-xs text-gray-400 mb-1">
+                                        Variant: {item.variant_name}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center justify-between mb-2">
+                                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                        Qty: {item.quantity}
+                                      </span>
+                                      <span className="text-sm font-bold text-purple-600">
+                                        $
+                                        {(
+                                          item.price_at_purchase * item.quantity
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={() =>
+                                        handleCartItemRemove(
+                                          item.product_variant_id
+                                        )
+                                      }
+                                      className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
+                                    >
+                                      Remove
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                       </div>
 
                       <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
@@ -512,13 +606,13 @@ const BuyerHeader: React.FC = () => {
                         </div>
                         <div className="space-y-3">
                           <Link
-                            to="/carts"
+                            to="/cart"
                             className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
                             onClick={() => setIsCartDropdownOpen(false)}
                           >
                             View Full Cart
                           </Link>
-                          <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105">
+                          <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105 cursor-pointer">
                             Proceed to Checkout
                           </button>
                         </div>
@@ -566,7 +660,7 @@ const BuyerHeader: React.FC = () => {
                   alt="Shopping Cart"
                   className="w-5 h-5"
                 />
-                {cart.length > 0 && (
+                {hasCartItems() && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                     {getTotalCartItems()}
                   </span>
@@ -589,7 +683,7 @@ const BuyerHeader: React.FC = () => {
                         <h3 className="text-base font-bold text-purple-800">
                           Shopping Cart
                         </h3>
-                        {status === "succeeded" && cart.length > 0 && (
+                        {status === "succeeded" && hasCartItems() && (
                           <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
                             {getTotalCartItems()}
                           </span>
@@ -629,7 +723,7 @@ const BuyerHeader: React.FC = () => {
                           </Link>
                         </div>
                       </div>
-                    ) : cart.length === 0 ? (
+                    ) : !hasCartItems() ? (
                       <div className="p-6 text-center">
                         <div className="w-12 h-12 mx-auto mb-3 bg-gray-100 rounded-full flex items-center justify-center">
                           <img
@@ -648,49 +742,52 @@ const BuyerHeader: React.FC = () => {
                     ) : (
                       <>
                         <div className="max-h-72 overflow-y-auto">
-                          {cart.slice(0, 3).map((item: any, index: number) => (
-                            <div
-                              key={index}
-                              className="p-3 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
-                            >
-                              <div className="flex items-start space-x-2">
-                                <div className="flex-shrink-0">
-                                  <img
-                                    src={
-                                      item.image_url || "/placeholder-image.jpg"
-                                    }
-                                    alt={item.product_name || "Product"}
-                                    className="w-12 h-12 object-cover rounded-lg border border-gray-200 shadow-sm"
-                                  />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-xs font-semibold text-gray-900 truncate mb-1">
-                                    {item.product_name || "Unknown Product"}
-                                  </h4>
-                                  {item.variant_name && (
-                                    <p className="text-xs text-gray-400 mb-1">
-                                      {item.variant_name}
-                                    </p>
-                                  )}
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                                      Qty: {item.quantity}
-                                    </span>
-                                    <span className="text-sm font-bold text-purple-600">
-                                      $
-                                      {(
-                                        item.price_at_purchase * item.quantity
-                                      ).toFixed(2)}
-                                    </span>
+                          {getAllCartItems()
+                            .slice(0, 3)
+                            .map((item: any, index: number) => (
+                              <div
+                                key={index}
+                                className="p-3 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                              >
+                                <div className="flex items-start space-x-2">
+                                  <div className="flex-shrink-0">
+                                    <img
+                                      src={
+                                        item.image_url ||
+                                        "/placeholder-image.jpg"
+                                      }
+                                      alt={item.product_name || "Product"}
+                                      className="w-12 h-12 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                    />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h4 className="text-xs font-semibold text-gray-900 truncate mb-1">
+                                      {item.product_name || "Unknown Product"}
+                                    </h4>
+                                    {item.variant_name && (
+                                      <p className="text-xs text-gray-400 mb-1">
+                                        {item.variant_name}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                        Qty: {item.quantity}
+                                      </span>
+                                      <span className="text-sm font-bold text-purple-600">
+                                        $
+                                        {(
+                                          item.price_at_purchase * item.quantity
+                                        ).toFixed(2)}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
-                          {cart.length > 3 && (
+                            ))}
+                          {getAllCartItems().length > 3 && (
                             <div className="p-2 text-center">
                               <span className="text-xs text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
-                                +{cart.length - 3} more items
+                                +{getAllCartItems().length - 3} more items
                               </span>
                             </div>
                           )}
@@ -706,7 +803,7 @@ const BuyerHeader: React.FC = () => {
                             </span>
                           </div>
                           <Link
-                            to="/carts"
+                            to="/cart"
                             className="block w-full bg-purple-600 text-white text-center py-2.5 rounded-lg hover:bg-purple-700 transition-all duration-200 text-sm font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
                             onClick={() => setIsCartDropdownOpen(false)}
                           >
