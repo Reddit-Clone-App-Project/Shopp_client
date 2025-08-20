@@ -1,9 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../redux/store";
+import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
 
 const AllProductSection = () => {
     const [active, setActive] = useState(0);
     const [violate, setViolate] = useState(0);
     const [pending, setPending] = useState(0);
+    const dispatch = useDispatch<AppDispatch>();
+    const stores = useSelector((state: RootState) => state.stores.stores);
+    const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
+
+    useEffect(() => {
+            dispatch(fetchStoreOwned());
+    }, [dispatch]);
+
+    useEffect(() => {
+            if (stores.length > 0 && selectedStoreId == null) {
+                dispatch(setSelectedStoreId(stores[0].id));
+            };
+    }, [stores, selectedStoreId, dispatch]);
+
+    useEffect(() => {
+        dispatch(getAllProductByStoreId());
+    }, [dispatch]);
 
     return (
         <>

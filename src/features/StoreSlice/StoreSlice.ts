@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getStore, getStoreOwned } from "../../api";
+import { getStore, getStoreOwned, getAllProductsByStoreId } from "../../api";
 import { StoreType } from '../../types/Item';
 
 export const fetchStore = createAsyncThunk(
@@ -33,6 +33,16 @@ export const fetchStoreOwned = createAsyncThunk(
     }
   }
 );
+
+export const fetchProductsByStoreId = createAsyncThunk(
+  'store/fetchProductsByStoreId',
+  async (_:void, thunkAPI) => {
+    try {
+      const response = await getAllProductsByStoreId(storeId);
+
+    }
+  }
+)
 
 export interface StoreState {
   store: any | null;
