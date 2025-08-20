@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
+import { fetchProductsByStoreId, fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
 
 const AllProductSection = () => {
     const [active, setActive] = useState(0);
@@ -22,7 +22,7 @@ const AllProductSection = () => {
     }, [stores, selectedStoreId, dispatch]);
 
     useEffect(() => {
-        dispatch(getAllProductByStoreId());
+        dispatch(fetchProductsByStoreId(stores[0].id));
     }, [dispatch]);
 
     return (

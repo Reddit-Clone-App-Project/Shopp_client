@@ -36,13 +36,19 @@ export const fetchStoreOwned = createAsyncThunk(
 
 export const fetchProductsByStoreId = createAsyncThunk(
   'store/fetchProductsByStoreId',
-  async (_:void, thunkAPI) => {
+  async (storeId: number, thunkAPI) => {
     try {
       const response = await getAllProductsByStoreId(storeId);
-
+      return response.data;
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
     }
   }
-)
+);
 
 export interface StoreState {
   store: any | null;

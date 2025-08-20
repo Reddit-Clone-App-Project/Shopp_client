@@ -93,7 +93,7 @@ export const getProductsReviewByImage = (productId: number, offset: number) => A
 export const getStore = (storeId: number) => API.get(`/store/${storeId}`);
 export const getStoreOwned = () => API.get('store/my-store');
 export const getStoreReleasedRuledDiscounts = (storeId: number) => API.get(`/store/${storeId}/discounts`);
-export const getAllProductsByStoreId = (storeId: number) => API.get(`store/${storeId}/AllProducts`);
+export const getAllProductsByStoreId = (storeId: number) => API.get(`store/${storeId}/products`);
 
 // Search
 export const searchProducts = (q: string, limit: number = 60, offset: number = 0, sortBy: string = 'Relevance', minPrice: number | null = null, maxPrice: number | null = null, rating: number | null = null) => API.get(`/products/search?q=${q}&limit=${limit}&offset=${offset}&sortBy=${sortBy}${minPrice !== null ? `&minPrice=${minPrice}` : ''}${maxPrice !== null ? `&maxPrice=${maxPrice}` : ''}${rating !== null ? `&rating=${rating}` : ''}`);
