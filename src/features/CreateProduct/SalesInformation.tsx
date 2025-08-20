@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ProductDataType, VariantDataType } from "../../pages/seller/CreateProduct";
+import { ProductDataType, VariantDataType } from "../../pages/seller/ProductManagement/CreateProduct";
 import React, { useState, useRef } from "react";
 import addImage from '../../assets/addImage.svg';
 

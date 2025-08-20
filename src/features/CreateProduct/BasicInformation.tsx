@@ -2,7 +2,7 @@ import React, { useRef } from 'react'
 import { toast } from 'react-toastify';
 import AddImage from '../../assets/addImage.svg';
 import CategoryInput from '../../components/CategoryInput';
-import { ProductDataType } from '../../pages/seller/CreateProduct';
+import { ProductDataType } from '../../pages/seller/ProductManagement/CreateProduct';
 
 type BasicInfoProps = {
     data: ProductDataType;
@@ -56,7 +56,7 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
     };
 
     const removeImage = (idToRemove: number) => {
-        onChange(prev => ({
+        onChange((prev: ProductDataType): ProductDataType => ({
             ...prev,
             productImage: prev.productImage.filter((_, id) => id !== idToRemove),
         }));

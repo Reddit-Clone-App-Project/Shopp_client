@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
-import SellerBlackHeader from '../../components/SellerBlackHeader';
+import SellerBlackHeader from '../../../components/SellerBlackHeader';
 // SVG
-import AddImage from '../../assets/addImage.svg';
-import Chat from '../../assets/chat.svg';
-import Cart from '../../assets/HomePage/Header/shopping-cart.svg';
-import BasicInformation from '../../features/CreateProduct/BasicInformation';
+import AddImage from '../../../assets/addImage.svg';
+import Chat from '../../../assets/chat.svg';
+import Cart from '../../../assets/HomePage/Header/shopping-cart.svg';
+import BasicInformation from '../../../features/CreateProduct/BasicInformation';
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "../../redux/store";
-import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
+import { RootState, AppDispatch } from "../../../redux/store";
+import { fetchStoreOwned, setSelectedStoreId } from '../../../features/StoreSlice/StoreSlice';
 import axios from "axios";
-import SalesInformation from '../../features/CreateProduct/SalesInformation';
+import SalesInformation from '../../../features/CreateProduct/SalesInformation';
 
 export type ProductDataType = {
     name: string;

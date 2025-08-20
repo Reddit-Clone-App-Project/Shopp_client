@@ -13,7 +13,7 @@ import HomePage from "./pages/buyer/HomePage.tsx";
 
 import PrivateRoute from "./components/PrivateRoutes.tsx";
 import CreateStorePage from "./pages/seller/CreateStorePage.tsx";
-import CreateProduct from "./pages/seller/CreateProduct.tsx";
+import CreateProduct from "./pages/seller/ProductManagement/CreateProduct.tsx";
 import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
@@ -23,6 +23,7 @@ import CartPage from "./pages/buyer/CartPage.tsx";
 import AccessGuard from "./components/AccesGuard.tsx";
 import PaymentSuccess from "./pages/buyer/PaymentSuccess.tsx";
 import PaymentFail from "./pages/buyer/PaymentFail.tsx";
+import AllProduct from "./pages/seller/ProductManagement/AllProduct.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -67,7 +68,8 @@ const router = createBrowserRouter(
           }
         />*/}
         {/* Route /seller/create is using for testing, changes will be made later */}
-        <Route path="create" element={<CreateProduct />} />
+        <Route path="product/create" element={<CreateProduct />} />
+        <Route path="product/all" element={<AllProduct />} />
       </Route>
 
       {/* Catch-all route for 404 errors */}

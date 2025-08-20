@@ -73,8 +73,8 @@ const SellerSideBar = () => {
                             transition={{ duration: 0.25, ease: "easeInOut" }}
                         >
                             <ul className='ml-12 space-y-1.5 mb-5'> 
-                                    <li className='hover:cursor-pointer'>All Products</li>
-                                    <li className='hover:cursor-pointer'><a href="/seller/create">Add Products</a></li>
+                                    <li className='hover:cursor-pointer'><a href="/seller/product/all">All Products</a></li>
+                                    <li className='hover:cursor-pointer'><a href="/seller/product/create">Add Products</a></li>
                             </ul>
                         </motion.div>
                     }
