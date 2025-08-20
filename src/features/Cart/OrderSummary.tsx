@@ -1,6 +1,8 @@
 import React from 'react';
 import Location from '../../assets/Product/Location.svg';
 import { CartData } from './CartSlice';
+import { loadStripe } from '@stripe/stripe-js';
+import { checkout } from '../../api'
 
 interface OrderSummaryProps {
   address: string; 
@@ -14,10 +16,23 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ address, cart, selectedItem
   const selectedCartItems = cart?.stores.flatMap(store =>
     store.items.filter(item => selectedItems.includes(item.product_variant_id))
   ) || [];
+  console.log(selectedCartItems);
 
   // Total products and payment
   const totalItems = selectedCartItems.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = selectedCartItems.reduce((acc, item) => acc + (item.price_at_purchase * item.quantity), 0);
+
+  const makePayment = async() => {
+    try {
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY as string);
+      const session = await checkout(selectedCartItems);
+      const result = await stripe?.redirectToCheckout({
+        sessionId: session.data.id
+      })
+    } catch (error) {
+      console.error("Error during payment:", error);
+    }
+  }
 
   return (
     <div className='basis-30% bg-blue-200 p-4'>
@@ -54,7 +69,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ address, cart, selectedItem
         <p className='self-end text-sm text-gray-600'>VAT Included</p>
       </div>
 
-      <button className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-102 cursor-pointer">Proceed to Checkout{`(${totalItems} items)`}</button>
+      <button 
+        className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-102 cursor-pointer"
+        onClick={makePayment}
+      >
+      Proceed to Checkout{`(${totalItems} items)`}
+      </button>
+
     </div>
   );
 };

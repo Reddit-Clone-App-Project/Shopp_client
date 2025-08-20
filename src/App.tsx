@@ -21,6 +21,8 @@ import SearchPage from "./pages/buyer/SearchPage.tsx";
 import CategoryPage from "./pages/buyer/CategoryPage.tsx";
 import CartPage from "./pages/buyer/CartPage.tsx";
 import AccessGuard from "./components/AccesGuard.tsx";
+import PaymentSuccess from "./pages/buyer/PaymentSuccess.tsx";
+import PaymentFail from "./pages/buyer/PaymentFail.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -40,6 +42,9 @@ const router = createBrowserRouter(
         </AccessGuard>
         } 
       />
+
+      <Route path="/success" element={<PaymentSuccess />} />
+      <Route path="/fail" element={<PaymentFail />} />
 
       <Route
         path="/new-store"
