@@ -7,7 +7,6 @@ import CartItems from '../../features/Cart/CartItems'
 import { removeFromCart, toggleSelectAll } from '../../features/Cart/CartSlice'
 import OrderSummary from '../../features/Cart/OrderSummary'
 
-
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { cart, selectedItems} = useSelector((state: RootState) => state.cart);

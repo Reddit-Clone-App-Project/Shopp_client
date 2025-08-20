@@ -4,6 +4,7 @@ import { CartData } from './CartSlice';
 import { loadStripe } from '@stripe/stripe-js';
 import { checkout } from '../../api'
 
+
 interface OrderSummaryProps {
   address: string; 
   cart: CartData | null;
@@ -16,7 +17,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ address, cart, selectedItem
   const selectedCartItems = cart?.stores.flatMap(store =>
     store.items.filter(item => selectedItems.includes(item.product_variant_id))
   ) || [];
-  console.log(selectedCartItems);
 
   // Total products and payment
   const totalItems = selectedCartItems.reduce((acc, item) => acc + item.quantity, 0);

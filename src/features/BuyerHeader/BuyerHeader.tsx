@@ -612,7 +612,7 @@ const BuyerHeader: React.FC = () => {
                           >
                             View Full Cart
                           </Link>
-                          
+                         
                         </div>
                       </div>
                     </>
