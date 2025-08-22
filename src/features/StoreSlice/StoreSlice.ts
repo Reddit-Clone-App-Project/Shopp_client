@@ -36,9 +36,9 @@ export const fetchStoreOwned = createAsyncThunk(
 
 export const fetchProductsByStoreId = createAsyncThunk(
   'store/fetchProductsByStoreId',
-  async (storeId: number, thunkAPI) => {
+  async ({ storeId, limit, offset }: { storeId: number; limit: number; offset: number }, thunkAPI) => {
     try {
-      const response = await getAllProductsByStoreId(storeId);
+      const response = await getAllProductsByStoreId(storeId, limit, offset);
       return response.data;
     } catch (error: any) {
       const errorMsg =
