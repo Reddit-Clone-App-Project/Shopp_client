@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { getStore, getStoreOwned, getAllProductsByStoreId } from "../../api";
-import { StoreType } from '../../types/Item';
+import { AllProducts, StoreType } from '../../types/Item';
 
 export const fetchStore = createAsyncThunk(
   "store/fetchStore",
@@ -54,9 +54,11 @@ export interface StoreState {
   store: any | null;
   stores: StoreType[];
   selectedStoreId: number | null,
+  allProducts: AllProducts[];
   status: {
     fetchStore: "idle" | "loading" | "succeeded" | "failed";
     fetchStoreOwned: "idle" | "loading" | "succeeded" | "failed";
+    fetchProductsByStoreId: "idle" | "loading" | "succeeded" | "failed";
   },
   error: string | null;
 }
@@ -65,9 +67,11 @@ const initialState: StoreState = {
   store: null,
   stores: [],
   selectedStoreId: null,
+  allProducts: [],
   status: {
     fetchStore: "idle",
     fetchStoreOwned: "idle",
+    fetchProductsByStoreId: 'idle',
   },
   error: null,
 };
@@ -109,6 +113,20 @@ const storeSlice = createSlice({
           return;
         }
         state.status.fetchStoreOwned = 'failed';
+        state.error = action.payload as string;
+      })
+      .addCase(fetchProductsByStoreId.pending, (state) => {
+        state.status.fetchProductsByStoreId = 'loading';
+      })
+      .addCase(fetchProductsByStoreId.fulfilled, (state, action) => {
+        state.status.fetchProductsByStoreId = 'succeeded';
+        state.allProducts = action.payload;
+      })
+      .addCase(fetchProductsByStoreId.rejected, (state, action) => {
+        if (action.meta.aborted) {
+          return;
+        }
+        state.status.fetchProductsByStoreId = 'failed';
         state.error = action.payload as string;
       })
   },

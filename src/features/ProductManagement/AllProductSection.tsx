@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { fetchProductsByStoreId, fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
+import { AllProducts } from "../../types/Item";
 
 const AllProductSection = () => {
     const [active, setActive] = useState(0);
@@ -10,6 +11,9 @@ const AllProductSection = () => {
     const dispatch = useDispatch<AppDispatch>();
     const stores = useSelector((state: RootState) => state.stores.stores);
     const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
+    const { allProducts: storeProducts, status, error } = useSelector((state: RootState) => state.stores);
+
+    const store_id = selectedStoreId ?? stores[0]?.id; 
 
     useEffect(() => {
             dispatch(fetchStoreOwned());
@@ -17,13 +21,15 @@ const AllProductSection = () => {
 
     useEffect(() => {
             if (stores.length > 0 && selectedStoreId == null) {
-                dispatch(setSelectedStoreId(stores[0].id));
+                dispatch(setSelectedStoreId(store_id));
             };
     }, [stores, selectedStoreId, dispatch]);
 
     useEffect(() => {
-        dispatch(fetchProductsByStoreId(stores[0].id));
-    }, [dispatch]);
+        if (store_id) {                                    
+            dispatch(fetchProductsByStoreId(store_id));
+        }
+    }, [dispatch, store_id]);
 
     return (
         <>
@@ -39,6 +45,14 @@ const AllProductSection = () => {
                     <li>Pending approval by Shopp ({})</li>
                 </ul>
             </nav>
+            <div className="mt-10">
+                <div>Provaaaa</div>
+                {storeProducts.map((p: AllProducts) => (
+                    <>
+                        <div key={p.id}>{p.name}</div>
+                    </>
+                ))}
+            </div>
         </>
     );
 };

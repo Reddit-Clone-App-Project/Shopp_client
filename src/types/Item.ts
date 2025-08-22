@@ -103,3 +103,28 @@ export interface ProductCard {
     promotion_image: ItemImage | null;
     store: ProductCardStore | null;
 }
+
+
+export interface AllProducts {
+    id: number;
+    name: string;
+    description: string;
+    store_id: number;
+    category_id: number;
+    created_at: Date;
+    updated_at: Date;
+    is_published: boolean;
+    is_active: boolean;
+    average_rating: string; 
+    total_reviews: number;
+    stars_5: number;
+    stars_4: number;
+    stars_3: number;
+    stars_2: number;
+    stars_1: number;
+    have_comment: number;
+    have_image: number;
+    views: string;
+    bought: number;
+    fts: string;
+}
