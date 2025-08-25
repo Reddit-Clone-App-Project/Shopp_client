@@ -79,6 +79,17 @@ export const logout = () => API.post('/users/logout');
 
 // Privacy information
 export const getProfile = () => API.get("/users/me");
+export const updateProfile = (profileData: any) => API.put("/users/me", profileData);
+export const uploadAvatar = (avatarFile: File) => {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+    return API.post("/users/me/avatar", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+};
+export const deleteProfile = () => API.delete("/users/me");
 
 //! All users
 export const getProductById = (productId: number) => API.get(`/products/${productId}`);

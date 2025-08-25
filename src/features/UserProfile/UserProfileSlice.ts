@@ -1,75 +1,138 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getProfile } from "../../api";
+import {
+  createSlice,
+  createAsyncThunk,
+  isPending,
+  isRejected,
+  isFulfilled,
+} from "@reduxjs/toolkit";
+import { getProfile, updateProfile, uploadAvatar } from "../../api";
 
 export const handleGetProfile = createAsyncThunk(
-    'profile/handleGetProfile',
-    async (_ , thunkAPI) => {
-        try {
-            const res = await getProfile();
-            if(res?.data?.id){
-                return res.data;
-            }
-            return thunkAPI.rejectWithValue('Get profile failed: Invalid response from the server.');
-        } catch (err: any) {
-            const errorMsg = err.response?.data?.error || err.response?.data?.error || "A network or server error occurred.";
-            return thunkAPI.rejectWithValue(errorMsg);
-        }
+  "profile/handleGetProfile",
+  async (_, thunkAPI) => {
+    try {
+      const res = await getProfile();
+      if (res?.data?.id) {
+        return res.data;
+      }
+      return thunkAPI.rejectWithValue(
+        "Get profile failed: Invalid response from the server."
+      );
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
     }
-)
+  }
+);
+
+export const handleUpdateProfile = createAsyncThunk(
+  "profile/handleUpdateProfile",
+  async (profileData: any, thunkAPI) => {
+    try {
+      console.log(profileData);
+      const res = await updateProfile(profileData);
+      if (res?.data?.id) {
+        return res.data;
+      }
+      return thunkAPI.rejectWithValue(
+        "Update profile failed: Invalid response from the server."
+      );
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const handleUploadAvatar = createAsyncThunk(
+  "profile/handleUploadAvatar",
+  async (avatarFile: File, thunkAPI) => {
+    try {
+      const res = await uploadAvatar(avatarFile);
+      if (res?.data?.id) {
+        return res.data;
+      }
+      return thunkAPI.rejectWithValue(
+        "Upload avatar failed: Invalid response from the server."
+      );
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
 
 export interface Profile {
-    status: 'idle' | 'loading' | 'succeeded' | 'failed',
-    error: string | null,
-    user: {
-        id: number,
-        email: string,
-        full_name: string,
-        profile_img: string,
-        date_of_birth: Date,
-        role: "buyer" | "seller",
-        phone_number: string,
-        nationality: string,
-        username: string
-    } | null
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+  user: {
+    id: number;
+    email: string;
+    full_name: string | null;
+    profile_img: string | null;
+    date_of_birth: Date | string | null;
+    role: "buyer" | "seller";
+    phone_number: string;
+    nationality: string;
+    username: string;
+    gender: "male" | "female" | "other" | null;
+  } | null;
 }
 
 export const initialState: Profile = {
-    status: 'idle',
-    error: null,
-    user: null
-}
+  status: "idle",
+  error: null,
+  user: null,
+};
 
 const ProfileSlice = createSlice({
-    name: 'profile',
-    initialState,
-    reducers: {  
-        deleteProfile: (state) => {
-            state.user = null;
-            state.status = 'idle';
-            state.error = null;
-        }
+  name: "profile",
+  initialState,
+  reducers: {
+    deleteProfile: (state) => {
+      state.user = null;
+      state.status = "idle";
+      state.error = null;
     },
-    extraReducers: (builder) => {
-        builder
-        .addCase(handleGetProfile.pending, (state) => {
-            state.status = 'loading';
-            state.error = null;
-        })
-        .addCase(handleGetProfile.fulfilled, (state, action) => {
-            state.status = 'succeeded';
-            state.user = action.payload;
-        })
-        .addCase(handleGetProfile.rejected, (state, action) => {
-            if (action.meta.aborted) {
-                return;
-            }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(
+        isPending(handleGetProfile, handleUpdateProfile, handleUploadAvatar),
+        (state) => {
+          state.status = "loading";
+          state.error = null;
+        }
+      )
+      .addMatcher(
+        isFulfilled(handleGetProfile, handleUpdateProfile, handleUploadAvatar),
+        (state, action) => {
+          state.status = "succeeded";
+          state.user = action.payload;
+        }
+      )
+      .addMatcher(
+        isRejected(handleGetProfile, handleUpdateProfile, handleUploadAvatar),
+        (state, action) => {
+          if (action.meta.aborted) {
+            return;
+          }
 
-            state.status = 'failed';
-            state.user = null;
-            state.error = action.payload as string;
-        })
-    }
-})
+          state.status = "failed";
+          state.error = action.payload as string;
+        }
+      );
+  },
+});
 
 export const { deleteProfile } = ProfileSlice.actions;
 export default ProfileSlice.reducer;
