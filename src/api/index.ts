@@ -2,7 +2,7 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { fetchNewAccessToken, logoutClientSide } from "../features/Auth/AuthSlice";
 import history from "../history";
-import { PostBuyerAddress, UpdateBuyerAddress } from "../types/buyerAddress";
+import { PostBuyerAddress, UpdateBuyerAddress } from "../types/BuyerAddress";
 
 const API = axios.create({
     baseURL: "http://localhost:3000",
