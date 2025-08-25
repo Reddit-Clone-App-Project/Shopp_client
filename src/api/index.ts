@@ -132,6 +132,7 @@ export const removeProductFromCart = (productVariantId: number) => API.delete(`/
 export const removeAllProductsFromCart = () => API.delete(`/cart/all`);
 export const updateCartItemQuantity = (productVariantId: number, quantity: number) => API.put("/cart", {
   productVariantId, quantity
+
 });
 
 interface CheckoutItem {

@@ -1,4 +1,6 @@
+
 import React, { useEffect } from 'react'
+
 import { useSelector, useDispatch } from 'react-redux'
 import BuyerHeader from '../../features/BuyerHeader/BuyerHeader'
 import SuggestionOfTheDay from '../../features/SuggestionOfTheDay/SuggestionOfTheDay'
@@ -7,17 +9,20 @@ import { AppDispatch, RootState } from '../../redux/store'
 import CartItems from '../../features/Cart/CartItems'
 import { removeFromCart, toggleSelectAll } from '../../features/Cart/CartSlice'
 import OrderSummary from '../../features/Cart/OrderSummary'
+
 import { fetchBuyerAddress } from '../../features/BuyerAddress/BuyerAddressSlice'
 
 
 const CartPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { cart, selectedItems} = useSelector((state: RootState) => state.cart);
+
   const { addresses, status } = useSelector(
       (state: RootState) => state.buyerAddress
   );
 
   const address = addresses?.find(address => address.is_default) || null;
+
 
   const handleSelectAll = () => {
     dispatch(toggleSelectAll());
@@ -29,6 +34,7 @@ const CartPage = () => {
 
   const allItemIds = cart?.stores.flatMap(store => store.items.map(item => item.product_variant_id)) || [];
   const isSelectedAll = allItemIds.length > 0 && selectedItems.length === allItemIds.length;
+
   
   useEffect(() => {
       if (status === "idle" || !address) {
@@ -47,7 +53,9 @@ const CartPage = () => {
         <BuyerHeader />
       </header>
 
+
       <div className='mt-[56px] md:mt-[92px]'>
+
         <div className='flex items-start pt-10 mx-0 lg:mx-14 gap-[2rem]'>
           <CartItems
             cart={cart}

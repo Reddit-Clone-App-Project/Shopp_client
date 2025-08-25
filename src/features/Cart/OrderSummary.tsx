@@ -3,11 +3,13 @@ import Location from '../../assets/Product/Location.svg';
 import { CartData } from './CartSlice';
 import { loadStripe } from '@stripe/stripe-js';
 import { checkout } from '../../api'
+
 import { BuyerAddress } from '../BuyerAddress/BuyerAddressSlice';
 import { Link } from 'react-router-dom';
 
 interface OrderSummaryProps {
   address: BuyerAddress | null; 
+
   cart: CartData | null;
   selectedItems: number[];
 }
@@ -18,7 +20,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ address, cart, selectedItem
   const selectedCartItems = cart?.stores.flatMap(store =>
     store.items.filter(item => selectedItems.includes(item.product_variant_id))
   ) || [];
-  console.log(selectedCartItems);
+
 
   // Total products and payment
   const totalItems = selectedCartItems.reduce((acc, item) => acc + item.quantity, 0);
@@ -49,6 +51,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ address, cart, selectedItem
               <p className='font-semibold'>{address ? `${address.address_line1}, ${address.address_line2}, ${address.city}, ${address.province}` : 'Your address might not be set up, or the address is fetching'}</p>
           </div>
           {address ? <Link to="/me/my-account/address" className='text-blue-500 cursor-pointer hover:underline'>Change</Link> : <Link to="/me/my-account/address" className='text-blue-500 cursor-pointer hover:underline'>Update</Link>}
+
       </div>
       <h3 className='text-xl font-semibold'>Order Summary</h3>
       <div className='flex justify-between my-2'>
