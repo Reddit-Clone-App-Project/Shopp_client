@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { RootState } from '../redux/store';
 import { useEffect } from 'react';
+import Loading from './Loading';
 
 interface PrivateRouteProps {
     children: React.ReactNode;
@@ -40,11 +41,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, allowedRoles }) =
     }, [isLoggedIn, role, status, allowedRoles, navigate, location]);
 
     if (status === 'loading' || status === 'idle') {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div>Loading...</div>
-            </div>
-        );
+        return <Loading />;
     }
 
     if (isLoggedIn && (!allowedRoles || allowedRoles.includes(role || ''))) {

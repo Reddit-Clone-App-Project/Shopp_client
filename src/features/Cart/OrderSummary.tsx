@@ -3,9 +3,11 @@ import Location from '../../assets/Product/Location.svg';
 import { CartData } from './CartSlice';
 import { loadStripe } from '@stripe/stripe-js';
 import { checkout } from '../../api'
+import { BuyerAddress } from '../BuyerAddress/BuyerAddressSlice';
+import { Link } from 'react-router-dom';
 
 interface OrderSummaryProps {
-  address: string; 
+  address: BuyerAddress | null; 
   cart: CartData | null;
   selectedItems: number[];
 }
@@ -44,9 +46,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ address, cart, selectedItem
                 alt="Location" 
                 className='h-6 mr-2'
               />
-              <p className='font-semibold'>{address ? address : 'Your address might not be set up, or the address is fetching'}</p>
+              <p className='font-semibold'>{address ? `${address.address_line1}, ${address.address_line2}, ${address.city}, ${address.province}` : 'Your address might not be set up, or the address is fetching'}</p>
           </div>
-          <p className='text-blue-500 cursor-pointer hover:underline'>{address ? 'Change' : 'Update'}</p>
+          {address ? <Link to="/me/my-account/address" className='text-blue-500 cursor-pointer hover:underline'>Change</Link> : <Link to="/me/my-account/address" className='text-blue-500 cursor-pointer hover:underline'>Update</Link>}
       </div>
       <h3 className='text-xl font-semibold'>Order Summary</h3>
       <div className='flex justify-between my-2'>

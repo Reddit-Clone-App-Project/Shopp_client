@@ -44,9 +44,11 @@ const ProductPage: React.FC = () => {
     (state: RootState) => state.productDetail.product
   );
 
-  const { address, status: addressStatus } = useSelector(
+  const { addresses, status: addressStatus } = useSelector(
     (state: RootState) => state.buyerAddress
   );
+
+  const address = addresses?.find(address => address.is_default) || null;
 
   const { store } = useSelector((state: RootState) => state.storeProfile);
 
@@ -926,7 +928,7 @@ const ProductPage: React.FC = () => {
                 )}
                 {address && (
                   <p className="font-semibold">
-                    {address.address_line_1}, {address.city}, {address.state},{" "}
+                    {address.address_line1}, {address.address_line2}, {address.city}, {address.province},{" "}
                     {address.postal_code}
                   </p>
                 )}
@@ -939,7 +941,7 @@ const ProductPage: React.FC = () => {
                 )}
                 {!address && user && (
                   <Link
-                    to="/buyer/address"
+                    to="/me/my-account/address"
                     className="text-purple-600 hover:underline"
                   >
                     Update
@@ -947,7 +949,7 @@ const ProductPage: React.FC = () => {
                 )}
                 {address && (
                   <Link
-                    to="/buyer/address"
+                    to="/me/my-account/address"
                     className="text-purple-600 hover:underline"
                   >
                     Change

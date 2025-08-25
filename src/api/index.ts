@@ -2,6 +2,7 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { fetchNewAccessToken, logoutClientSide } from "../features/Auth/AuthSlice";
 import history from "../history";
+import { PostBuyerAddress, UpdateBuyerAddress } from "../types/buyerAddress";
 
 const API = axios.create({
     baseURL: "http://localhost:3000",
@@ -106,6 +107,10 @@ export const getNewAccessToken = () => API.get("/refresh");
 
 //! Buyers
 export const getBuyerAddress = () => API.get("/users/me/address");
+export const addANewAddress = (addressData: PostBuyerAddress) => API.post("/users/me/address", addressData);
+export const updateAddress = (id: number, addressData: UpdateBuyerAddress) => API.put(`/users/me/address/${id}`, addressData);
+export const setAddressToDefault = (id: number) => API.put(`/users/me/address/default/${id}`);
+export const deleteAddress = (id: number) => API.delete(`/users/me/address/${id}`);
 export const getBuyerCart = () => API.get("/cart");
 export const addProductToCart = (productVariantId: number, quantity: number, priceAtPurchase: number) => API.post("/cart", {
   productVariantId, quantity, priceAtPurchase
