@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { getStore, getStoreOwned, getAllProductsByStoreId } from "../../api";
-import { AllProducts, StoreType } from '../../types/Item';
+import { getStore, getStoreOwned } from "../../api";
+import { StoreType } from '../../types/Item';
 
 export const fetchStore = createAsyncThunk(
   "store/fetchStore",
@@ -34,31 +34,13 @@ export const fetchStoreOwned = createAsyncThunk(
   }
 );
 
-export const fetchProductsByStoreId = createAsyncThunk(
-  'store/fetchProductsByStoreId',
-  async ({ storeId, limit, offset }: { storeId: number; limit: number; offset: number }, thunkAPI) => {
-    try {
-      const response = await getAllProductsByStoreId(storeId, limit, offset);
-      return response.data;
-    } catch (error: any) {
-      const errorMsg =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        "A network or server error occurred.";
-      return thunkAPI.rejectWithValue(errorMsg);
-    }
-  }
-);
-
 export interface StoreState {
   store: any | null;
   stores: StoreType[];
   selectedStoreId: number | null,
-  allProducts: AllProducts[];
   status: {
     fetchStore: "idle" | "loading" | "succeeded" | "failed";
     fetchStoreOwned: "idle" | "loading" | "succeeded" | "failed";
-    fetchProductsByStoreId: "idle" | "loading" | "succeeded" | "failed";
   },
   error: string | null;
 }
@@ -67,16 +49,14 @@ const initialState: StoreState = {
   store: null,
   stores: [],
   selectedStoreId: null,
-  allProducts: [],
   status: {
     fetchStore: "idle",
     fetchStoreOwned: "idle",
-    fetchProductsByStoreId: 'idle',
   },
   error: null,
 };
 
-const storeSlice = createSlice({
+export const storeSlice = createSlice({
   name: "store",
   initialState,
   reducers: {
@@ -113,20 +93,6 @@ const storeSlice = createSlice({
           return;
         }
         state.status.fetchStoreOwned = 'failed';
-        state.error = action.payload as string;
-      })
-      .addCase(fetchProductsByStoreId.pending, (state) => {
-        state.status.fetchProductsByStoreId = 'loading';
-      })
-      .addCase(fetchProductsByStoreId.fulfilled, (state, action) => {
-        state.status.fetchProductsByStoreId = 'succeeded';
-        state.allProducts = action.payload;
-      })
-      .addCase(fetchProductsByStoreId.rejected, (state, action) => {
-        if (action.meta.aborted) {
-          return;
-        }
-        state.status.fetchProductsByStoreId = 'failed';
         state.error = action.payload as string;
       })
   },

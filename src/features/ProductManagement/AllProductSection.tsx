@@ -1,35 +1,41 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { fetchProductsByStoreId, fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
-import { AllProducts } from "../../types/Item";
+import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
+import { fetchProductsByStoreId } from "../StoreProducts/StoreProductSlice";
 
 const AllProductSection = () => {
     const [active, setActive] = useState(0);
     const [violate, setViolate] = useState(0);
     const [pending, setPending] = useState(0);
+    const [limit, setLimit] = useState(10);
+    const [offset, setOffset] = useState(0);
     const dispatch = useDispatch<AppDispatch>();
     const stores = useSelector((state: RootState) => state.stores.stores);
     const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
-    const { allProducts: storeProducts, status, error } = useSelector((state: RootState) => state.stores);
+    const token = useSelector((state: RootState) => state.auth.accessToken);
+    const { allProducts, status, error } = useSelector((state: RootState) => state.storeProducts);
+    const loading = status.fetchProductsByStoreId === 'loading';
 
-    const store_id = selectedStoreId ?? stores[0]?.id; 
+    const storeId = selectedStoreId ?? stores[0]?.id; 
 
     useEffect(() => {
+        if (token) {
             dispatch(fetchStoreOwned());
-    }, [dispatch]);
+        };
+    }, [dispatch, token]);
 
     useEffect(() => {
-            if (stores.length > 0 && selectedStoreId == null) {
-                dispatch(setSelectedStoreId(store_id));
+            if (stores.length > 0 && selectedStoreId == null && token) {
+                dispatch(setSelectedStoreId(storeId));
             };
-    }, [stores, selectedStoreId, dispatch]);
+    }, [stores, selectedStoreId, dispatch, token]);
 
     useEffect(() => {
-        if (store_id) {                                    
-            dispatch(fetchProductsByStoreId(store_id));
+        if (token && storeId) {                                    
+            dispatch(fetchProductsByStoreId({storeId, limit, offset}));
         }
-    }, [dispatch, store_id]);
+    }, [dispatch, token, storeId, limit, offset]);
 
     return (
         <>
@@ -47,11 +53,17 @@ const AllProductSection = () => {
             </nav>
             <div className="mt-10">
                 <div>Provaaaa</div>
-                {storeProducts.map((p: AllProducts) => (
-                    <>
+                {loading && <div>Loading Products…</div>}
+                {error && <div className="text-red-500">Error: {error}</div>}
+                {status.fetchProductsByStoreId === 'succeeded' && allProducts.length === 0 && (
+                    <div>No product</div>
+                )}
+                {status.fetchProductsByStoreId === 'succeeded' && allProducts.length > 0 && (
+                    allProducts.map((p) => (
                         <div key={p.id}>{p.name}</div>
-                    </>
-                ))}
+                    ))
+                )}
+                <div>Provaaaa</div>
             </div>
         </>
     );
