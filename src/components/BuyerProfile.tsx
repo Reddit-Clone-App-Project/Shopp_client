@@ -7,7 +7,9 @@ import {
   handleUploadAvatar,
 } from "../features/UserProfile/UserProfileSlice";
 import { toast } from "react-toastify";
+
 import BuyerProfileOTP from "./BuyerProfileOTP";
+
 
 const BuyerProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -29,8 +31,10 @@ const BuyerProfile: React.FC = () => {
       : "",
   });
 
+
   // State for OTP modal
   const [showOTPModal, setShowOTPModal] = useState(false);
+
 
   // Ref for file input
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -186,9 +190,6 @@ const BuyerProfile: React.FC = () => {
               <span className="text-gray-900">
                 {hideEmail(user?.email || "")}
               </span>
-              {/* <button className="text-blue-600 underline hover:text-blue-700 transition-colors">
-                Change
-              </button> */}
             </div>
           </div>
 
@@ -204,6 +205,7 @@ const BuyerProfile: React.FC = () => {
                 onClick={() => setShowOTPModal(true)}
                 className="text-blue-600 underline hover:text-blue-700 transition-colors"
               >
+
                 Change
               </button>
             </div>
@@ -375,6 +377,7 @@ const BuyerProfile: React.FC = () => {
         </div>
       </div>
 
+
       {/* OTP Modal */}
       {showOTPModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -394,6 +397,7 @@ const BuyerProfile: React.FC = () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

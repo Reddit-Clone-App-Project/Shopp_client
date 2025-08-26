@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import BuyerHeader from '../../features/BuyerHeader/BuyerHeader'
@@ -18,7 +19,6 @@ const CartPage = () => {
   );
 
   const address = addresses?.find(address => address.is_default) || null;
-
   const handleSelectAll = () => {
     dispatch(toggleSelectAll());
   };
@@ -47,7 +47,9 @@ const CartPage = () => {
         <BuyerHeader />
       </header>
 
+
       <div className='mt-[56px] md:mt-[92px]'>
+
         <div className='flex items-start pt-10 mx-0 lg:mx-14 gap-[2rem]'>
           <CartItems
             cart={cart}

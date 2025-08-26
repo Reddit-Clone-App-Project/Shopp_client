@@ -5,6 +5,7 @@ import {
   isRejected,
   isFulfilled,
 } from "@reduxjs/toolkit";
+
 import {
   getProfile,
   updateProfile,
@@ -12,6 +13,7 @@ import {
   changePassword,
   uploadAvatar,
 } from "../../api";
+
 
 export const handleGetProfile = createAsyncThunk(
   "profile/handleGetProfile",
@@ -52,6 +54,7 @@ export const handleUpdateProfile = createAsyncThunk(
         err.response?.data?.error ||
         "A network or server error occurred.";
       return thunkAPI.rejectWithValue(errorMsg);
+
     }
   }
 );
@@ -97,6 +100,7 @@ export const handleChangePassword = createAsyncThunk(
         err.response?.data?.error ||
         "A network or server error occurred.";
       return thunkAPI.rejectWithValue(errorMsg);
+
     }
   }
 );
@@ -164,6 +168,7 @@ const ProfileSlice = createSlice({
           handleUploadAvatar,
           handleChangePhoneNumber
         ),
+
         (state) => {
           state.status = "loading";
           state.error = null;

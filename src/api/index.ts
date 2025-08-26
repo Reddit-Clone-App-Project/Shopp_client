@@ -80,8 +80,10 @@ export const logout = () => API.post('/users/logout');
 // Privacy information
 export const getProfile = () => API.get("/users/me");
 export const updateProfile = (profileData: any) => API.put("/users/me", profileData);
+
 export const changePhoneNumber = (newPhoneNumber: string) => API.put("/users/me/phone", { phone: newPhoneNumber });
 export const changePassword = (oldPassword: string, newPassword: string) => API.put("/users/me/password", { oldPassword, newPassword });
+
 export const uploadAvatar = (avatarFile: File) => {
     const formData = new FormData();
     formData.append("avatar", avatarFile);
@@ -134,6 +136,7 @@ export const removeProductFromCart = (productVariantId: number) => API.delete(`/
 export const removeAllProductsFromCart = () => API.delete(`/cart/all`);
 export const updateCartItemQuantity = (productVariantId: number, quantity: number) => API.put("/cart", {
   productVariantId, quantity
+
 });
 
 interface CheckoutItem {
@@ -147,4 +150,6 @@ interface CheckoutItem {
 
 export const checkout = (items: CheckoutItem[]) => API.post("/payment/create-checkout-session", {
   items
+
 });
+
