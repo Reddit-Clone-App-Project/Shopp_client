@@ -2,6 +2,7 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { fetchNewAccessToken, logoutClientSide } from "../features/Auth/AuthSlice";
 import history from "../history";
+import { PostBuyerAddress, UpdateBuyerAddress } from "../types/BuyerAddress";
 
 export const API = axios.create({
     baseURL: "http://localhost:3000",
@@ -80,6 +81,22 @@ export const logout = () => API.post('/users/logout');
 
 // Privacy information
 export const getProfile = () => API.get("/users/me");
+export const updateProfile = (profileData: any) => API.put("/users/me", profileData);
+
+export const changePhoneNumber = (newPhoneNumber: string) => API.put("/users/me/phone", { phone: newPhoneNumber });
+export const changePassword = (oldPassword: string, newPassword: string) => API.put("/users/me/password", { oldPassword, newPassword });
+export const changeNotificationSettings = (settings: { email_notification: boolean; order_update: boolean; promotion_update: boolean }) => API.put("/users/me/notifications", settings);
+
+export const uploadAvatar = (avatarFile: File) => {
+    const formData = new FormData();
+    formData.append("avatar", avatarFile);
+    return API.post("/users/me/avatar", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+};
+export const deleteProfile = () => API.delete("/users/me");
 
 //! All users
 export const getProductById = (productId: number) => API.get(`/products/${productId}`);
@@ -108,6 +125,10 @@ export const getNewAccessToken = () => API.get("/refresh");
 
 //! Buyers
 export const getBuyerAddress = () => API.get("/users/me/address");
+export const addANewAddress = (addressData: PostBuyerAddress) => API.post("/users/me/address", addressData);
+export const updateAddress = (id: number, addressData: UpdateBuyerAddress) => API.put(`/users/me/address/${id}`, addressData);
+export const setAddressToDefault = (id: number) => API.put(`/users/me/address/default/${id}`);
+export const deleteAddress = (id: number) => API.delete(`/users/me/address/${id}`);
 export const getBuyerCart = () => API.get("/cart");
 export const addProductToCart = (productVariantId: number, quantity: number, priceAtPurchase: number) => API.post("/cart", {
   productVariantId, quantity, priceAtPurchase
@@ -132,4 +153,6 @@ interface CheckoutItem {
 
 export const checkout = (items: CheckoutItem[]) => API.post("/payment/create-checkout-session", {
   items
+
 });
+

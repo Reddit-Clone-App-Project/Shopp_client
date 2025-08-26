@@ -25,6 +25,18 @@ import PaymentSuccess from "./pages/buyer/PaymentSuccess.tsx";
 import PaymentFail from "./pages/buyer/PaymentFail.tsx";
 import AllProduct from "./pages/seller/ProductManagement/AllProduct.tsx";
 
+import BuyerPage from "./pages/buyer/BuyerPage.tsx";
+import BuyerProfile from "./components/BuyerProfile.tsx";
+import BuyerAddress from "./features/BuyerAddress/BuyerAddress.tsx";
+import BuyerChangePassword from "./components/BuyerChangePassword.tsx";
+import BuyerNotificationSettings from "./components/BuyerNotificationSettings.tsx";
+import BuyerPrivacySettings from "./components/BuyerPrivacySettings.tsx";
+import NotificationOrders from "./components/NotificationOrders.tsx";
+import NotificationPromotions from "./components/NotificationPromotions.tsx";
+import Orders from "./components/Orders.tsx";
+import Vouchers from "./components/Vouchers.tsx";
+
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Root />}>
@@ -43,6 +55,27 @@ const router = createBrowserRouter(
         </AccessGuard>
         } 
       />
+
+      <Route path="/me" element={<PrivateRoute><BuyerPage /></PrivateRoute>}>
+        <Route index element={<Navigate to="/me/my-account/profile" replace />} />
+        
+        <Route path="notification">
+          <Route path="n-orders" element={<NotificationOrders />} />
+          <Route path="promotions" element={<NotificationPromotions />} />
+        </Route>
+        
+        <Route path="my-account">
+          <Route path="profile" element={<BuyerProfile />} />
+          <Route path="address" element={<BuyerAddress />} />
+          <Route path="change-password" element={<BuyerChangePassword />} />
+          <Route path="notification-settings" element={<BuyerNotificationSettings />} />
+          <Route path="privacy-settings" element={<BuyerPrivacySettings />} />
+        </Route>
+
+        <Route path="orders" element={<Orders />} />
+        <Route path="vouchers" element={<Vouchers />} />
+
+      </Route>
 
       <Route path="/success" element={<PaymentSuccess />} />
       <Route path="/fail" element={<PaymentFail />} />

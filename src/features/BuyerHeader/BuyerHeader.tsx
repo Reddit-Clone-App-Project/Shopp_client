@@ -295,7 +295,9 @@ const BuyerHeader: React.FC = () => {
                   >
                     <span className="text-white">{user?.username}</span>
                     <img
-                      className="h-6 cursor-pointer hover:opacity-80"
+
+                      className="w-6 h-6 object-cover cursor-pointer hover:opacity-80 rounded-full"
+
                       src={user?.profile_img ?? GenericAvatar}
                       alt="Profile image"
                     />
@@ -310,14 +312,14 @@ const BuyerHeader: React.FC = () => {
                       />
                       <div className="absolute flex flex-col bg-white text-black top-8 right-0 shadow-lg rounded-md overflow-hidden min-w-[120px] z-10">
                         <Link
-                          to="/profile"
+                          to="/me/my-account/profile"
                           className="px-4 py-2 hover:bg-gray-100 text-sm"
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           My Account
                         </Link>
                         <Link
-                          to="/carts"
+                          to="/me/orders"
                           className="px-4 py-2 hover:bg-gray-100 text-sm"
                           onClick={() => setIsDropdownOpen(false)}
                         >
@@ -612,7 +614,7 @@ const BuyerHeader: React.FC = () => {
                           >
                             View Full Cart
                           </Link>
-                         
+
                         </div>
                       </div>
                     </>
@@ -912,20 +914,22 @@ const BuyerHeader: React.FC = () => {
                     <div className="flex items-center gap-2 p-2">
                       <span className="text-white">{user?.username}</span>
                       <img
-                        className="h-6 cursor-pointer hover:opacity-80"
+
+                        className="w-6 h-6 object-cover cursor-pointer hover:opacity-80 rounded-full"
+
                         src={user?.profile_img ?? GenericAvatar}
                         alt="Profile image"
                       />
                     </div>
                     <Link
-                      to="/profile"
+                      to="/me/my-account/profile"
                       className="block text-white hover:bg-purple-700 p-2 rounded"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       My Account
                     </Link>
                     <Link
-                      to="/carts"
+                      to="/me/orders"
                       className="block text-white hover:bg-purple-700 p-2 rounded"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
