@@ -83,6 +83,7 @@ export const updateProfile = (profileData: any) => API.put("/users/me", profileD
 
 export const changePhoneNumber = (newPhoneNumber: string) => API.put("/users/me/phone", { phone: newPhoneNumber });
 export const changePassword = (oldPassword: string, newPassword: string) => API.put("/users/me/password", { oldPassword, newPassword });
+export const changeNotificationSettings = (settings: { email_notification: boolean; order_update: boolean; promotion_update: boolean }) => API.put("/users/me/notifications", settings);
 
 export const uploadAvatar = (avatarFile: File) => {
     const formData = new FormData();

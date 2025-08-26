@@ -12,6 +12,8 @@ import {
   changePhoneNumber,
   changePassword,
   uploadAvatar,
+  deleteProfile as deleteProfileApi,
+  changeNotificationSettings as changeNotificationSettingsApi
 } from "../../api";
 
 
@@ -126,6 +128,42 @@ export const handleUploadAvatar = createAsyncThunk(
   }
 );
 
+export const handleDeleteAccount = createAsyncThunk(
+  "profile/handleDeleteAccount",
+  async (_, thunkAPI) => {
+    try {
+      await deleteProfileApi();
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const changeNotificationSettings = createAsyncThunk(
+  "profile/changeNotificationSettings",
+  async (settings: { email_notification: boolean; order_update: boolean; promotion_update: boolean }, thunkAPI) => {
+    try {
+      const res = await changeNotificationSettingsApi(settings);
+      if (res?.data) {
+        return res.data;
+      }
+      return thunkAPI.rejectWithValue(
+        "Change notification settings failed: Invalid response from the server."
+      );
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
+
 export interface Profile {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
@@ -140,6 +178,9 @@ export interface Profile {
     nationality: string;
     username: string;
     gender: "male" | "female" | "other" | null;
+    email_notification: boolean;
+    order_update: boolean;
+    promotion_update: boolean;
   } | null;
 }
 
@@ -161,12 +202,19 @@ const ProfileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(handleDeleteAccount.fulfilled, (state) => {
+        state.user = null;
+        state.status = "idle";
+        state.error = null;
+      })
       .addMatcher(
         isPending(
           handleGetProfile,
           handleUpdateProfile,
           handleUploadAvatar,
-          handleChangePhoneNumber
+          handleChangePhoneNumber,
+          handleDeleteAccount,
+          changeNotificationSettings
         ),
 
         (state) => {
@@ -179,7 +227,8 @@ const ProfileSlice = createSlice({
           handleGetProfile,
           handleUpdateProfile,
           handleUploadAvatar,
-          handleChangePhoneNumber
+          handleChangePhoneNumber,
+          changeNotificationSettings
         ),
         (state, action) => {
           state.status = "succeeded";
@@ -191,7 +240,9 @@ const ProfileSlice = createSlice({
           handleGetProfile,
           handleUpdateProfile,
           handleUploadAvatar,
-          handleChangePhoneNumber
+          handleChangePhoneNumber,
+          handleDeleteAccount,
+          changeNotificationSettings
         ),
         (state, action) => {
           if (action.meta.aborted) {
