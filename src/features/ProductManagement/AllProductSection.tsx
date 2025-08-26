@@ -33,9 +33,12 @@ const AllProductSection = () => {
 
     useEffect(() => {
         if (token && storeId) {                                    
+            console.log('Fetching products for store', storeId);
             dispatch(fetchProductsByStoreId({storeId, limit, offset}));
         }
     }, [dispatch, token, storeId, limit, offset]);
+
+    console.log(allProducts);
 
     return (
         <>
@@ -59,9 +62,24 @@ const AllProductSection = () => {
                     <div>No product</div>
                 )}
                 {status.fetchProductsByStoreId === 'succeeded' && allProducts.length > 0 && (
-                    allProducts.map((p) => (
-                        <div key={p.id}>{p.name}</div>
-                    ))
+                    <table className="min-w-full border">
+                        <thead>
+                            <tr>
+                            <th className="border px-4 py-2">Name</th>
+                            <th className="border px-4 py-2">Category</th>
+                            <th className="border px-4 py-2">Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {allProducts.map((p) => (
+                            <tr key={p.id}>
+                                <td className="border px-4 py-2">{p.name}</td>
+                                <td className="border px-4 py-2">{p.is_active}</td>
+                                <td className="border px-4 py-2">{p.description}</td>
+                            </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 )}
                 <div>Provaaaa</div>
             </div>

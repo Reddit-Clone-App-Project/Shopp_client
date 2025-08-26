@@ -23,6 +23,7 @@ export const fetchProductsByStoreId = createAsyncThunk(
   async ({ storeId, limit, offset }: { storeId: number; limit: number; offset: number }, thunkAPI) => {
     try {
       const response = await getAllProductsByStoreId(storeId, limit, offset);
+      console.log('API response:', response.data);
       return response.data;
     } catch (error: any) {
       const errorMsg =
@@ -80,6 +81,7 @@ export const storeProductsSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchProductsByStoreId.fulfilled, (state, action) => {
+                console.log('Reducer payload:', action.payload);
                 state.status.fetchProductsByStoreId = 'succeeded';
                 state.allProducts = action.payload;
             })
