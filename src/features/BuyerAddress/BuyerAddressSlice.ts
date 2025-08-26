@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, isPending, isFulfilled, isRejected } from "@reduxjs/toolkit";
 import { addANewAddress, deleteAddress, getBuyerAddress, setAddressToDefault, updateAddress } from "../../api";
-import { PostBuyerAddress, UpdateBuyerAddress } from "../../types/buyerAddress";
+import { PostBuyerAddress, UpdateBuyerAddress } from "../../types/BuyerAddress";
 
 export const fetchBuyerAddress = createAsyncThunk(
   "buyerAddress/fetchBuyerAddress",

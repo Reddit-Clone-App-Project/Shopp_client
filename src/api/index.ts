@@ -2,9 +2,9 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { fetchNewAccessToken, logoutClientSide } from "../features/Auth/AuthSlice";
 import history from "../history";
-import { PostBuyerAddress, UpdateBuyerAddress } from "../types/buyerAddress";
+import { PostBuyerAddress, UpdateBuyerAddress } from "../types/BuyerAddress";
 
-const API = axios.create({
+export const API = axios.create({
     baseURL: "http://localhost:3000",
     withCredentials: true
 });
@@ -80,6 +80,8 @@ export const logout = () => API.post('/users/logout');
 // Privacy information
 export const getProfile = () => API.get("/users/me");
 export const updateProfile = (profileData: any) => API.put("/users/me", profileData);
+export const changePhoneNumber = (newPhoneNumber: string) => API.put("/users/me/phone", { phone: newPhoneNumber });
+export const changePassword = (oldPassword: string, newPassword: string) => API.put("/users/me/password", { oldPassword, newPassword });
 export const uploadAvatar = (avatarFile: File) => {
     const formData = new FormData();
     formData.append("avatar", avatarFile);

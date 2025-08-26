@@ -5,7 +5,13 @@ import {
   isRejected,
   isFulfilled,
 } from "@reduxjs/toolkit";
-import { getProfile, updateProfile, uploadAvatar } from "../../api";
+import {
+  getProfile,
+  updateProfile,
+  changePhoneNumber,
+  changePassword,
+  uploadAvatar,
+} from "../../api";
 
 export const handleGetProfile = createAsyncThunk(
   "profile/handleGetProfile",
@@ -39,6 +45,51 @@ export const handleUpdateProfile = createAsyncThunk(
       }
       return thunkAPI.rejectWithValue(
         "Update profile failed: Invalid response from the server."
+      );
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const handleChangePhoneNumber = createAsyncThunk(
+  "profile/handleChangePhoneNumber",
+  async (newPhoneNumber: string, thunkAPI) => {
+    try {
+      const res = await changePhoneNumber(newPhoneNumber);
+      if (res?.data?.id) {
+        return res.data;
+      }
+      return thunkAPI.rejectWithValue(
+        "Change phone number failed: Invalid response from the server."
+      );
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.error ||
+        "A network or server error occurred.";
+      return thunkAPI.rejectWithValue(errorMsg);
+    }
+  }
+);
+
+export const handleChangePassword = createAsyncThunk(
+  "profile/handleChangePassword",
+  async (
+    { oldPassword, newPassword }: { oldPassword: string; newPassword: string },
+    thunkAPI
+  ) => {
+    try {
+      const res = await changePassword(oldPassword, newPassword);
+      if (res?.data?.id) {
+        return res.data;
+      }
+      return thunkAPI.rejectWithValue(
+        "Change password failed: Invalid response from the server."
       );
     } catch (err: any) {
       const errorMsg =
@@ -107,21 +158,36 @@ const ProfileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        isPending(handleGetProfile, handleUpdateProfile, handleUploadAvatar),
+        isPending(
+          handleGetProfile,
+          handleUpdateProfile,
+          handleUploadAvatar,
+          handleChangePhoneNumber
+        ),
         (state) => {
           state.status = "loading";
           state.error = null;
         }
       )
       .addMatcher(
-        isFulfilled(handleGetProfile, handleUpdateProfile, handleUploadAvatar),
+        isFulfilled(
+          handleGetProfile,
+          handleUpdateProfile,
+          handleUploadAvatar,
+          handleChangePhoneNumber
+        ),
         (state, action) => {
           state.status = "succeeded";
           state.user = action.payload;
         }
       )
       .addMatcher(
-        isRejected(handleGetProfile, handleUpdateProfile, handleUploadAvatar),
+        isRejected(
+          handleGetProfile,
+          handleUpdateProfile,
+          handleUploadAvatar,
+          handleChangePhoneNumber
+        ),
         (state, action) => {
           if (action.meta.aborted) {
             return;

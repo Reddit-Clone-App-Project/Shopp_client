@@ -34,7 +34,7 @@ const BuyerPage: React.FC = () => {
                 <img
                 src={user?.profile_img || GenericAvatar}
                 alt="User Avatar"
-                className="w-12 h-12 rounded-full"
+                className="w-12 h-12 object-cover rounded-full"
                 />
                 <div>
                 <p className="font-medium">{user?.username}</p>

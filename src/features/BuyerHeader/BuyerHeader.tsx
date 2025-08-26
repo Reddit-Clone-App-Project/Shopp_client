@@ -295,7 +295,7 @@ const BuyerHeader: React.FC = () => {
                   >
                     <span className="text-white">{user?.username}</span>
                     <img
-                      className="h-6 cursor-pointer hover:opacity-80 rounded-full"
+                      className="w-6 h-6 object-cover cursor-pointer hover:opacity-80 rounded-full"
                       src={user?.profile_img ?? GenericAvatar}
                       alt="Profile image"
                     />
@@ -912,7 +912,7 @@ const BuyerHeader: React.FC = () => {
                     <div className="flex items-center gap-2 p-2">
                       <span className="text-white">{user?.username}</span>
                       <img
-                        className="h-6 cursor-pointer hover:opacity-80 rounded-full"
+                        className="w-6 h-6 object-cover cursor-pointer hover:opacity-80 rounded-full"
                         src={user?.profile_img ?? GenericAvatar}
                         alt="Profile image"
                       />

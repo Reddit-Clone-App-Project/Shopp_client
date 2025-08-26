@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { UpdateBuyerAddress } from "../../types/buyerAddress";
+import { UpdateBuyerAddress } from "../../types/BuyerAddress";
 
 interface BuyerAddressUpdateFormProps {
   addressId: number | null;
