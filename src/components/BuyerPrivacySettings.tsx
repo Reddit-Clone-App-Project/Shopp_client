@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleDeleteAccount } from "../features/UserProfile/UserProfileSlice";
 import { API } from "../api";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 
 interface BuyerPrivacySettingsProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const BuyerPrivacySettings: React.FC<BuyerPrivacySettingsProps> = ({
@@ -15,6 +16,16 @@ const BuyerPrivacySettings: React.FC<BuyerPrivacySettingsProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { status, user } = useSelector((state: RootState) => state.profile);
+  const navigate = useNavigate();
+
+  // Handle close action - either call onClose prop or navigate back
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate("/me/my-account/profile");
+    }
+  };
 
   // OTP States
   const [otpSent, setOtpSent] = useState(false);
@@ -206,7 +217,7 @@ const BuyerPrivacySettings: React.FC<BuyerPrivacySettingsProps> = ({
                 : "Permanently Delete Account"}
             </button>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isDeleting || status === "loading"}
               className="flex-1 bg-gray-200 hover:bg-gray-300 disabled:bg-gray-100 disabled:cursor-not-allowed text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors"
             >
@@ -281,7 +292,7 @@ const BuyerPrivacySettings: React.FC<BuyerPrivacySettingsProps> = ({
             Send OTP to My Email
           </button>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
           >
             Cancel

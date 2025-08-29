@@ -20,7 +20,7 @@ import ProductPage from "./pages/buyer/ProductPage.tsx";
 import SearchPage from "./pages/buyer/SearchPage.tsx";
 import CategoryPage from "./pages/buyer/CategoryPage.tsx";
 import CartPage from "./pages/buyer/CartPage.tsx";
-import AccessGuard from "./components/AccesGuard.tsx";
+import AccessGuard from "./components/AccessGuard.tsx";
 import PaymentSuccess from "./pages/buyer/PaymentSuccess.tsx";
 import PaymentFail from "./pages/buyer/PaymentFail.tsx";
 import AllProduct from "./pages/seller/ProductManagement/AllProduct.tsx";
