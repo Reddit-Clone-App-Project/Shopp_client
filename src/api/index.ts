@@ -285,3 +285,6 @@ export const getNotifications = () => API.get("/notifications");
 export const markAllNotificationsAsRead = () => API.put("/notifications/mark-all-as-read");
 export const markNotificationAsRead = (id: number) => API.put(`/notifications/${id}/mark-as-read`);
 export const deleteNotification = (id: number) => API.delete(`/notifications/${id}`);
+
+// Buyer Vouchers
+export const getVouchersByUserId = (limit: number, offset: number) => API.get(`/discounts/me/vouchers?limit=${limit}&offset=${offset}`);
