@@ -4,7 +4,7 @@ import { RootState, AppDispatch } from "../../redux/store";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import useEmblaCarousel from "embla-carousel-react";
-import { Item, ItemImage, ItemVariant } from "../../types/Item";
+import { ItemImage, ItemVariant } from "../../types/Item";
 import BuyerHeader from "../../features/BuyerHeader/BuyerHeader";
 import Footer from "../../components/Footer";
 import { Link } from "react-router-dom";
@@ -21,7 +21,7 @@ import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
 import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
 import StoreProducts from "../../features/StoreProducts/StoreProducts";
 import SuggestionOfTheDay from "../../features/SuggestionOfTheDay/SuggestionOfTheDay";
-
+import { singleItemCheckout } from "../../api";
 // SVG
 import ChevronLeft from "../../assets/HomePage/Category/chevron-left.svg";
 import ChevronRight from "../../assets/HomePage/Category/chevron-right.svg";
@@ -34,6 +34,7 @@ import LightStar from "../../assets/Product/LightStar.svg";
 import DefaultAvatar from "../../assets/generic-avatar.svg";
 import AddCart from "../../assets/Product/AddCartLight.svg";
 import Chat from "../../assets/chat.svg";
+import { loadStripe } from "@stripe/stripe-js";
 
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -48,11 +49,11 @@ const ProductPage: React.FC = () => {
     (state: RootState) => state.buyerAddress
   );
 
-  const address = addresses?.find(address => address.is_default) || null;
+  const address = addresses?.find((address) => address.is_default) || null;
 
   const { store } = useSelector((state: RootState) => state.storeProfile);
 
-  const { user, status: userStatus } = useSelector((state: RootState) => state.profile);
+  const { user } = useSelector((state: RootState) => state.profile);
 
   const { id } = useParams<{ id: string }>();
 
@@ -183,13 +184,13 @@ const ProductPage: React.FC = () => {
   };
 
   const handleProtectedAction = (action: () => void) => {
-    if(user){
+    if (user) {
       action();
-    }else{
+    } else {
       toast.info("Please log in to continue.");
       navigate("/login", { state: { from: location } });
     }
-  }
+  };
 
   const handleAddToCart = async () => {
     if (!currentVariant) return;
@@ -210,9 +211,59 @@ const ProductPage: React.FC = () => {
     }
   };
 
-  const handleBuyNow = () => {
-    console.log("Buy now with selected variant");
-  }
+  const handleBuyNow = async () => {
+    try {
+      if (!address || !address.id) {
+        toast.error("Please select or add a delivery address");
+        return;
+      }
+
+      if (!product || !currentVariant) {
+        toast.error("Product or variant not found");
+        return;
+      }
+
+      if (!store) {
+        toast.error("Store not found");
+        return;
+      }
+
+      const stripe = await loadStripe(
+        import.meta.env.VITE_STRIPE_PUBLIC_KEY as string
+      );
+
+      const session = await singleItemCheckout(
+        {
+          product_name: product?.name || "",
+          image_url: currentVariant?.images?.[0]?.url || "",
+          price_at_purchase: currentVariant?.price || 0,
+          product_variant_id: currentVariant?.id || 0,
+          quantity: quantity,
+          express_shipping: store.express_shipping,
+          fast_shipping: store.fast_shipping,
+          economical_shipping: store.economical_shipping,
+          bulky_shipping: store.bulky_shipping,
+          store_id: store.id || 0
+        },
+        address.id
+      );
+
+      const result = await stripe?.redirectToCheckout({
+        sessionId: session.data.id,
+      });
+
+      if (result?.error) {
+        toast.error(result.error.message || "Payment failed");
+      }
+    } catch (error: any) {
+      console.error("Error during payment:", error);
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Payment failed. Please try again.";
+      toast.error(errorMessage);
+    }
+  };
 
   // Handle mobile modal actions
   const handleMobileAddToCart = () => {
@@ -892,7 +943,7 @@ const ProductPage: React.FC = () => {
                 </div>
               </div>
               <div className="hidden md:flex gap-4 mt-4">
-                <button 
+                <button
                   className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded cursor-pointer"
                   onClick={() => handleProtectedAction(handleBuyNow)}
                 >
@@ -928,14 +979,17 @@ const ProductPage: React.FC = () => {
                 )}
                 {address && (
                   <p className="font-semibold">
-                    {address.address_line1}, {address.address_line2}, {address.city}, {address.province},{" "}
-                    {address.postal_code}
+                    {address.address_line1}, {address.address_line2},{" "}
+                    {address.city}, {address.province}, {address.postal_code}
                   </p>
                 )}
               </div>
               <div>
                 {!address && !user && (
-                  <p onClick={() => handleProtectedAction(() => {})} className="text-purple-600 hover:underline cursor-pointer">
+                  <p
+                    onClick={() => handleProtectedAction(() => {})}
+                    className="text-purple-600 hover:underline cursor-pointer"
+                  >
                     Login
                   </p>
                 )}
@@ -969,9 +1023,17 @@ const ProductPage: React.FC = () => {
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center gap-4 w-1/2">
                 {store?.profile_img ? (
-                  <img src={store.profile_img} alt="Store Profile" className="h-10 w-10 object-cover rounded-full"/>
+                  <img
+                    src={store.profile_img}
+                    alt="Store Profile"
+                    className="h-10 w-10 object-cover rounded-full"
+                  />
                 ) : (
-                  <img src={DefaultAvatar} alt="Default Avatar" className="h-10 w-10 object-cover rounded-full"/>
+                  <img
+                    src={DefaultAvatar}
+                    alt="Default Avatar"
+                    className="h-10 w-10 object-cover rounded-full"
+                  />
                 )}
                 {store?.name ? (
                   <p className="font-semibold">{store.name}</p>

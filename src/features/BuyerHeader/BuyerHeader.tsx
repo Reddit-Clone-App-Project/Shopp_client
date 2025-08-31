@@ -163,7 +163,7 @@ const BuyerHeader: React.FC = () => {
 
   // Notification functions
   const getLatestNotifications = () => {
-    return notifications
+    return [...notifications]
       .sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -370,7 +370,7 @@ const BuyerHeader: React.FC = () => {
                         {getUnreadNotificationCount() > 0 && (
                           <button
                             onClick={handleMarkAllAsRead}
-                            className="bg-purple-600 text-white text-xs px-3 py-1 rounded hover:bg-purple-700 transition-colors"
+                            className="cursor-pointer bg-purple-600 text-white text-xs px-3 py-1 rounded hover:bg-purple-700 transition-colors"
                           >
                             Mark All as Read
                           </button>

@@ -7,6 +7,7 @@ import { BuyerAddress } from "../BuyerAddress/BuyerAddressSlice";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
+
 interface OrderSummaryProps {
   address: BuyerAddress | null;
   cart: CartData | null;

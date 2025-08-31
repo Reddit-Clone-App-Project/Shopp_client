@@ -242,6 +242,14 @@ interface CheckoutItem {
   quantity: number;
 }
 
+interface SingleCheckoutItem extends CheckoutItem {
+    express_shipping: boolean;
+    fast_shipping: boolean;
+    economical_shipping: boolean;
+    bulky_shipping: boolean;
+    store_id: number;
+}
+
 interface CheckoutStore {
   store_id: number;
   items: CheckoutItem[];
@@ -256,6 +264,15 @@ export const checkout = (
   API.post("/payment/create-checkout-session", {
     stores,
     total_shipping_cost,
+    address_id,
+  });
+
+export const singleItemCheckout = (
+  item: SingleCheckoutItem,
+  address_id: number
+) =>
+  API.post("/payment/create-checkout-session/single-item", {
+    item,
     address_id,
   });
 
