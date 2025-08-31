@@ -35,6 +35,7 @@ import NotificationOrders from "./components/NotificationOrders.tsx";
 import NotificationPromotions from "./components/NotificationPromotions.tsx";
 import Orders from "./components/Orders.tsx";
 import Vouchers from "./components/Vouchers.tsx";
+import OrderDetail from "./features/Orders/OrderDetail.tsx";
 
 
 const router = createBrowserRouter(
@@ -72,7 +73,10 @@ const router = createBrowserRouter(
           <Route path="privacy-settings" element={<BuyerPrivacySettings />} />
         </Route>
 
-        <Route path="orders" element={<Orders />} />
+        <Route path="orders" >
+          <Route index element={<Orders />}/>
+          <Route path=":id" element={<OrderDetail />} />
+        </Route>
         <Route path="vouchers" element={<Vouchers />} />
 
       </Route>

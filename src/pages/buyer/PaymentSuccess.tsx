@@ -42,14 +42,6 @@ const PaymentSuccess = () => {
             Your order has been confirmed and is being processed.
           </p>
 
-          {/* Order Details */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-600 mb-1">Order Number</p>
-            <p className="font-semibold text-gray-800">
-              #ORD-{Date.now().toString().slice(-8)}
-            </p>
-          </div>
-
           {/* Action Buttons */}
           <div className="space-y-3">
             <Link
@@ -60,7 +52,7 @@ const PaymentSuccess = () => {
             </Link>
 
             <Link
-              to="/orders"
+              to="/me/orders"
               className="block w-full bg-white text-purple-600 border border-purple-600 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors"
             >
               View Orders

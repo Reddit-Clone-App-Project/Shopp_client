@@ -258,3 +258,6 @@ export const checkout = (
     total_shipping_cost,
     address_id,
   });
+
+export const getOrders = () => API.get("/orders");
+export const getOrderById = (orderId: number) => API.get(`/orders/${orderId}`);

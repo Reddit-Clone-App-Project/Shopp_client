@@ -969,9 +969,9 @@ const ProductPage: React.FC = () => {
             <div className="flex justify-between items-center mt-4">
               <div className="flex items-center gap-4 w-1/2">
                 {store?.profile_img ? (
-                  <img src={store.profile_img} alt="Store Profile" />
+                  <img src={store.profile_img} alt="Store Profile" className="h-10 w-10 object-cover rounded-full"/>
                 ) : (
-                  <img src={DefaultAvatar} alt="Default Avatar" />
+                  <img src={DefaultAvatar} alt="Default Avatar" className="h-10 w-10 object-cover rounded-full"/>
                 )}
                 {store?.name ? (
                   <p className="font-semibold">{store.name}</p>

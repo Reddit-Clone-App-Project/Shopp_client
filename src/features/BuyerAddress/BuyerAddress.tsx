@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
-import { fetchBuyerAddress, postAnAddress, putAnAddress, removeAnAddress, setAddressDefault } from "./BuyerAddressSlice";
+import {
+  fetchBuyerAddress,
+  postAnAddress,
+  putAnAddress,
+  removeAnAddress,
+  setAddressDefault,
+} from "./BuyerAddressSlice";
 import BuyerAddressForm from "./BuyerAddressForm";
+import BuyerAddressSkeleton from "./BuyerAddressSkeleton";
 
 import { PostBuyerAddress } from "../../types/BuyerAddress";
 import { toast } from "react-toastify";
 import BuyerAddressUpdateForm from "./BuyerAddressUpdateForm";
 import { UpdateBuyerAddress } from "../../types/BuyerAddress";
-
 
 const BuyerAddress: React.FC = () => {
   const { addresses, status } = useSelector(
@@ -32,7 +38,10 @@ const BuyerAddress: React.FC = () => {
       });
   };
 
-  const handleUpdateAddress = (addressId: number, updatedData: UpdateBuyerAddress) => {
+  const handleUpdateAddress = (
+    addressId: number,
+    updatedData: UpdateBuyerAddress
+  ) => {
     dispatch(putAnAddress({ id: addressId, addressData: updatedData }))
       .unwrap()
       .then(() => {
@@ -108,15 +117,22 @@ const BuyerAddress: React.FC = () => {
       <div className="flex justify-between items-center mb-8">
         <h4 className="font-semibold text-xl">My address</h4>
         <button
-          className="bg-purple-600 text-white p-2"
+          className={`p-2 text-white ${
+            status === "loading"
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-purple-600 hover:bg-purple-700"
+          }`}
           onClick={handleShowAddressForm}
+          disabled={status === "loading"}
         >
           + Add a new address
         </button>
       </div>
 
       <p className="text-lg">Address</p>
-      {addresses ? (
+      {status === "loading" ? (
+        <BuyerAddressSkeleton />
+      ) : addresses ? (
         addresses.map((addr, index) => (
           <div key={index} className="mt-4">
             <div className="flex justify-between">
@@ -145,12 +161,13 @@ const BuyerAddress: React.FC = () => {
                 {addr.address_line1}, {addr.address_line2}
               </p>
               <button
-                className={`px-4 border ${
+                className={`px-4 border p-1 rounded ${
                   addr.is_default
                     ? "text-gray-500 border-gray-500 cursor-not-allowed"
-                    : "cursor-pointer"
-                } p-1 rounded`}
+                    : "cursor-pointer hover:bg-gray-50"
+                }`}
                 onClick={() => handleSetDefault(addr.id)}
+                disabled={addr.is_default}
               >
                 Set as default location
               </button>
