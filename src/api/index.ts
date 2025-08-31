@@ -261,3 +261,10 @@ export const checkout = (
 
 export const getOrders = () => API.get("/orders");
 export const getOrderById = (orderId: number) => API.get(`/orders/${orderId}`);
+export const removeOrderById = (orderId: number) => API.delete(`/orders/${orderId}`);
+
+// Buyer Notifications
+export const getNotifications = () => API.get("/notifications");
+export const markAllNotificationsAsRead = () => API.put("/notifications/mark-all-as-read");
+export const markNotificationAsRead = (id: number) => API.put(`/notifications/${id}/mark-as-read`);
+export const deleteNotification = (id: number) => API.delete(`/notifications/${id}`);

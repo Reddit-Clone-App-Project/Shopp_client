@@ -16,6 +16,7 @@ import productDetail from '../features/ProductDetail/ProductDetailSlice';
 import cart from '../features/Cart/CartSlice';
 import orders from "../features/Orders/OrdersSlice"
 import orderDetail from "../features/Orders/OrderDetailSlice"
+import notification from "../features/Notification/NotificationSlice";
 
 export const store = configureStore({
     reducer: {
@@ -35,7 +36,8 @@ export const store = configureStore({
         productDetail,
         cart,
         orders,
-        orderDetail
+        orderDetail,
+        notification
     },
 });
 

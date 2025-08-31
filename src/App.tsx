@@ -36,7 +36,7 @@ import NotificationPromotions from "./components/NotificationPromotions.tsx";
 import Orders from "./components/Orders.tsx";
 import Vouchers from "./components/Vouchers.tsx";
 import OrderDetail from "./features/Orders/OrderDetail.tsx";
-
+import Notification from "./features/Notification/Notification.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -50,35 +50,53 @@ const router = createBrowserRouter(
       <Route path="/category">
         <Route path=":slug" element={<CategoryPage />} />
       </Route>
-      <Route path="/cart" element={
-        <AccessGuard>
-          <CartPage />
-        </AccessGuard>
-        } 
+      <Route
+        path="/cart"
+        element={
+          <AccessGuard>
+            <CartPage />
+          </AccessGuard>
+        }
       />
 
-      <Route path="/me" element={<PrivateRoute><BuyerPage /></PrivateRoute>}>
-        <Route index element={<Navigate to="/me/my-account/profile" replace />} />
-        
-        <Route path="notification">
+      <Route
+        path="/me"
+        element={
+          <PrivateRoute>
+            <BuyerPage />
+          </PrivateRoute>
+        }
+      >
+        <Route
+          index
+          element={<Navigate to="/me/my-account/profile" replace />}
+        />
+
+        <Route path="notification" element={<Notification />}>
+          <Route
+            index
+            element={<Navigate to="/me/notification/n-orders" replace />}
+          />
           <Route path="n-orders" element={<NotificationOrders />} />
           <Route path="promotions" element={<NotificationPromotions />} />
         </Route>
-        
+
         <Route path="my-account">
           <Route path="profile" element={<BuyerProfile />} />
           <Route path="address" element={<BuyerAddress />} />
           <Route path="change-password" element={<BuyerChangePassword />} />
-          <Route path="notification-settings" element={<BuyerNotificationSettings />} />
+          <Route
+            path="notification-settings"
+            element={<BuyerNotificationSettings />}
+          />
           <Route path="privacy-settings" element={<BuyerPrivacySettings />} />
         </Route>
 
-        <Route path="orders" >
-          <Route index element={<Orders />}/>
+        <Route path="orders">
+          <Route index element={<Orders />} />
           <Route path=":id" element={<OrderDetail />} />
         </Route>
         <Route path="vouchers" element={<Vouchers />} />
-
       </Route>
 
       <Route path="/success" element={<PaymentSuccess />} />

@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getOrders } from "../../api";
+import { createAsyncThunk, createSlice, isPending, isRejected } from "@reduxjs/toolkit";
+import { getOrders, removeOrderById } from "../../api";
 
 export const fetchOrders = createAsyncThunk(
     "orders/fetchOrders", 
@@ -8,6 +8,22 @@ export const fetchOrders = createAsyncThunk(
             const response = await getOrders();
             return response.data;
             
+        } catch (error: any) {
+            const errorMsg =
+                error.response?.data?.error ||
+                error.response?.data?.message ||
+                "A network or server error occurred.";
+            return thunkAPI.rejectWithValue(errorMsg);
+        }
+    }
+);
+
+export const deleteOrderById = createAsyncThunk(
+    "orders/deleteOrderById",
+    async (orderId: number, thunkAPI) => {
+        try {
+            await removeOrderById(orderId);
+            return orderId;
         } catch (error: any) {
             const errorMsg =
                 error.response?.data?.error ||
@@ -78,15 +94,19 @@ const ordersSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(fetchOrders.pending, (state) => {
-                state.status = 'loading';
-                state.error = null;
-            })
             .addCase(fetchOrders.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.orders = action.payload;
             })
-            .addCase(fetchOrders.rejected, (state, action) => {
+            .addCase(deleteOrderById.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.orders = state.orders.filter(order => order.order_id !== action.payload);
+            })
+            .addMatcher(isPending(fetchOrders, deleteOrderById), (state) => {
+                state.status = 'loading';
+                state.error = null;
+            })
+            .addMatcher(isRejected(fetchOrders, deleteOrderById), (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload as string;
             });

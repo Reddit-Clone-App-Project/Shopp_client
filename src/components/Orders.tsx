@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
-import { fetchOrders } from "../features/Orders/OrdersSlice";
+import { deleteOrderById, fetchOrders } from "../features/Orders/OrdersSlice";
 import OrdersSkeleton from "./OrdersSkeleton";
 // SVG
 import Search from "../assets/Order/search.svg";
@@ -11,13 +11,13 @@ import Truck from "../assets/Order/Truck.svg";
 import Help from "../assets/Order/Help.svg";
 import GenericAvatar from "../assets/generic-avatar.svg";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 export const handleTransferOrderStatus = (orderStatus: string) => {
   if (orderStatus === "pending") return "Waiting For Payment";
   if (orderStatus === "paid") return "Shipping";
   if (orderStatus === "shipped") return "Wait for Delivery";
   if (orderStatus === "delivered") return "Completed";
-  if (orderStatus === "cancelled" || orderStatus === "failed")
-    return "Aborted";
+  if (orderStatus === "cancelled" || orderStatus === "failed") return "Aborted";
   if (orderStatus === "returned") return "Refunded";
 };
 
@@ -30,7 +30,6 @@ const Orders = () => {
     (state: RootState) => state.orders
   );
   const [filteredOrders, setFilteredOrders] = useState(orders);
-
 
   const filterOrders = (
     filterType: string,
@@ -54,9 +53,7 @@ const Orders = () => {
           order.store.name.toLowerCase().includes(searchLower) ||
           order.order_id.toString().includes(searchLower) ||
           order.products.some((product) =>
-            product.variants.some((variant) =>
-              variant.variant_name.toLowerCase().includes(searchLower)
-            )
+            product.product_name.toLowerCase().includes(searchLower)
           )
         );
       });
@@ -74,6 +71,15 @@ const Orders = () => {
     const value = e.target.value;
     setSearchTerm(value);
     filterOrders(currentFilter, value);
+  };
+
+  const handleRemoveOrderById = async (orderId: number) => {
+    try {
+      await dispatch(deleteOrderById(orderId));
+      toast.success("Order deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete order");
+    }
   };
 
   useEffect(() => {
@@ -263,7 +269,10 @@ const Orders = () => {
                   <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
                     Contact Seller
                   </button>
-                  <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+                  <button
+                    className="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => handleRemoveOrderById(order.order_id)}
+                  >
                     Cancel Order
                   </button>
                 </div>
@@ -280,7 +289,10 @@ const Orders = () => {
                   <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
                     Contact Seller
                   </button>
-                  <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+                  <button
+                    className="border border-gray-300 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() => handleRemoveOrderById(order.order_id)}
+                  >
                     Cancel Order
                   </button>
                 </div>
