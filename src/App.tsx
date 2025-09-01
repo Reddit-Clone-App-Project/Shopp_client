@@ -37,6 +37,9 @@ import Orders from "./components/Orders.tsx";
 import Vouchers from "./components/Vouchers.tsx";
 import OrderDetail from "./features/Orders/OrderDetail.tsx";
 import Notification from "./features/Notification/Notification.tsx";
+import WishListPage from "./pages/buyer/WishListPage.tsx";
+import Wishlist from "./components/Wishlist.tsx";
+import WishlistDetail from "./components/WishlistDetail.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -97,6 +100,11 @@ const router = createBrowserRouter(
           <Route path=":id" element={<OrderDetail />} />
         </Route>
         <Route path="vouchers" element={<Vouchers />} />
+      </Route>
+
+      <Route path="/wishlist" element={<WishListPage />}>
+        <Route index element={<Wishlist />}/>
+        <Route path=":id" element={<WishlistDetail />} />
       </Route>
 
       <Route path="/success" element={<PaymentSuccess />} />

@@ -18,6 +18,8 @@ import orders from "../features/Orders/OrdersSlice"
 import orderDetail from "../features/Orders/OrderDetailSlice"
 import notification from "../features/Notification/NotificationSlice";
 import vouchers from "../features/Vouchers/VouchersSlice";
+import wishlist from "../features/Wishlist/WishlistSlice";
+import wishlistDetail from "../features/Wishlist/WishlistDetailSlice";
 
 export const store = configureStore({
     reducer: {
@@ -39,7 +41,9 @@ export const store = configureStore({
         orders,
         orderDetail,
         notification,
-        vouchers
+        vouchers,
+        wishlist,
+        wishlistDetail
     },
 });
 

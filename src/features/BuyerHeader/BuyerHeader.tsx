@@ -523,6 +523,13 @@ const BuyerHeader: React.FC = () => {
                         >
                           My Orders
                         </Link>
+                        <Link
+                          to="/wishlist"
+                          className="px-4 py-2 hover:bg-gray-100 text-sm"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          My Wishlist
+                        </Link>
                         <button
                           className="px-4 py-2 hover:bg-gray-100 text-sm text-left"
                           onClick={() => {
@@ -1146,6 +1153,13 @@ const BuyerHeader: React.FC = () => {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       My Orders
+                    </Link>
+                    <Link
+                      to="/wishlist"
+                      className="block text-white hover:bg-purple-700 p-2 rounded"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Wishlist
                     </Link>
                     <button
                       className="block text-white hover:bg-purple-700 p-2 rounded w-full text-left"

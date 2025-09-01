@@ -16,12 +16,15 @@ import {
   clearProduct,
 } from "../../features/ProductDetail/ProductDetailSlice";
 import { addToCart } from "../../features/Cart/CartSlice";
+import { postProductToWishlist } from "../../features/Wishlist/WishlistDetailSlice";
+import { fetchWishlists } from "../../features/Wishlist/WishlistSlice";
 import Review from "../../features/Review/Review";
 import StoreHotProduct from "../../features/StoreHotProduct/StoreHotProduct";
 import StoreDiscount from "../../features/StoreDiscount/StoreDiscount";
 import StoreProducts from "../../features/StoreProducts/StoreProducts";
 import SuggestionOfTheDay from "../../features/SuggestionOfTheDay/SuggestionOfTheDay";
 import { singleItemCheckout } from "../../api";
+import { loadStripe } from "@stripe/stripe-js";
 // SVG
 import ChevronLeft from "../../assets/HomePage/Category/chevron-left.svg";
 import ChevronRight from "../../assets/HomePage/Category/chevron-right.svg";
@@ -34,7 +37,13 @@ import LightStar from "../../assets/Product/LightStar.svg";
 import DefaultAvatar from "../../assets/generic-avatar.svg";
 import AddCart from "../../assets/Product/AddCartLight.svg";
 import Chat from "../../assets/chat.svg";
-import { loadStripe } from "@stripe/stripe-js";
+
+interface Wishlist {
+  id: number;
+  name: string;
+  created_at: Date;
+  updated_at: Date;
+}
 
 const ProductPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -80,6 +89,12 @@ const ProductPage: React.FC = () => {
 
   // Image carousel state
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+
+  // Wishlist modal state
+  const [showWishlistModal, setShowWishlistModal] = useState(false);
+
+  // Get wishlist data
+  const { wishlists } = useSelector((state: RootState) => state.wishlist);
 
   // Get all images in a single array for carousel navigation
   const getAllImages = (): ItemImage[] => {
@@ -243,7 +258,7 @@ const ProductPage: React.FC = () => {
           fast_shipping: store.fast_shipping,
           economical_shipping: store.economical_shipping,
           bulky_shipping: store.bulky_shipping,
-          store_id: store.id || 0
+          store_id: store.id || 0,
         },
         address.id
       );
@@ -293,6 +308,37 @@ const ProductPage: React.FC = () => {
       handleProtectedAction(handleBuyNow);
     }
     setIsMobileModalOpen(false);
+  };
+
+  const handleAddToWishlist = () => {
+    if (!user) {
+      toast.error("Please login to add products to wishlist");
+      navigate("/login");
+      return;
+    }
+
+    // Fetch wishlists and show modal
+    dispatch(fetchWishlists());
+    setShowWishlistModal(true);
+  };
+
+  const handleWishlistSelect = (wishlistId: number) => {
+    if (!product) return;
+
+    dispatch(
+      postProductToWishlist({
+        wishlistId,
+        productId: product.id,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        toast.success("Product added to wishlist!");
+        setShowWishlistModal(false);
+      })
+      .catch((error) => {
+        toast.error(error || "Failed to add product to wishlist");
+      });
   };
 
   // Early return if product is not found
@@ -891,7 +937,12 @@ const ProductPage: React.FC = () => {
                   <p>{product.bought} Sold</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <img src={Heart} alt="Favorite" className="cursor-pointer" />
+                  <img
+                    src={Heart}
+                    alt="Favorite"
+                    className="cursor-pointer"
+                    onClick={handleAddToWishlist}
+                  />
                   <img src={Share} alt="Share" className="cursor-pointer" />
                 </div>
               </div>
@@ -1277,6 +1328,92 @@ const ProductPage: React.FC = () => {
                 {modalAction === "addToCart" ? "Add to Cart" : "Buy Now"}
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Wishlist Modal */}
+      {showWishlistModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md max-h-96 overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Add to Wishlist</h2>
+              <button
+                onClick={() => setShowWishlistModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+
+            {wishlists.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600 mb-4">
+                  You don't have any wishlists yet.
+                </p>
+                <button
+                  onClick={() => {
+                    setShowWishlistModal(false);
+                    navigate("/wishlist");
+                  }}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                >
+                  Create Your First Wishlist
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <p className="text-gray-600 mb-4">
+                  Choose a wishlist to add this product:
+                </p>
+                {wishlists.map((wishlist: Wishlist) => (
+                  <div
+                    key={wishlist.id}
+                    onClick={() => handleWishlistSelect(wishlist.id)}
+                    className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 cursor-pointer transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-gray-900">
+                          {wishlist.name}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          Created{" "}
+                          {new Date(wishlist.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-purple-600">
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="pt-4 border-t">
+                  <button
+                    onClick={() => {
+                      setShowWishlistModal(false);
+                      navigate("/wishlist");
+                    }}
+                    className="w-full px-4 py-2 text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                  >
+                    + Create New Wishlist
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

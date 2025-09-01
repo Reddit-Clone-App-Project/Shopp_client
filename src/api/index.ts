@@ -288,3 +288,11 @@ export const deleteNotification = (id: number) => API.delete(`/notifications/${i
 
 // Buyer Vouchers
 export const getVouchersByUserId = (limit: number, offset: number) => API.get(`/discounts/me/vouchers?limit=${limit}&offset=${offset}`);
+
+// Buyer Wishlist
+export const getWishlists = () => API.get("/wishlists");
+export const getWishlistDetail = (id: number) => API.get(`/wishlists/${id}`);
+export const createWishlist = (name: string) => API.post("/wishlists", { name });
+export const deleteWishlist = (id: number) => API.delete(`/wishlists/${id}`);
+export const addProductToWishlist = (wishlistId: number, productId: number) => API.post(`/wishlists/${wishlistId}/products`, { productId });
+export const removeProductFromWishlist = (wishlistId: number, productId: number) => API.delete(`/wishlists/${wishlistId}/products`, { data: { productId } });
