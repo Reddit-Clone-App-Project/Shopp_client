@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+/* Custom scrollbar styles for sidebar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: #1f1f1f #0a0a0a;
+}
+
+/* Webkit scrollbar styles */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #1f1f1f;
+}
+
+.custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: #2d2d2d;
+}

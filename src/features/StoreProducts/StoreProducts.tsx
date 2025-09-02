@@ -10,7 +10,7 @@ const StoreProducts = ({store_id}: {store_id: number}) => {
   const { products, status, error } = useSelector((state: RootState) => state.storeProducts);
 
   React.useEffect(() => {
-    if (products.length === 0 && status === 'idle') {
+    if (products.length === 0 && status.fetchStoreProducts === 'idle') {
         const promise = dispatch(fetchStoreProducts({ storeId: store_id, limit: 10, offset: 0 }));
     
         return () => {

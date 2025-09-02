@@ -14,7 +14,6 @@ import HomePage from "./pages/buyer/HomePage.tsx";
 import PrivateRoute from "./components/PrivateRoutes.tsx";
 import CreateStorePage from "./pages/seller/CreateStorePage.tsx";
 import CreateProduct from "./pages/seller/ProductManagement/CreateProduct.tsx";
-import SellerDashboard from "./pages/seller/SellerDashboard.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import ProductPage from "./pages/buyer/ProductPage.tsx";
 import SearchPage from "./pages/buyer/SearchPage.tsx";
@@ -23,7 +22,6 @@ import CartPage from "./pages/buyer/CartPage.tsx";
 import AccessGuard from "./components/AccessGuard.tsx";
 import PaymentSuccess from "./pages/buyer/PaymentSuccess.tsx";
 import PaymentFail from "./pages/buyer/PaymentFail.tsx";
-import AllProduct from "./pages/seller/ProductManagement/AllProduct.tsx";
 
 import BuyerPage from "./pages/buyer/BuyerPage.tsx";
 import BuyerProfile from "./components/BuyerProfile.tsx";
@@ -40,6 +38,13 @@ import Notification from "./features/Notification/Notification.tsx";
 import WishListPage from "./pages/buyer/WishListPage.tsx";
 import Wishlist from "./components/Wishlist.tsx";
 import WishlistDetail from "./components/WishlistDetail.tsx";
+import SellerPageTemplate from "./pages/seller/SellerPageTemplate.tsx";
+import SellerDashboard from "./components/SellerDashboard.tsx";
+import AllProductSection from "./features/ProductManagement/AllProductSection.tsx";
+import AllOrderSection from "./components/orderManagement/AllOrderSection.tsx";
+import BulkOrderSection from "./components/orderManagement/BulkOrderSection.tsx";
+import PickupOrderSection from "./components/orderManagement/PickupOrderSection.tsx";
+import ReturnsOrderSection from "./components/orderManagement/ReturnsOrderSection.tsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -104,8 +109,15 @@ const router = createBrowserRouter(
       </Route>
       {/* Ai read here end */}
 
-      <Route path="/wishlist" element={<PrivateRoute><WishListPage /></PrivateRoute>}>
-        <Route index element={<Wishlist />}/>
+      <Route
+        path="/wishlist"
+        element={
+          <PrivateRoute>
+            <WishListPage />
+          </PrivateRoute>
+        }
+      >
+        <Route index element={<Wishlist />} />
         <Route path=":id" element={<WishlistDetail />} />
       </Route>
 
@@ -115,27 +127,34 @@ const router = createBrowserRouter(
       <Route
         path="/new-store"
         element={
-          <PrivateRoute>
+          <AccessGuard>
             <CreateStorePage />
-          </PrivateRoute>
+          </AccessGuard>
         }
       />
 
-      <Route path="/seller">
-        <Route index element={<SellerLandingPage />} />
+      <Route path="/seller" element={<SellerLandingPage />} />
+      {/* Seller Routes */}
+      <Route path="/seller" element={<PrivateRoute><SellerPageTemplate /></PrivateRoute>}>
         <Route path="dashboard" element={<SellerDashboard />} />
-        {/*<Route
-          path="dashboard"
-          element={
-            <PrivateRoute allowedRoles={['seller', 'admin']}>
-              <SellerDashboard />
-            </PrivateRoute>
-          }
-        />*/}
-        {/* Route /seller/create is using for testing, changes will be made later */}
-        <Route path="product/create" element={<CreateProduct />} />
-        <Route path="product/all" element={<AllProduct />} />
+        <Route path="product/all" element={<AllProductSection />} />
+        <Route path="order">
+          <Route index element={<Navigate to="/seller/order/all" />} />
+          <Route path="all" element={<AllOrderSection />} />
+          <Route path="bulk" element={<BulkOrderSection />} />
+          <Route path="pickup" element={<PickupOrderSection />} />
+          <Route path="returns" element={<ReturnsOrderSection />} />
+        </Route>
       </Route>
+      
+      <Route
+        path="/seller/product/create"
+        element={
+          <AccessGuard>
+            <CreateProduct />
+          </AccessGuard>
+        }
+      />
 
       {/* Catch-all route for 404 errors */}
       <Route path="*" element={<ErrorPage />} />
