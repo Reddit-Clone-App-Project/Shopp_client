@@ -1,4 +1,3 @@
-import React from "react";
 import SellerLogo from "../../assets/Seller-Logo.svg";
 import GenericAvatar from "../../assets/generic-avatar.svg";
 import Chat from "../../assets/chat.svg";

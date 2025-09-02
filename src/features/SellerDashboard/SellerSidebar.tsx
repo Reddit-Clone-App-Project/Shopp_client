@@ -16,7 +16,8 @@ import Tic from '../../assets/SellerDashboard/Tic.svg';
 import Documentation from '../../assets/SellerDashboard/Documentation.svg';
 import { useState } from 'react';
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+
 
 
 
@@ -36,10 +37,10 @@ const SellerSideBar = () => {
         <aside className="bg-black h-screen w-85 mt-18">
             <nav className="pt-7">
                 <ul className="text-white font-light">
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${orderIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
+                    <div className={`flex items-center m-auto hover:cursor-pointer w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${orderIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setOrderIsOpen(!orderIsOpen)}>
                         <img src={`${orderIsOpen ? OpenOrder : OrderManagement}`} alt="Order Logo" className="mr-5"/>
                         <li>Order Management</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${orderIsOpen ? 'rotate-180' : '' }`} onClick={() => setOrderIsOpen(!orderIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto  transition-transform duration-300 ${orderIsOpen ? 'rotate-180' : '' }`} />
                     </div>
                     <AnimatePresence initial={false}>
                     {orderIsOpen &&
@@ -59,10 +60,10 @@ const SellerSideBar = () => {
                         </motion.div>
                     }
                     </AnimatePresence>
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${productIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
-                        <img src={`${productIsOpen ? OpenProduct : ProductManagement}`} alt="Product Logo" className="mr-5"/>
+                    <div className={`flex items-center hover:cursor-pointer m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${productIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setProductIsOpen(!productIsOpen)}>
+                        <img src={`${productIsOpen ? OpenProduct : ProductManagement}`} alt="Product Logo" className="mr-5" />
                         <li>Product Management</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${productIsOpen ? 'rotate-180' : '' }`} onClick={() => setProductIsOpen(!productIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto transition-transform duration-300 ${productIsOpen ? 'rotate-180' : '' }`} />
                     </div>
                     <AnimatePresence initial={false}>
                     {productIsOpen &&
@@ -73,16 +74,24 @@ const SellerSideBar = () => {
                             transition={{ duration: 0.25, ease: "easeInOut" }}
                         >
                             <ul className='ml-12 space-y-1.5 mb-5'> 
-                                    <li className='hover:cursor-pointer'><a href="/seller/product/all">All Products</a></li>
-                                    <li className='hover:cursor-pointer'><a href="/seller/product/create">Add Products</a></li>
+                                    <li className='hover:cursor-pointer'>
+                                        <NavLink to="/seller/product/all" 
+                                            className={({ isActive }) => { 
+                                                if (isActive) setProductIsOpen(true); 
+                                                return isActive ? 'underline text-[#A567C6]' : ''
+                                            }}>
+                                                All Products
+                                        </NavLink>
+                                    </li>
+                                    <li className='hover:cursor-pointer'><NavLink to="/seller/product/create">Add Products</NavLink></li>
                             </ul>
                         </motion.div>
                     }
                     </AnimatePresence>
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${marketingIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
+                    <div className={`flex items-center m-auto hover:cursor-pointer w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${marketingIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setMarketingIsOpen(!marketingIsOpen)}>
                         <img src={`${marketingIsOpen ? OpenMarketing : Marketing}`} alt="Marketing Logo" className="mr-5"/>
                         <li>Marketing</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${marketingIsOpen ? 'rotate-180' : '' }`} onClick={() => setMarketingIsOpen(!marketingIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto transition-transform duration-300 ${marketingIsOpen ? 'rotate-180' : '' }`} />
                     </div>
                     <AnimatePresence initial={false}>
                     {marketingIsOpen &&
@@ -103,10 +112,10 @@ const SellerSideBar = () => {
                         </motion.div>
                     }
                     </AnimatePresence>
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${customersIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
+                    <div className={`flex items-center m-auto hover:cursor-pointer w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${customersIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setCustomersIsOpen(!customersIsOpen)}>
                         <img src={`${customersIsOpen ? OpenServices : CustomersService}`} alt="Customers Logo" className="mr-5"/>
                         <li>Customers Service</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${customersIsOpen ? 'rotate-180' : '' }`} onClick={() => setCustomersIsOpen(!customersIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto transition-transform duration-300 ${customersIsOpen ? 'rotate-180' : '' }`} />
                     </div>
                     <AnimatePresence initial={false}>
                     {customersIsOpen &&
@@ -123,10 +132,10 @@ const SellerSideBar = () => {
                         </motion.div>
                     }
                     </AnimatePresence>
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${financialIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
+                    <div className={`flex items-center hover:cursor-pointer m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${financialIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setFinancialIsOpen(!financialIsOpen)}>
                         <img src={`${financialIsOpen ? OpenFinancial : Financial}`} alt="Financial Logo" className="mr-5"/>
                         <li>Financial</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${financialIsOpen ? 'rotate-180' : '' }`} onClick={() => setFinancialIsOpen(!financialIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto transition-transform duration-300 ${financialIsOpen ? 'rotate-180' : '' }`}/>
                     </div>
                     <AnimatePresence initial={false}>
                     {financialIsOpen &&
@@ -144,10 +153,10 @@ const SellerSideBar = () => {
                         </motion.div>
                     }
                     </AnimatePresence>
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${metricsIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
+                    <div className={`flex items-center m-auto hover:cursor-pointer w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${metricsIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setMetricsIsOpen(!metricsIsOpen)}>
                         <img src={`${metricsIsOpen ? OpenMetrics : Metrics}`} alt="Metrics Logo" className="mr-5"/>
                         <li>Metrics</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${metricsIsOpen ? 'rotate-180' : '' }`} onClick={() => setMetricsIsOpen(!metricsIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto transition-transform duration-300 ${metricsIsOpen ? 'rotate-180' : '' }`} />
                     </div>
                     <AnimatePresence initial={false}>
                     {metricsIsOpen &&
@@ -164,10 +173,10 @@ const SellerSideBar = () => {
                         </motion.div>
                     }
                     </AnimatePresence>
-                    <div className={`flex items-center m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${settingsIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} >
+                    <div className={`flex items-center hover:cursor-pointer m-auto w-68 pl-3.5 pr-1.5 py-2.5 transition-all duration-300 ${settingsIsOpen ? 'bg-[#2e1647] rounded-xl mb-2' : ' mb-4' }`} onClick={() => setSettingsIsOpen(!settingsIsOpen)}>
                         <img src={`${settingsIsOpen ? OpenSettings : ShopSettings}`} alt="Settings Logo" className="mr-5"/>
                         <li>Shop Setting</li>
-                        <img src={Tic} alt='Toggle' className={`ml-auto hover:cursor-pointer transition-transform duration-300 ${settingsIsOpen ? 'rotate-180' : '' }`} onClick={() => setSettingsIsOpen(!settingsIsOpen)}/>
+                        <img src={Tic} alt='Toggle' className={`ml-auto transition-transform duration-300 ${settingsIsOpen ? 'rotate-180' : '' }`} />
                     </div>
                     <AnimatePresence initial={false}>
                     {settingsIsOpen &&

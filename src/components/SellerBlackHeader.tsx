@@ -51,7 +51,8 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section, mLogo, mSection}) =>
           <img 
             src={SellerLogo} 
             alt="Seller Logo" 
-            className={`w-full ${mLogo}`}
+            className={`w-full ${mLogo} hover:cursor-pointer`}
+            onClick={() => navigate('/seller/dashboard')}
           />
           
           {/* Breadcrumb - hidden on mobile, visible from md upwards */}
