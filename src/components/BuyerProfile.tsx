@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 
 import BuyerProfileOTP from "./BuyerProfileOTP";
 
-
 const BuyerProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { user, status } = useSelector((state: RootState) => state.profile);
@@ -31,10 +30,8 @@ const BuyerProfile: React.FC = () => {
       : "",
   });
 
-
   // State for OTP modal
   const [showOTPModal, setShowOTPModal] = useState(false);
-
 
   // Ref for file input
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -135,20 +132,20 @@ const BuyerProfile: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-10 font-inter">
-      <div className="mb-10">
-        <h1 className="text-3xl font-semibold text-gray-900 mb-2">
+    <div className="max-w-6xl mx-auto p-4 sm:p-10 font-inter">
+      <div className="mb-6 sm:mb-10">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-2">
           My Profile
         </h1>
-        <p className="text-gray-600">
+        <p className="text-sm sm:text-base text-gray-600">
           Manage profile information to keep your account secure
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-start">
-        <div className="lg:col-span-2 space-y-8">
-          <div className="flex items-start gap-5">
-            <label className="min-w-[120px] text-right text-gray-700 font-medium pt-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16 items-start">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5">
+            <label className="sm:min-w-[120px] sm:text-right text-gray-700 font-medium pt-0 sm:pt-3">
               Username
             </label>
             <div className="flex-1">
@@ -166,8 +163,8 @@ const BuyerProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-start gap-5">
-            <label className="min-w-[120px] text-right text-gray-700 font-medium pt-3">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5">
+            <label className="sm:min-w-[120px] sm:text-right text-gray-700 font-medium pt-0 sm:pt-3">
               Name
             </label>
             <div className="flex-1">
@@ -182,8 +179,8 @@ const BuyerProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-5">
-            <label className="min-w-[120px] text-right text-gray-700 font-medium">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+            <label className="sm:min-w-[120px] sm:text-right text-gray-700 font-medium">
               Email
             </label>
             <div className="flex-1 flex items-center gap-4">
@@ -193,8 +190,8 @@ const BuyerProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-5">
-            <label className="min-w-[120px] text-right text-gray-700 font-medium">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+            <label className="sm:min-w-[120px] sm:text-right text-gray-700 font-medium">
               Phone number
             </label>
             <div className="flex-1 flex items-center gap-4">
@@ -205,17 +202,16 @@ const BuyerProfile: React.FC = () => {
                 onClick={() => setShowOTPModal(true)}
                 className="text-blue-600 underline hover:text-blue-700 transition-colors"
               >
-
                 Change
               </button>
             </div>
           </div>
 
-          <div className="flex items-center gap-5">
-            <label className="min-w-[120px] text-right text-gray-700 font-medium">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+            <label className="sm:min-w-[120px] sm:text-right text-gray-700 font-medium">
               Gender
             </label>
-            <div className="flex-1 flex items-center gap-6">
+            <div className="flex-1 flex flex-wrap items-center gap-6">
               <div className="flex items-center gap-2">
                 <input
                   id="gender-male"
@@ -270,11 +266,11 @@ const BuyerProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-start gap-5">
-            <label className="min-w-[120px] text-right text-gray-700 font-medium pt-3">
+          <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-5">
+            <label className="sm:min-w-[120px] sm:text-right text-gray-700 font-medium pt-0 sm:pt-3">
               Birthday
             </label>
-            <div className="flex-1 flex gap-3">
+            <div className="flex-1 flex flex-col sm:flex-row gap-3">
               <select
                 name="day"
                 value={formData.day}
@@ -344,8 +340,8 @@ const BuyerProfile: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-5 p-10">
-          <div className="w-30 h-30 rounded-full bg-gradient-to-br from-purple-300 to-purple-500 flex items-center justify-center overflow-hidden">
+        <div className="flex flex-col items-center gap-5 p-6 sm:p-10">
+          <div className="w-24 h-24 sm:w-30 sm:h-30 rounded-full bg-gradient-to-br from-purple-300 to-purple-500 flex items-center justify-center overflow-hidden">
             <img
               src={user?.profile_img || GenericAvatar}
               alt="User Avatar"
@@ -377,7 +373,6 @@ const BuyerProfile: React.FC = () => {
         </div>
       </div>
 
-
       {/* OTP Modal */}
       {showOTPModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -397,7 +392,6 @@ const BuyerProfile: React.FC = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

@@ -114,10 +114,10 @@ const BuyerAddress: React.FC = () => {
         />
       )}
 
-      <div className="flex justify-between items-center mb-8">
-        <h4 className="font-semibold text-xl">My address</h4>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-3 sm:gap-0">
+        <h4 className="font-semibold text-lg sm:text-xl">My address</h4>
         <button
-          className={`p-2 text-white ${
+          className={`w-full sm:w-auto px-3 sm:px-4 py-2 text-white text-sm sm:text-base rounded ${
             status === "loading"
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-purple-600 hover:bg-purple-700"
@@ -129,26 +129,29 @@ const BuyerAddress: React.FC = () => {
         </button>
       </div>
 
-      <p className="text-lg">Address</p>
+      <p className="text-base sm:text-lg mb-3">Address</p>
       {status === "loading" ? (
         <BuyerAddressSkeleton />
       ) : addresses ? (
         addresses.map((addr, index) => (
-          <div key={index} className="mt-4">
-            <div className="flex justify-between">
-              <p>
+          <div
+            key={index}
+            className="mt-4 border-b border-gray-200 pb-4 last:border-b-0"
+          >
+            <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-0">
+              <p className="text-sm sm:text-base font-medium">
                 {addr.full_name} | {addr.phone_number}
               </p>
-              <div className="flex gap-4">
+              <div className="flex gap-3 sm:gap-4">
                 <p
-                  className="text-blue-600 underline cursor-pointer"
+                  className="text-blue-600 underline cursor-pointer text-sm sm:text-base hover:text-blue-800"
                   onClick={() => handleShowUpdateForm(addr.id)}
                 >
                   Update
                 </p>
                 {!addr.is_default && (
                   <p
-                    className="text-blue-600 underline cursor-pointer"
+                    className="text-blue-600 underline cursor-pointer text-sm sm:text-base hover:text-blue-800"
                     onClick={() => handleRemove(addr.id)}
                   >
                     Remove
@@ -156,12 +159,12 @@ const BuyerAddress: React.FC = () => {
                 )}
               </div>
             </div>
-            <div className="flex justify-between items-center my-2">
-              <p className="text-gray-500">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center my-2 gap-2 sm:gap-0">
+              <p className="text-gray-500 text-sm sm:text-base">
                 {addr.address_line1}, {addr.address_line2}
               </p>
               <button
-                className={`px-4 border p-1 rounded ${
+                className={`w-full sm:w-auto px-3 sm:px-4 py-1 sm:py-2 border rounded text-sm sm:text-base ${
                   addr.is_default
                     ? "text-gray-500 border-gray-500 cursor-not-allowed"
                     : "cursor-pointer hover:bg-gray-50"
@@ -173,7 +176,7 @@ const BuyerAddress: React.FC = () => {
               </button>
             </div>
             {addr.is_default && (
-              <div className="py-1 px-2 border text-purple-600 w-fit">
+              <div className="py-1 px-2 border text-purple-600 w-fit text-sm sm:text-base rounded">
                 Default Location
               </div>
             )}

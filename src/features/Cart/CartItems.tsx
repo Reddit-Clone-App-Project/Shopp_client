@@ -50,9 +50,9 @@ const CartItems: React.FC<CartItemsProps> = ({
   };
 
   return (
-    <div className="basis-[70%]">
+    <div className="w-full lg:basis-[70%]">
       {/* Cart Header */}
-      <div className="bg-white flex justify-between items-center mb-4 p-4">
+      <div className="bg-white flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 p-3 sm:p-4 gap-2 sm:gap-0">
         <button
           onClick={handleSelectAll}
           className="flex cursor-pointer items-center"
@@ -62,7 +62,9 @@ const CartItems: React.FC<CartItemsProps> = ({
             alt="Select all"
             className="mr-2"
           />
-          <span className="font-medium text-gray-500">SELECT ALL</span>
+          <span className="font-medium text-gray-500 text-sm sm:text-base">
+            SELECT ALL
+          </span>
         </button>
 
         {isSelectedAll && (
@@ -71,7 +73,9 @@ const CartItems: React.FC<CartItemsProps> = ({
             onClick={handleClearCart}
           >
             <img src={Trash} alt="Remove from Cart" className="h-5 mr-2" />
-            <p className="font-medium text-gray-500">DELETE</p>
+            <p className="font-medium text-gray-500 text-sm sm:text-base">
+              DELETE
+            </p>
           </button>
         )}
       </div>
@@ -87,9 +91,9 @@ const CartItems: React.FC<CartItemsProps> = ({
             storeItemIds.every((id) => selectedItems.includes(id));
 
           return (
-            <div key={store.store_id} className="bg-white p-4 mt-4">
+            <div key={store.store_id} className="bg-white p-3 sm:p-4 mt-4">
               {/* Store Header */}
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
                 <div
                   onClick={() => dispatch(toggleSelectStore(store.store_id))}
                   className="cursor-pointer flex items-center gap-2"
@@ -99,7 +103,9 @@ const CartItems: React.FC<CartItemsProps> = ({
                     alt="Select Shop"
                   />
                   <img src={ShopIcon} alt="Shop Icon" className="h-4" />
-                  <h3>{store.store_name}</h3>
+                  <h3 className="text-sm sm:text-base font-medium">
+                    {store.store_name}
+                  </h3>
                   <img src={ChevronRight} alt="Chevron Right" className="h-4" />
                 </div>
 
@@ -116,7 +122,7 @@ const CartItems: React.FC<CartItemsProps> = ({
                         | "bulky"
                     )
                   }
-                  className="border border-gray-300 rounded p-2"
+                  className="border border-gray-300 rounded p-2 text-xs sm:text-sm w-full sm:w-auto"
                 >
                   <option value="">Choose your shipping method</option>
                   {store.store_express_shipping && (
@@ -145,38 +151,40 @@ const CartItems: React.FC<CartItemsProps> = ({
                   return (
                     <div
                       key={item.product_variant_id}
-                      className="flex items-center mt-4"
+                      className="flex flex-col sm:flex-row items-start sm:items-center mt-4 gap-3 sm:gap-0"
                     >
-                      <div className="basis-3/5 flex items-center">
+                      <div className="w-full sm:basis-3/5 flex items-center">
                         <img
                           src={isItemSelected ? CheckBox : EmptyCheckbox}
                           alt="Select Item"
                           onClick={() =>
                             dispatch(toggleSelectItem(item.product_variant_id))
                           }
-                          className="cursor-pointer"
+                          className="cursor-pointer flex-shrink-0"
                         />
 
                         <img
                           src={item.image_url}
                           alt={item.product_name}
-                          className="h-40"
+                          className="h-20 sm:h-32 lg:h-40 ml-3 flex-shrink-0"
                         />
 
-                        <div>
-                          <h4>{item.product_name}</h4>
-                          <p>
+                        <div className="ml-3 flex-1 min-w-0">
+                          <h4 className="text-sm sm:text-base font-medium truncate">
+                            {item.product_name}
+                          </h4>
+                          <p className="text-xs sm:text-sm text-gray-600">
                             <span className="text-blue-700">type:</span>{" "}
                             {item.variant_name}
                           </p>
                         </div>
                       </div>
 
-                      <div className="basis-1/5 flex flex-col items-end">
-                        <p className="text-blue-700 text-xl">
+                      <div className="w-full sm:basis-1/5 flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start">
+                        <p className="text-blue-700 text-lg sm:text-xl font-semibold">
                           ${item.price_at_purchase}
                         </p>
-                        <div className="flex gap-1">
+                        <div className="flex gap-2 sm:gap-1 mt-0 sm:mt-2">
                           <img
                             className="h-4 cursor-pointer"
                             src={Heart}
@@ -193,9 +201,9 @@ const CartItems: React.FC<CartItemsProps> = ({
                         </div>
                       </div>
 
-                      <div className="basis-1/5 flex items-center justify-end gap-2">
+                      <div className="w-full sm:basis-1/5 flex items-center justify-center sm:justify-end gap-2 sm:gap-2">
                         <button
-                          className="cursor-pointer font-bold text-xl bg-gray-200 px-3 py-0.5"
+                          className="cursor-pointer font-bold text-lg sm:text-xl bg-gray-200 px-2 sm:px-3 py-0.5 rounded"
                           onClick={() => {
                             dispatch(
                               updateProductQuantityInCart({
@@ -207,9 +215,11 @@ const CartItems: React.FC<CartItemsProps> = ({
                         >
                           -
                         </button>
-                        <p>{item.quantity}</p>
+                        <p className="text-sm sm:text-base font-medium min-w-[2rem] text-center">
+                          {item.quantity}
+                        </p>
                         <button
-                          className="cursor-pointer font-bold text-xl bg-gray-200 px-3 py-0.5"
+                          className="cursor-pointer font-bold text-lg sm:text-xl bg-gray-200 px-2 sm:px-3 py-0.5 rounded"
                           onClick={() => {
                             dispatch(
                               updateProductQuantityInCart({

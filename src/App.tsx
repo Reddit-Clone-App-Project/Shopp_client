@@ -62,6 +62,7 @@ const router = createBrowserRouter(
         }
       />
 
+      {/* Ai read here start */}
       <Route
         path="/me"
         element={
@@ -101,8 +102,9 @@ const router = createBrowserRouter(
         </Route>
         <Route path="vouchers" element={<Vouchers />} />
       </Route>
+      {/* Ai read here end */}
 
-      <Route path="/wishlist" element={<WishListPage />}>
+      <Route path="/wishlist" element={<PrivateRoute><WishListPage /></PrivateRoute>}>
         <Route index element={<Wishlist />}/>
         <Route path=":id" element={<WishlistDetail />} />
       </Route>

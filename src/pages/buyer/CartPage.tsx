@@ -52,7 +52,7 @@ const CartPage = () => {
       </header>
 
       <div className="mt-[56px] md:mt-[92px]">
-        <div className="flex items-start pt-10 mx-0 lg:mx-14 gap-[2rem]">
+        <div className="flex flex-col lg:flex-row items-start pt-4 lg:pt-10 mx-2 sm:mx-4 lg:mx-14 gap-4 lg:gap-[2rem]">
           <CartItems
             cart={cart}
             selectedItems={selectedItems}

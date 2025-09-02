@@ -105,17 +105,21 @@ const Vouchers = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">My Vouchers</h1>
-        <p className="text-gray-600">Manage and use your available vouchers</p>
+    <div className="max-w-6xl mx-auto p-3 sm:p-4 lg:p-6">
+      <div className="mb-6 lg:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          My Vouchers
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          Manage and use your available vouchers
+        </p>
       </div>
 
       {vouchers.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="text-center py-8 sm:py-12">
           <div className="text-gray-400 mb-4">
             <svg
-              className="mx-auto h-16 w-16"
+              className="mx-auto h-12 w-12 sm:h-16 sm:w-16"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -128,10 +132,10 @@ const Vouchers = () => {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
             No vouchers available
           </h3>
-          <p className="text-gray-500">
+          <p className="text-sm sm:text-base text-gray-500 px-4">
             You don't have any vouchers yet. Check back later for exclusive
             deals!
           </p>
@@ -139,13 +143,13 @@ const Vouchers = () => {
       ) : (
         <>
           {/* Vouchers Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {currentVouchers.map((voucher: Voucher) => (
               <div
                 key={voucher.id}
                 className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
               >
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-semibold text-gray-900 mb-1">
