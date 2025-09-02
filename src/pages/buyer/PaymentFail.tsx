@@ -44,14 +44,6 @@ const PaymentFail = () => {
             Please check your payment details and try again.
           </p>
 
-          {/* Error Details */}
-          <div className="bg-red-50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-red-600 mb-1">Transaction ID</p>
-            <p className="font-semibold text-red-700">
-              #TXN-{Date.now().toString().slice(-8)}
-            </p>
-          </div>
-
           {/* Common Reasons */}
           <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
             <h3 className="font-semibold text-gray-800 mb-2">

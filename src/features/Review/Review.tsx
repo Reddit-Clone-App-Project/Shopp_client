@@ -30,7 +30,7 @@ const Review: React.FC<ReviewProps> = ({ total_reviews, average_rating, countSta
         return (
             <div className='bg-white p-4 mb-4 rounded shadow'>
                 <div className='flex items-center gap-4 mb-4'>
-                    <img src={profile_img ?? GenericAvatar} alt="Profile" />
+                    <img src={profile_img ?? GenericAvatar} alt="Profile"  className='h-8 w-8 rounded-full object-cover'/>
                     <div>
                         <p>{user_name}</p>
                         <div className='flex'>{countStars(stars)}</div>

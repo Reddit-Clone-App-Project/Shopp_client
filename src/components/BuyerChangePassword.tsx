@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleChangePassword } from "../features/UserProfile/UserProfileSlice";
 import { API } from "../api";
 import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
 
 interface BuyerChangePasswordProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const BuyerChangePassword: React.FC<BuyerChangePasswordProps> = ({
@@ -15,6 +16,16 @@ const BuyerChangePassword: React.FC<BuyerChangePasswordProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const { status } = useSelector((state: RootState) => state.profile);
+  const navigate = useNavigate();
+
+  // Handle close action - either call onClose prop or navigate back
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else {
+      navigate("/me/my-account/profile");
+    }
+  };
 
   // OTP States
   const [otpSent, setOtpSent] = useState(false);
@@ -89,11 +100,9 @@ const BuyerChangePassword: React.FC<BuyerChangePasswordProps> = ({
     }
 
     try {
-      await dispatch(
-        handleChangePassword({ oldPassword, newPassword })
-      );
+      await dispatch(handleChangePassword({ oldPassword, newPassword }));
       toast.success("Password changed successfully!");
-      onClose();
+      handleClose();
     } catch (error: any) {
       toast.error(error || "Failed to change password.");
     }
@@ -457,7 +466,7 @@ const BuyerChangePassword: React.FC<BuyerChangePasswordProps> = ({
               {status === "loading" ? "Changing..." : "Change Password"}
             </button>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors"
             >
               Cancel
@@ -506,7 +515,7 @@ const BuyerChangePassword: React.FC<BuyerChangePasswordProps> = ({
             Send OTP to My Email
           </button>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-medium transition-colors"
           >
             Cancel

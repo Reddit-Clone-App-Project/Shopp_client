@@ -14,6 +14,12 @@ import categoryProducts from '../features/Category/CategoryProductsSlice';
 import stores from '../features/StoreSlice/StoreSlice';
 import productDetail from '../features/ProductDetail/ProductDetailSlice'; 
 import cart from '../features/Cart/CartSlice';
+import orders from "../features/Orders/OrdersSlice"
+import orderDetail from "../features/Orders/OrderDetailSlice"
+import notification from "../features/Notification/NotificationSlice";
+import vouchers from "../features/Vouchers/VouchersSlice";
+import wishlist from "../features/Wishlist/WishlistSlice";
+import wishlistDetail from "../features/Wishlist/WishlistDetailSlice";
 
 export const store = configureStore({
     reducer: {
@@ -31,7 +37,13 @@ export const store = configureStore({
         categoryProducts,
         stores,
         productDetail,
-        cart
+        cart,
+        orders,
+        orderDetail,
+        notification,
+        vouchers,
+        wishlist,
+        wishlistDetail
     },
 });
 

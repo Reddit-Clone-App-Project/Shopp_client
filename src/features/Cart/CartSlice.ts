@@ -11,7 +11,7 @@ import {
   addProductToCart,
   removeProductFromCart,
   removeAllProductsFromCart,
-  updateCartItemQuantity
+  updateCartItemQuantity,
 } from "../../api";
 
 export const clearCart = createAsyncThunk(
@@ -99,10 +99,7 @@ export const updateProductQuantityInCart = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      const response = await updateCartItemQuantity(
-        productVariantId,
-        quantity
-      );
+      const response = await updateCartItemQuantity(productVariantId, quantity);
       return response.data;
     } catch (error: any) {
       const errorMsg =
@@ -126,6 +123,10 @@ interface CartItem {
 interface CartStore {
   store_id: number;
   store_name: string;
+  store_express_shipping: boolean;
+  store_fast_shipping: boolean;
+  store_economical_shipping: boolean;
+  store_bulky_shipping: boolean;
   items: CartItem[];
 }
 
@@ -140,6 +141,9 @@ interface CartState {
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
   selectedItems: number[];
+  storeShippingMethods: {
+    [storeId: number]: "express" | "fast" | "economical" | "bulky";
+  };
 }
 
 const initialState: CartState = {
@@ -147,6 +151,7 @@ const initialState: CartState = {
   status: "idle",
   error: null,
   selectedItems: [],
+  storeShippingMethods: {},
 };
 
 const CartSlice = createSlice({
@@ -205,6 +210,17 @@ const CartSlice = createSlice({
     clearSelectedItems: (state) => {
       state.selectedItems = [];
     },
+
+    setStoreShippingMethod: (
+      state,
+      action: PayloadAction<{
+        storeId: number;
+        shippingMethod: "express" | "fast" | "economical" | "bulky";
+      }>
+    ) => {
+      const { storeId, shippingMethod } = action.payload;
+      state.storeShippingMethods[storeId] = shippingMethod;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -217,7 +233,13 @@ const CartSlice = createSlice({
       })
       // Handle pending states for all cart async thunks
       .addMatcher(
-        isPending(fetchBuyerCart, addToCart, removeFromCart, clearCart, updateProductQuantityInCart),
+        isPending(
+          fetchBuyerCart,
+          addToCart,
+          removeFromCart,
+          clearCart,
+          updateProductQuantityInCart
+        ),
         (state) => {
           state.status = "loading";
           state.error = null;
@@ -225,7 +247,12 @@ const CartSlice = createSlice({
       )
       // Handle fulfilled states for all cart async thunks
       .addMatcher(
-        isFulfilled(fetchBuyerCart, addToCart, removeFromCart, updateProductQuantityInCart),
+        isFulfilled(
+          fetchBuyerCart,
+          addToCart,
+          removeFromCart,
+          updateProductQuantityInCart
+        ),
         (state, action) => {
           state.status = "succeeded";
           // Update cart with items from response
@@ -234,7 +261,13 @@ const CartSlice = createSlice({
       )
       // Handle rejected states for all cart async thunks
       .addMatcher(
-        isRejected(fetchBuyerCart, addToCart, removeFromCart, clearCart, updateProductQuantityInCart),
+        isRejected(
+          fetchBuyerCart,
+          addToCart,
+          removeFromCart,
+          clearCart,
+          updateProductQuantityInCart
+        ),
         (state, action) => {
           if (action.meta.aborted) {
             return;
@@ -252,5 +285,6 @@ export const {
   toggleSelectStore,
   toggleSelectAll,
   clearSelectedItems,
+  setStoreShippingMethod,
 } = CartSlice.actions;
 export default CartSlice.reducer;

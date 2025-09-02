@@ -5,6 +5,12 @@ import { RootState, AppDispatch } from "../../redux/store";
 import axios from "axios";
 import { handleLogout } from "../Auth/AuthSlice";
 import { fetchBuyerCart, removeFromCart } from "../Cart/CartSlice";
+import {
+  fetchNotifications,
+  markEveryNotificationAsRead,
+  markSingleNotificationAsRead,
+} from "../Notification/NotificationSlice";
+import { toast } from "react-toastify";
 // SVG
 import Bell from "../../assets/HomePage/Header/bell.svg";
 import GitHub from "../../assets/HomePage/Header/github-white.svg";
@@ -45,9 +51,14 @@ const BuyerHeader: React.FC = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
+  const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
+    useState(false);
   const { status, user } = useSelector((state: RootState) => state.profile);
 
   const { cart } = useSelector((state: RootState) => state.cart);
+  const { notifications } = useSelector(
+    (state: RootState) => state.notification
+  );
 
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -59,6 +70,7 @@ const BuyerHeader: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const cartDropdownRef = useRef<HTMLDivElement>(null);
   const mobileCartDropdownRef = useRef<HTMLDivElement>(null);
+  const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle search
   const handleSearch = () => {
@@ -149,12 +161,56 @@ const BuyerHeader: React.FC = () => {
     return items.reduce((total: number, item: any) => total + item.quantity, 0);
   };
 
+  // Notification functions
+  const getLatestNotifications = () => {
+    return [...notifications]
+      .sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      .slice(0, 5);
+  };
+
+  const getUnreadNotificationCount = () => {
+    return notifications.filter((notification) => !notification.is_read).length;
+  };
+
+  const handleMarkAllAsRead = async () => {
+    try {
+      await dispatch(markEveryNotificationAsRead()).unwrap();
+      toast.success("All notifications marked as read");
+    } catch (error) {
+      toast.error("Failed to mark all notifications as read");
+    }
+  };
+
+  const handleMarkSingleAsRead = async (notificationId: number) => {
+    try {
+      await dispatch(markSingleNotificationAsRead(notificationId)).unwrap();
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+    }
+  };
+
+  const formatNotificationDate = (dateString: Date) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+    );
+
+    if (diffInHours < 1) return "Just now";
+    if (diffInHours < 24) return `${diffInHours}h ago`;
+    return date.toLocaleDateString();
+  };
+
   // Handle Escape key to close dropdown
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsDropdownOpen(false);
         setIsCartDropdownOpen(false);
+        setIsNotificationDropdownOpen(false);
       }
     };
 
@@ -164,10 +220,11 @@ const BuyerHeader: React.FC = () => {
     };
   }, []);
 
-  // Fetch cart data when component mounts and user is logged in
+  // Fetch cart data and notifications when component mounts and user is logged in
   useEffect(() => {
     if (status === "succeeded" && user) {
       dispatch(fetchBuyerCart());
+      dispatch(fetchNotifications());
     }
   }, [dispatch, status, user]);
 
@@ -223,6 +280,15 @@ const BuyerHeader: React.FC = () => {
       if (isOutsideDesktopCart && isOutsideMobileCart) {
         setIsCartDropdownOpen(false);
       }
+
+      // Check if click is outside notification dropdown
+      if (
+        notificationDropdownRef.current &&
+        target &&
+        !notificationDropdownRef.current.contains(target)
+      ) {
+        setIsNotificationDropdownOpen(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -270,11 +336,145 @@ const BuyerHeader: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center space-x-6">
-            <div className="flex items-center space-x-2">
-              <img src={Bell} alt="Notifications" className="w-4 h-4" />
-              <span className="hover:underline cursor-pointer">
-                Notification
-              </span>
+            <div className="relative" ref={notificationDropdownRef}>
+              <div
+                className="flex items-center space-x-2 cursor-pointer hover:bg-purple-600 px-2 py-1 rounded transition-colors"
+                onClick={() =>
+                  setIsNotificationDropdownOpen(!isNotificationDropdownOpen)
+                }
+              >
+                <div className="relative">
+                  <img src={Bell} alt="Notifications" className="w-4 h-4" />
+                  {getUnreadNotificationCount() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                      {getUnreadNotificationCount()}
+                    </span>
+                  )}
+                </div>
+                <span className="hover:underline">Notification</span>
+              </div>
+
+              {isNotificationDropdownOpen && (
+                <>
+                  {/* Invisible backdrop to capture outside clicks */}
+                  <div
+                    className="fixed inset-0 z-5"
+                    onClick={() => setIsNotificationDropdownOpen(false)}
+                  />
+                  <div className="absolute top-8 right-0 bg-white shadow-xl rounded-lg overflow-hidden min-w-[400px] max-w-[450px] z-10 border border-gray-100">
+                    <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-purple-800">
+                          Notifications
+                        </h3>
+                        {getUnreadNotificationCount() > 0 && (
+                          <button
+                            onClick={handleMarkAllAsRead}
+                            className="cursor-pointer bg-purple-600 text-white text-xs px-3 py-1 rounded hover:bg-purple-700 transition-colors"
+                          >
+                            Mark All as Read
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {getLatestNotifications().length === 0 ? (
+                      <div className="p-8 text-center">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                          <img
+                            src={Bell}
+                            alt="No Notifications"
+                            className="w-8 h-8 opacity-50"
+                          />
+                        </div>
+                        <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                          No Notifications
+                        </h4>
+                        <p className="text-gray-500 text-sm">
+                          You'll see your latest notifications here
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="max-h-80 overflow-y-auto">
+                          {getLatestNotifications().map((notification) => (
+                            <div
+                              key={notification.id}
+                              className={`p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors cursor-pointer ${
+                                !notification.is_read ? "bg-blue-50" : ""
+                              }`}
+                              onClick={() => {
+                                if (!notification.is_read) {
+                                  handleMarkSingleAsRead(notification.id);
+                                }
+                              }}
+                            >
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <h4
+                                      className={`text-sm font-semibold ${
+                                        notification.is_read
+                                          ? "text-gray-800"
+                                          : "text-blue-800"
+                                      }`}
+                                    >
+                                      {notification.title}
+                                    </h4>
+                                    {!notification.is_read && (
+                                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                                    )}
+                                  </div>
+                                  <p
+                                    className={`text-xs ${
+                                      notification.is_read
+                                        ? "text-gray-600"
+                                        : "text-blue-700"
+                                    } mb-1`}
+                                  >
+                                    {notification.content.length > 80
+                                      ? notification.content.substring(0, 80) +
+                                        "..."
+                                      : notification.content}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {formatNotificationDate(
+                                      notification.created_at
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="p-3 bg-gray-50 border-t border-gray-200">
+                          <div className="flex justify-between space-x-2">
+                            <Link
+                              to="/me/notification/n-orders"
+                              className="flex-1 text-center bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
+                              onClick={() =>
+                                setIsNotificationDropdownOpen(false)
+                              }
+                            >
+                              View Orders
+                            </Link>
+                            <Link
+                              to="/me/notification/promotions"
+                              className="flex-1 text-center bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700 transition-colors"
+                              onClick={() =>
+                                setIsNotificationDropdownOpen(false)
+                              }
+                            >
+                              View Promotions
+                            </Link>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
             <div className="relative" ref={dropdownRef}>
               {status !== "succeeded" ? (
@@ -295,9 +495,7 @@ const BuyerHeader: React.FC = () => {
                   >
                     <span className="text-white">{user?.username}</span>
                     <img
-
                       className="w-6 h-6 object-cover cursor-pointer hover:opacity-80 rounded-full"
-
                       src={user?.profile_img ?? GenericAvatar}
                       alt="Profile image"
                     />
@@ -324,6 +522,13 @@ const BuyerHeader: React.FC = () => {
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           My Orders
+                        </Link>
+                        <Link
+                          to="/wishlist"
+                          className="px-4 py-2 hover:bg-gray-100 text-sm"
+                          onClick={() => setIsDropdownOpen(false)}
+                        >
+                          My Wishlist
                         </Link>
                         <button
                           className="px-4 py-2 hover:bg-gray-100 text-sm text-left"
@@ -614,7 +819,6 @@ const BuyerHeader: React.FC = () => {
                           >
                             View Full Cart
                           </Link>
-
                         </div>
                       </div>
                     </>
@@ -886,8 +1090,25 @@ const BuyerHeader: React.FC = () => {
                 <img src={GitHub} alt="GitHub" className="w-4 h-4" />
               </a>
 
-              <div className="flex items-center space-x-2 text-white hover:bg-purple-700 p-2 rounded cursor-pointer">
-                <img src={Bell} alt="Notifications" className="w-4 h-4" />
+              <div
+                className="flex items-center space-x-2 text-white hover:bg-purple-700 p-2 rounded cursor-pointer"
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  if (status === "succeeded") {
+                    // If user is logged in, navigate to notifications
+                    window.location.href = "/me/notification/n-orders";
+                  }
+                }}
+              >
+                <div className="relative">
+                  <img src={Bell} alt="Notifications" className="w-4 h-4" />
+                  {status === "succeeded" &&
+                    getUnreadNotificationCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
+                        {getUnreadNotificationCount()}
+                      </span>
+                    )}
+                </div>
                 <span>Notification</span>
               </div>
 
@@ -914,9 +1135,7 @@ const BuyerHeader: React.FC = () => {
                     <div className="flex items-center gap-2 p-2">
                       <span className="text-white">{user?.username}</span>
                       <img
-
                         className="w-6 h-6 object-cover cursor-pointer hover:opacity-80 rounded-full"
-
                         src={user?.profile_img ?? GenericAvatar}
                         alt="Profile image"
                       />
@@ -934,6 +1153,13 @@ const BuyerHeader: React.FC = () => {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       My Orders
+                    </Link>
+                    <Link
+                      to="/wishlist"
+                      className="block text-white hover:bg-purple-700 p-2 rounded"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      My Wishlist
                     </Link>
                     <button
                       className="block text-white hover:bg-purple-700 p-2 rounded w-full text-left"
