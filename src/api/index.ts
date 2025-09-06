@@ -296,3 +296,8 @@ export const createWishlist = (name: string) => API.post("/wishlists", { name })
 export const deleteWishlist = (id: number) => API.delete(`/wishlists/${id}`);
 export const addProductToWishlist = (wishlistId: number, productId: number) => API.post(`/wishlists/${wishlistId}/products`, { productId });
 export const removeProductFromWishlist = (wishlistId: number, productId: number) => API.delete(`/wishlists/${wishlistId}/products`, { data: { productId } });
+
+// Chat
+export const getConversations = () => API.get("/chat");
+export const getConversationsForStore = (storeId: number) => API.get(`/chat/store`, { data: { storeId } });
+export const findOrCreateConversation = (sellerId: number) => API.post('/chat/find-or-create', { sellerId });

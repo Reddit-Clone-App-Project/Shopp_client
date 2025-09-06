@@ -11,6 +11,7 @@ import {
   markSingleNotificationAsRead,
 } from "../Notification/NotificationSlice";
 import { toast } from "react-toastify";
+import { deleteProfile } from "../UserProfile/UserProfileSlice";
 // SVG
 import Bell from "../../assets/HomePage/Header/bell.svg";
 import GitHub from "../../assets/HomePage/Header/github-white.svg";
@@ -20,7 +21,7 @@ import Menu from "../../assets/HomePage/Header/hamburger_menu.svg";
 import CloseIcon from "../../assets/HomePage/Header/Close.svg";
 import Logo from "../../assets/Logo.svg";
 import GenericAvatar from "../../assets/generic-avatar.svg";
-import { deleteProfile } from "../UserProfile/UserProfileSlice";
+import Chat from "../../assets/chat.svg";
 
 /* A custom hook for debouncing
  * @param value - The value to debounce

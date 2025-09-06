@@ -51,7 +51,7 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section, mLogo, mSection}) =>
           <img 
             src={SellerLogo} 
             alt="Seller Logo" 
-            className={`w-full ${mLogo} hover:cursor-pointer`}
+            className={`w-full ${mLogo} cursor-pointer`}
             onClick={() => navigate('/seller/dashboard')}
           />
           
@@ -93,7 +93,7 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({section, mLogo, mSection}) =>
           </button>
           
           {/* Chat icon - hidden on mobile and tablet */}
-          <button className="p-1 hidden md:block">
+          <button className="p-1 hidden md:block cursor-pointer">
             <img src={Chat} alt="Messages" className="w-5 h-5 md:w-6 md:h-6" />
           </button>
           
