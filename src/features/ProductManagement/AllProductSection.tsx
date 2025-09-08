@@ -33,12 +33,9 @@ const AllProductSection = () => {
 
     useEffect(() => {
         if (token && storeId) {                                    
-            console.log('Fetching products for store', storeId);
             dispatch(fetchProductsByStoreId({storeId, limit, offset}));
         }
     }, [dispatch, token, storeId, limit, offset]);
-
-    console.log(allProducts);
 
     return (
         <>
@@ -54,34 +51,40 @@ const AllProductSection = () => {
                     <li>Pending approval by Shopp ({})</li>
                 </ul>
             </nav>
-            <div className="mt-10">
-                <div>Provaaaa</div>
+            <div className="mt-10 bg-gray-900 p-5 rounded-xl">
                 {loading && <div>Loading Products…</div>}
                 {error && <div className="text-red-500">Error: {error}</div>}
                 {status.fetchProductsByStoreId === 'succeeded' && allProducts.length === 0 && (
                     <div>No product</div>
                 )}
                 {status.fetchProductsByStoreId === 'succeeded' && allProducts.length > 0 && (
-                    <table className="min-w-full border">
+                    <table className="min-w-full">
                         <thead>
-                            <tr>
-                            <th className="border px-4 py-2">Name</th>
-                            <th className="border px-4 py-2">Category</th>
-                            <th className="border px-4 py-2">Description</th>
+                            <tr className="bg-gray-700 text-center text-xl">
+                                <th className="px-4 py-2 font-normal rounded-l-xl">Product's name</th>
+                                <th className="px-4 py-2 font-normal">Variant's name</th>
+                                <th className="px-4 py-2 font-normal">Category</th>
+                                <th className="px-4 py-2 font-normal">Price</th>
+                                <th className="px-4 py-2 font-normal">Quantity</th>
+                                <th className="px-4 py-2 font-normal">Content quality</th>
+                                <th className="px-4 py-2 font-normal rounded-r-xl">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {allProducts.map((p) => (
-                            <tr key={p.id}>
-                                <td className="border px-4 py-2">{p.name}</td>
-                                <td className="border px-4 py-2">{p.is_active}</td>
-                                <td className="border px-4 py-2">{p.description}</td>
+                            <tr key={p.id} className="border-b-[0.01rem] text-center">
+                                <td className="px-4 py-2">{p.name}</td>
+                                <td className="px-4 py-2">{p.product_variant_name}</td>
+                                <td className="px-4 py-2">{p.category_name}</td>
+                                <td className="px-4 py-2">{p.product_variant_price} €</td>
+                                <td className="px-4 py-2">{}</td>
+                                <td className="px-4 py-2">{}</td>
+                                <td className="px-4 py-2">View</td>
                             </tr>
                             ))}
                         </tbody>
                     </table>
                 )}
-                <div>Provaaaa</div>
             </div>
         </>
     );
