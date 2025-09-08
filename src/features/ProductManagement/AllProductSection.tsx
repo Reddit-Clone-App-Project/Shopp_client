@@ -65,7 +65,8 @@ const AllProductSection = () => {
                                 <th className="px-4 py-2 font-normal">Variant's name</th>
                                 <th className="px-4 py-2 font-normal">Category</th>
                                 <th className="px-4 py-2 font-normal">Price</th>
-                                <th className="px-4 py-2 font-normal">Quantity</th>
+                                <th className="px-4 py-2 font-normal">Sales</th>
+                                <th className="px-4 py-2 font-normal">Stock quantity</th>
                                 <th className="px-4 py-2 font-normal">Content quality</th>
                                 <th className="px-4 py-2 font-normal rounded-r-xl">Action</th>
                             </tr>
@@ -74,11 +75,12 @@ const AllProductSection = () => {
                             {allProducts.map((p) => (
                             <tr key={p.id} className="border-b-[0.01rem] text-center">
                                 <td className="px-4 py-2">{p.name}</td>
-                                <td className="px-4 py-2">{p.product_variant_name}</td>
+                                <td className="px-4 py-2">{p.variant_name}</td>
                                 <td className="px-4 py-2">{p.category_name}</td>
-                                <td className="px-4 py-2">{p.product_variant_price} €</td>
-                                <td className="px-4 py-2">{}</td>
-                                <td className="px-4 py-2">{}</td>
+                                <td className="px-4 py-2">{p.variant_price} €</td>
+                                <td className="px-4 py-2">{p.bought}</td>
+                                <td className="px-4 py-2">{p.variant_stock}</td>
+                                <td className="px-4 py-2">{p.is_active ? 'OK' : 'NOT GOOD'}</td>
                                 <td className="px-4 py-2">View</td>
                             </tr>
                             ))}

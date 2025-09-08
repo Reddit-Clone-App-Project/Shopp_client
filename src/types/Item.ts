@@ -128,6 +128,7 @@ export interface AllProducts {
     bought: number;
     fts: string;
     category_name: string;
-    product_variant_name: string;
-    product_variant_price: number;
+    variant_name: string;
+    variant_price: number;
+    variant_stock: number;
 }
