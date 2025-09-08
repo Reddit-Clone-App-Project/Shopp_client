@@ -5,7 +5,8 @@ const URL = 'http://localhost:3000';
 
 // Getting access token
 const getAccessToken = () => {
-    return store.getState().auth.accessToken;
+    const token = store.getState().auth.accessToken;
+    return token;
 };
 
 // INIT socket

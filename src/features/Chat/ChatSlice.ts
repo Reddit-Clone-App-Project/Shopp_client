@@ -1,5 +1,5 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { getConversations } from "../../api";
+import { createSlice, PayloadAction, createAsyncThunk, isRejected } from "@reduxjs/toolkit";
+import { getConversations, findOrCreateConversation } from "../../api";
 
 export const fetchConversations = createAsyncThunk(
     'chat/fetchConversations',
@@ -17,9 +17,29 @@ export const fetchConversations = createAsyncThunk(
     }
 )
 
+export const fetchConversationDetail = createAsyncThunk(
+    'chat/fetchConversationDetail',
+    async ({ buyerIdFromSeller, sellerId }: {buyerIdFromSeller: number | undefined, sellerId: number}, thunkAPI) => {
+        try {
+            const response = await findOrCreateConversation(buyerIdFromSeller, sellerId);
+            return response.data;
+        } catch (error: any) {
+            const errorMsg =
+                error.response?.data?.error ||
+                error.response?.data?.message ||
+                "Failed to fetch conversation detail";
+            return thunkAPI.rejectWithValue(errorMsg);
+        }
+    }
+);
+
 interface Message {
+    id: number;
+    conversationId: number;
+    sender_buyer_id: number | null;
+    sender_store_id: number | null;
     content: string;
-    senderId: number;
+    is_read: boolean;
     createdAt: string;
 }
 
@@ -28,7 +48,7 @@ export interface Conversation{
     updated_at: string;
     other_user: {
         id: number;
-        username: string;
+        name: string;
         avatar: string | null;
     };
     last_message_content: string | null;
@@ -64,6 +84,18 @@ const chatSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(fetchConversationDetail.pending, (state) => {
+                state.status = 'loading';
+                state.error = null;
+                state.messages = [];
+                state.conversationId = null;
+            })
+            .addCase(fetchConversationDetail.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.conversationId = action.payload.conversation.conversation_id;
+                state.messages = action.payload.messages;
+            })
+
             .addCase(fetchConversations.pending, (state) => {
                 state.status = 'loading';
                 state.error = null;
@@ -72,7 +104,7 @@ const chatSlice = createSlice({
                 state.status = 'succeeded';
                 state.conversations = action.payload;
             })
-            .addCase(fetchConversations.rejected, (state, action) => {
+            .addMatcher(isRejected(fetchConversations, fetchConversationDetail), (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload as string;
             });
