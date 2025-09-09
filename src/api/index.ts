@@ -151,7 +151,6 @@ export const getProductsReviewByImage = (productId: number, offset: number) =>
   API.get(`/products/${productId}/reviews/image?limit=25&offset=${offset}`);
 
 export const getStore = (storeId: number) => API.get(`/store/${storeId}`);
-export const getStoreOwned = () => API.get("store/my-store");
 export const getStoreReleasedRuledDiscounts = (storeId: number) =>
   API.get(`/store/${storeId}/discounts`);
 export const getAllProductsByStoreId = (
@@ -301,3 +300,8 @@ export const removeProductFromWishlist = (wishlistId: number, productId: number)
 export const getConversations = () => API.get("/chat");
 export const getConversationsForStore = (storeId: number) => API.get(`/chat/store`, { data: { storeId } });
 export const findOrCreateConversation = (buyerIdFromSeller: number | undefined, sellerId: number) => API.post('/chat/find-or-create', { buyerIdFromSeller, sellerId });
+
+//! Seller
+// Get all store owned by the user
+export const getStoreOwned = () => API.get("store/my-store");
+export const getAllStore = () => API.get("/store/involved-stores");

@@ -1,11 +1,27 @@
-import { createSlice, PayloadAction, createAsyncThunk, isRejected } from "@reduxjs/toolkit";
-import { getConversations, findOrCreateConversation } from "../../api";
+import { createSlice, PayloadAction, createAsyncThunk, isRejected, isPending, isFulfilled } from "@reduxjs/toolkit";
+import { getConversations, findOrCreateConversation, getConversationsForStore } from "../../api";
 
 export const fetchConversations = createAsyncThunk(
     'chat/fetchConversations',
     async (_, thunkAPI) => {
         try {
             const response = await getConversations();
+            return response.data;
+        } catch (error: any) {
+            const errorMsg =
+                error.response?.data?.error ||
+                error.response?.data?.message ||
+                "Failed to clear cart";
+            return thunkAPI.rejectWithValue(errorMsg);
+        }
+    }
+)
+
+export const fetchStoreConversations = createAsyncThunk(
+    'chat/fetchStoreConversations',
+    async (storeId:number, thunkAPI) => {
+        try {
+            const response = await getConversationsForStore(storeId);
             return response.data;
         } catch (error: any) {
             const errorMsg =
@@ -96,11 +112,11 @@ const chatSlice = createSlice({
                 state.messages = action.payload.messages;
             })
 
-            .addCase(fetchConversations.pending, (state) => {
+            .addMatcher(isPending(fetchConversations, fetchStoreConversations), (state) => {
                 state.status = 'loading';
                 state.error = null;
             })
-            .addCase(fetchConversations.fulfilled, (state, action: PayloadAction<Conversation[]>) => {
+            .addMatcher(isFulfilled(fetchConversations, fetchStoreConversations), (state, action: PayloadAction<Conversation[]>) => {
                 state.status = 'succeeded';
                 state.conversations = action.payload;
             })
