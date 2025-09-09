@@ -25,6 +25,9 @@ import StoreProducts from "../../features/StoreProducts/StoreProducts";
 import SuggestionOfTheDay from "../../features/SuggestionOfTheDay/SuggestionOfTheDay";
 import { singleItemCheckout } from "../../api";
 import { loadStripe } from "@stripe/stripe-js";
+import ChatBox from "../../features/BuyerHeader/ChatBox";
+import ChatDropDown from "../../features/BuyerHeader/ChatDropDown";
+import { fetchConversationDetail } from "../../features/Chat/ChatSlice";
 // SVG
 import ChevronLeft from "../../assets/HomePage/Category/chevron-left.svg";
 import ChevronRight from "../../assets/HomePage/Category/chevron-right.svg";
@@ -92,6 +95,14 @@ const ProductPage: React.FC = () => {
 
   // Wishlist modal state
   const [showWishlistModal, setShowWishlistModal] = useState(false);
+
+  // Chat state
+  const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
+  const [currentChat, setCurrentChat] = useState<{
+    buyerId: number;
+    sellerId: number;
+  } | null>(null);
 
   // Get wishlist data
   const { wishlists } = useSelector((state: RootState) => state.wishlist);
@@ -341,6 +352,38 @@ const ProductPage: React.FC = () => {
       });
   };
 
+  const handleChatNow = async () => {
+    if (!user) {
+      toast.error("Please log in to start a chat");
+      navigate("/login");
+      return;
+    }
+
+    if (!store) {
+      toast.error("Store information not available");
+      return;
+    }
+
+    try {
+      await dispatch(
+        fetchConversationDetail({
+          buyerIdFromSeller: undefined,
+          sellerId: store.id,
+        })
+      ).unwrap();
+
+      setCurrentChat({
+        buyerId: user.id,
+        sellerId: store.id,
+      });
+      setIsChatDropdownOpen(true);
+      setIsChatBoxOpen(true);
+    } catch (error) {
+      console.error("Failed to start chat:", error);
+      toast.error("Failed to start chat. Please try again.");
+    }
+  };
+
   // Early return if product is not found
   useEffect(() => {
     if (!product) {
@@ -428,6 +471,13 @@ const ProductPage: React.FC = () => {
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
+
+  // Close chat box when chat dropdown closes
+  useEffect(() => {
+    if (!isChatDropdownOpen) {
+      setIsChatBoxOpen(false);
+    }
+  }, [isChatDropdownOpen]);
 
   // Skeleton Loading Component
   const ProductSkeleton = () => (
@@ -700,7 +750,10 @@ const ProductPage: React.FC = () => {
           />
           <p>Add to Cart</p>
         </button>
-        <button className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600">
+        <button
+          onClick={() => handleProtectedAction(handleChatNow)}
+          className="flex-2 h-full py-2 flex flex-col justify-center items-center text-sm font-semibold text-white bg-purple-500 hover:bg-purple-600"
+        >
           <img src={Chat} alt="Chat" className="inline-block mr-1 w-4" />
           <p>Chat Now</p>
         </button>
@@ -1093,7 +1146,10 @@ const ProductPage: React.FC = () => {
                 )}
               </div>
               <div className="flex flex-col gap-2">
-                <button className="hidden md:block bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
+                <button
+                  onClick={() => handleProtectedAction(handleChatNow)}
+                  className="hidden md:block bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer"
+                >
                   Chat Now
                 </button>
                 <button className="bg-purple-600 hover:bg-purple-500 text-white px-2 py-1 text-sm rounded cursor-pointer">
@@ -1416,6 +1472,35 @@ const ProductPage: React.FC = () => {
             )}
           </div>
         </div>
+      )}
+
+      {/* Chat Dropdown */}
+      <ChatDropDown
+        isOpen={isChatDropdownOpen}
+        onClose={() => {
+          setIsChatDropdownOpen(false);
+          setIsChatBoxOpen(false);
+        }}
+        setCurrentChat={setCurrentChat}
+        setIsChatBoxOpen={setIsChatBoxOpen}
+      />
+
+      {/* Chat Box */}
+      {currentChat && (
+        <ChatBox
+          buyerId={currentChat.buyerId}
+          sellerId={currentChat.sellerId}
+          isOpen={isChatBoxOpen}
+          onClose={() => setIsChatBoxOpen(false)}
+          storeInfo={
+            store
+              ? {
+                  name: store.name,
+                  avatar: store.profile_img,
+                }
+              : null
+          }
+        />
       )}
     </div>
   );

@@ -9,9 +9,9 @@ import settings from "../../assets/SellerDashboard/user-settings.svg";
 import notification from "../../assets/SellerDashboard/user-notifications.svg";
 import logoutIcon from "../../assets/SellerDashboard/user-logout.svg";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { handleLogout } from "../../features/Auth/AuthSlice";
-import { AppDispatch } from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import SellerChatDropDown from "./Chat/SellerChatDropDown";
@@ -38,6 +38,21 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({
 
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+  const { conversations } = useSelector((state: RootState) => state.chat);
+
+  // Find buyer information from conversations
+  const getBuyerInfo = (buyerId: number) => {
+    const conversation = conversations.find(
+      (conv) => conv.other_user.id === buyerId
+    );
+    if (conversation) {
+      return {
+        name: conversation.other_user.name,
+        avatar: conversation.other_user.avatar,
+      };
+    }
+    return null;
+  };
 
   const logout = async () => {
     try {
@@ -198,6 +213,7 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({
           sellerId={currentChat.sellerId}
           isOpen={isChatBoxOpen}
           onClose={() => setIsChatBoxOpen(false)}
+          buyerInfo={getBuyerInfo(currentChat.buyerId)}
         />
       )}
     </>

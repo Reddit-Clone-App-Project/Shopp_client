@@ -1266,6 +1266,7 @@ const BuyerHeader: React.FC = () => {
           sellerId={currentChat.sellerId}
           isOpen={isChatBoxOpen}
           onClose={() => setIsChatBoxOpen(false)}
+          storeInfo={null}
         />
       )}
     </div>

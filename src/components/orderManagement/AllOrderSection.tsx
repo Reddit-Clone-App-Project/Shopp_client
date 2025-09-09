@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Filter from './All/Filter';
 import OrderStatusFilter from './All/OrderStatusFilter';
+import OnPreparingOrdersFilter from './All/OnPreparingOrdersFilter';
 
 const AllOrderSection = () => {
     const [nav, setNav] = useState<'All' | 'Waiting for confirmation' | 'On preparing' | 'On delivering' | 'Deliver successful' | 'Return/Refund'>('All');
@@ -43,9 +44,7 @@ const AllOrderSection = () => {
             {/* Table Header */}
             <div className='flex items-center justify-between'>
                 <h2 className='text-3xl'>Orders</h2>
-                <div>
-                    
-                </div>
+                {nav === "On preparing" && <OnPreparingOrdersFilter />}
             </div>
 
         </div>

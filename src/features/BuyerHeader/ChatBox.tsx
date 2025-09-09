@@ -4,12 +4,17 @@ import { socket } from "../../socket";
 import { addMessage } from "../Chat/ChatSlice";
 import { RootState, AppDispatch } from "../../redux/store";
 import GoBack from "../../assets/left-arrow.svg";
+import GenericAvatar from "../../assets/generic-avatar.svg";
 
 interface ChatBoxProps {
   buyerId: number;
   sellerId: number;
   onClose?: () => void;
   isOpen?: boolean;
+  storeInfo?: {
+    name: string;
+    avatar?: string;
+  } | null;
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({
@@ -17,9 +22,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   sellerId,
   onClose,
   isOpen,
+  storeInfo,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, conversationId } = useSelector(
+  const { messages, conversationId, conversations } = useSelector(
     (state: RootState) => state.chat
   );
   const { user } = useSelector((state: RootState) => state.profile);
@@ -27,6 +33,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   const roomId = `conversation_${[buyerId, sellerId]
     .sort((a, b) => a - b)
     .join("_")}`;
+
+  // Find the current conversation to get store/user info
+  const currentConversation = conversations.find(
+    (conv) => conv.other_user.id === sellerId
+  );
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +87,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       {/* Header */}
       <div className="flex-shrink-0 p-3 md:p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             {/* Mobile back button */}
             <button
               onClick={onClose}
@@ -84,16 +95,42 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             >
               <img src={GoBack} alt="Back" className="w-5 h-5" />
             </button>
-            {/* Desktop chat icon */}
-            <h3 className="text-base md:text-lg font-semibold text-gray-800">
-              Chat
-            </h3>
+
+            {/* Store/User Info */}
+            {currentConversation ? (
+              <div className="flex items-center space-x-3">
+                <img
+                  src={currentConversation.other_user.avatar || GenericAvatar}
+                  alt={currentConversation.other_user.name}
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
+                />
+                <h3 className="text-sm md:text-base font-semibold text-gray-800">
+                  {currentConversation.other_user.name}
+                </h3>
+              </div>
+            ) : storeInfo ? (
+              <div className="flex items-center space-x-3">
+                <img
+                  src={storeInfo.avatar || GenericAvatar}
+                  alt={storeInfo.name}
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full object-cover"
+                />
+                <h3 className="text-sm md:text-base font-semibold text-gray-800">
+                  {storeInfo.name}
+                </h3>
+              </div>
+            ) : (
+              <h3 className="text-base md:text-lg font-semibold text-gray-800">
+                Chat
+              </h3>
+            )}
           </div>
+
           {/* Desktop close button */}
           {onClose && (
             <button
               onClick={onClose}
-              className="hidden md:block text-gray-500 hover:text-gray-700 p-1"
+              className="text-gray-500 hover:text-gray-700 p-1"
             >
               <svg
                 className="w-5 h-5"
