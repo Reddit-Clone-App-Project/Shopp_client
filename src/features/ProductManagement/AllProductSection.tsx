@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
 import { fetchProductsByStoreId } from "../StoreProducts/StoreProductSlice";
 
 const AllProductSection = () => {
@@ -11,25 +10,12 @@ const AllProductSection = () => {
     const [limit, setLimit] = useState(10);
     const [offset, setOffset] = useState(0);
     const dispatch = useDispatch<AppDispatch>();
-    const stores = useSelector((state: RootState) => state.stores.stores);
-    const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
-    const token = useSelector((state: RootState) => state.auth.accessToken);
     const { allProducts, status, error } = useSelector((state: RootState) => state.storeProducts);
     const loading = status.fetchProductsByStoreId === 'loading';
-
+    const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
+    const stores = useSelector((state: RootState) => state.stores.stores);
+    const token = useSelector((state: RootState) => state.auth.accessToken);
     const storeId = selectedStoreId ?? stores[0]?.id; 
-
-    useEffect(() => {
-        if (token) {
-            dispatch(fetchStoreOwned());
-        };
-    }, [dispatch, token]);
-
-    useEffect(() => {
-            if (stores.length > 0 && selectedStoreId == null && token) {
-                dispatch(setSelectedStoreId(storeId));
-            };
-    }, [stores, selectedStoreId, dispatch, token]);
 
     useEffect(() => {
         if (token && storeId) {                                    

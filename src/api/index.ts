@@ -298,7 +298,7 @@ export const removeProductFromWishlist = (wishlistId: number, productId: number)
 
 // Chat
 export const getConversations = () => API.get("/chat");
-export const getConversationsForStore = (storeId: number) => API.get(`/chat/store`, { data: { storeId } });
+export const getConversationsForStore = (storeId: number) => API.get(`/chat/store?storeId=${storeId}`);
 export const findOrCreateConversation = (buyerIdFromSeller: number | undefined, sellerId: number) => API.post('/chat/find-or-create', { buyerIdFromSeller, sellerId });
 
 //! Seller

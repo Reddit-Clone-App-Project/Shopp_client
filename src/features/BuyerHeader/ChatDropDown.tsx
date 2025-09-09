@@ -47,6 +47,23 @@ const ChatDropDown: React.FC<ChatDropDownProps> = ({
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       const target = event.target as Element;
+
+      // Check if the click is inside the dropdown
+      if (
+        dropdownRef.current &&
+        target &&
+        dropdownRef.current.contains(target)
+      ) {
+        return; // Don't close if clicking inside dropdown
+      }
+
+      // Check if the click is inside a chat box (exclude chat box from closing dropdown)
+      const chatBoxElement = target.closest("[data-buyer-chatbox]");
+      if (chatBoxElement) {
+        return; // Don't close if clicking inside chat box
+      }
+
+      // Close dropdown if clicking outside both dropdown and chat box
       if (
         dropdownRef.current &&
         target &&

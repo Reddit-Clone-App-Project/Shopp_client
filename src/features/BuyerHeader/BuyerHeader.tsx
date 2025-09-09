@@ -239,6 +239,13 @@ const BuyerHeader: React.FC = () => {
     }
   }, [dispatch, status, user]);
 
+  // Close chat box when chat dropdown closes
+  useEffect(() => {
+    if (!isChatDropdownOpen) {
+      setIsChatBoxOpen(false);
+    }
+  }, [isChatDropdownOpen]);
+
   useEffect(() => {
     if (debouncedSearchTerm) {
       axios

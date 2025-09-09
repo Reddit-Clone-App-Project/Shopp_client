@@ -8,12 +8,14 @@ import portfolio from "../../assets/SellerDashboard/user-portfolio.svg";
 import settings from "../../assets/SellerDashboard/user-settings.svg";
 import notification from "../../assets/SellerDashboard/user-notifications.svg";
 import logoutIcon from "../../assets/SellerDashboard/user-logout.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { handleLogout } from "../../features/Auth/AuthSlice";
 import { AppDispatch } from "../../redux/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import SellerChatDropDown from "./Chat/SellerChatDropDown";
+import SellerChatBox from "./Chat/SellerChatBox";
 
 type HeaderProps = {
   section: string;
@@ -27,6 +29,13 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({
   mSection,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
+  const [currentChat, setCurrentChat] = useState<{
+    buyerId: number;
+    sellerId: number;
+  } | null>(null);
+  const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
+
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,6 +48,29 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({
       toast.error(err as string);
     }
   };
+
+  // Handle click outside to close chat dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      const target = event.target as Element;
+      // Add logic to close dropdowns when clicking outside
+      if (isChatDropdownOpen && target) {
+        // The dropdown component will handle its own click outside logic
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isChatDropdownOpen]);
+
+  // Close chat box when chat dropdown closes
+  useEffect(() => {
+    if (!isChatDropdownOpen) {
+      setIsChatBoxOpen(false);
+    }
+  }, [isChatDropdownOpen]);
 
   return (
     <>
@@ -98,7 +130,10 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({
           </button>
 
           {/* Chat icon - hidden on mobile and tablet */}
-          <button className="p-1 hidden md:block cursor-pointer">
+          <button
+            className="p-1 hidden md:block cursor-pointer relative"
+            onClick={() => setIsChatDropdownOpen(!isChatDropdownOpen)}
+          >
             <img src={Chat} alt="Messages" className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
@@ -145,6 +180,26 @@ const SellerBlackHeader: React.FC<HeaderProps> = ({
           </div>
         )}
       </div>
+
+      {/* Chat Components */}
+      <SellerChatDropDown
+        isOpen={isChatDropdownOpen}
+        onClose={() => {
+          setIsChatDropdownOpen(false);
+          setIsChatBoxOpen(false);
+        }}
+        setCurrentChat={setCurrentChat}
+        setIsChatBoxOpen={setIsChatBoxOpen}
+      />
+
+      {currentChat && (
+        <SellerChatBox
+          buyerId={currentChat.buyerId}
+          sellerId={currentChat.sellerId}
+          isOpen={isChatBoxOpen}
+          onClose={() => setIsChatBoxOpen(false)}
+        />
+      )}
     </>
   );
 };

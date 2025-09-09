@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { socket } from "../../socket";
-import { addMessage, clearMessages } from "../Chat/ChatSlice";
+import { addMessage } from "../Chat/ChatSlice";
 import { RootState, AppDispatch } from "../../redux/store";
 import GoBack from "../../assets/left-arrow.svg";
 
@@ -57,15 +57,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
     // 4. Define the cleanup function
     return () => {
-      // This runs when the component unmounts
+      // This runs when the component unmounts OR when buyerId/sellerId changes
       socket.off("receiveMessage", handleReceiveMessage);
       socket.disconnect();
-      dispatch(clearMessages());
+      // Don't clear messages here - Redux handles message clearing when fetching new conversations
     };
   }, [dispatch, buyerId, sellerId]);
 
   return (
     <div
+      data-buyer-chatbox="true"
       className={`fixed bg-white shadow-xl border-gray-200 z-50 flex flex-col ${
         !isOpen ? "hidden" : ""
       }
