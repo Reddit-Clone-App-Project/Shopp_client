@@ -5,8 +5,6 @@ import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/S
 import { fetchProductsByStoreId } from "../StoreProducts/StoreProductSlice";
 import { Link } from "react-router-dom";
 import CategoryFilter from "../../components/CategoryFilter";
-import { userInfo } from "os";
-import { AllProducts } from "../../types/Item";
 
 const AllProductSection = () => {
     const [all, setAll] = useState(true);
@@ -14,7 +12,7 @@ const AllProductSection = () => {
     const [violate, setViolate] = useState(false);
     const [pending, setPending] = useState(false);
     const [filter, setFilter] = useState<'all' | 'active' | 'violate' | 'pending'>('all');
-    const [limit, setLimit] = useState(10);
+    const [limit, setLimit] = useState(20);
     const [offset, setOffset] = useState(0);
     const [category, setCategory] = useState('');
     const dispatch = useDispatch<AppDispatch>();
@@ -62,6 +60,24 @@ const AllProductSection = () => {
     const filteredState = (state: "all" | "active" | "violate" | "pending") => {
         setFilter(state);
     };
+
+    let getProductsState
+
+    switch (filter) {
+        case "all":
+            getProductsState = allProducts
+            break;
+        case "active":
+            getProductsState = activeProducts
+            break;
+        case "violate":
+            getProductsState = violateProducts
+            break;
+        case "pending":
+            getProductsState = pendingProducts
+            break;
+    };
+    
 
     return (
         <>
@@ -132,7 +148,21 @@ const AllProductSection = () => {
                                 <th className="px-4 py-2 font-normal rounded-r-xl">Action</th>
                             </tr>
                         </thead>
-                        {filter === 'all' &&
+                        <tbody>
+                                {getProductsState.map((p) => (
+                                <tr key={p.id} className="border-b-[0.01rem] text-center">
+                                    <td className="px-4 py-2">{p.name}</td>
+                                    <td className="px-4 py-2">{p.variant_name}</td>
+                                    <td className="px-4 py-2">{p.category_name}</td>
+                                    <td className="px-4 py-2">{p.variant_price} $</td>
+                                    <td className="px-4 py-2">{p.bought}</td>
+                                    <td className="px-4 py-2">{p.variant_stock}</td>
+                                    <td className="px-4 py-2">{p.is_active ? 'OK' : 'NOT GOOD'}</td>
+                                    <td className="px-4 py-2">View</td>
+                                </tr>
+                                ))}
+                            </tbody>
+                        {/*{filter === 'all' &&
                             <tbody>
                                 {allProducts.map((p) => (
                                 <tr key={p.id} className="border-b-[0.01rem] text-center">
@@ -195,7 +225,7 @@ const AllProductSection = () => {
                                 </tr>
                                 ))}
                             </tbody>
-                        }
+                        }*/}
                     </table>
                 )}
             </div>
