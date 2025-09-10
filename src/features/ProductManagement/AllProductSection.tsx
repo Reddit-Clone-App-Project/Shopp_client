@@ -6,18 +6,22 @@ import { fetchProductsByStoreId } from "../StoreProducts/StoreProductSlice";
 import { Link } from "react-router-dom";
 import CategoryFilter from "../../components/CategoryFilter";
 import { Categories } from "../../components/MockCategories";
+import database from '../../assets/Database.svg';
 
 const AllProductSection = () => {
     const [filter, setFilter] = useState<'all' | 'active' | 'violate' | 'pending'>('all');
     const [limit, setLimit] = useState(50);
     const [offset, setOffset] = useState(0);
-    const [category, setCategory] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+    const [categoryFilter, setCategoryFilter] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const stores = useSelector((state: RootState) => state.stores.stores);
     const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
     const token = useSelector((state: RootState) => state.auth.accessToken);
     const { allProducts, status, error } = useSelector((state: RootState) => state.storeProducts);
     const loading = status.fetchProductsByStoreId === 'loading';
+    const [getProductsState, setGetProductsState] = useState(allProducts);
+    const [isSearchActive, setIsSearchActive] = useState(false);
 
     const storeId = selectedStoreId ?? stores[0]?.id; 
     const categories = Categories;
@@ -50,25 +54,43 @@ const AllProductSection = () => {
 
     const filteredState = (state: "all" | "active" | "violate" | "pending") => {
         setFilter(state);
+        setIsSearchActive(false); 
     };
 
-    let getProductsState
-
-    switch (filter) {
-        case "all":
-            getProductsState = allProducts
-            break;
-        case "active":
-            getProductsState = activeProducts
-            break;
-        case "violate":
-            getProductsState = violateProducts
-            break;
-        case "pending":
-            getProductsState = pendingProducts
-            break;
-    };
+    useEffect(() => {
+        if (!isSearchActive) {
+            switch (filter) {
+                case "all":
+                    setGetProductsState(allProducts);
+                    break;
+                case "active":
+                    setGetProductsState(activeProducts);
+                    break;
+                case "violate":
+                    setGetProductsState(violateProducts);
+                    break;
+                case "pending":
+                    setGetProductsState(pendingProducts);
+                    break;
+            }
+        }
+    }, [filter, allProducts, activeProducts, violateProducts, pendingProducts, isSearchActive]);
     
+    
+    const searchFilter = (inputText: string, category?: string) => {
+        const searchInput = inputText.trim().toLowerCase();
+        const categoryInput = (category ?? categoryFilter).trim().toLowerCase();
+        const filteredProducts = allProducts.filter((p) =>
+            (searchInput && (
+                p.name?.toLowerCase().includes(searchInput) ||
+                p.variant_sku?.toLowerCase().includes(searchInput) ||
+                String(p.id).includes(searchInput)
+            )) ||
+            (categoryInput && p.category_name?.toLowerCase().includes(categoryInput))
+        );
+        setGetProductsState(filteredProducts);
+        setIsSearchActive(true);
+    };
 
     return (
         <>
@@ -84,24 +106,27 @@ const AllProductSection = () => {
                     <li className={filter === 'pending' ? 'text-[#A567C6] cursor-pointer hover:underline-none underline' : 'cursor-pointer hover:underline hover:text-[#A567C6]'} onClick={() => filteredState('pending')}>Pending approval by Shopp ({countPending})</li>
                 </ul>
             </nav>
-            <div className="mt-10 bg-gray-900 p-5 rounded-xl">
+            <div className="mt-10 bg-gray-900 p-5 rounded-xl min-h-200">
                 {loading && <div>Loading Products…</div>}
                 {error && <div className="text-red-500">Error: {error}</div>}
                 {status.fetchProductsByStoreId === 'succeeded' && allProducts.length === 0 && (
                     <div>No product</div>
                 )}
-                <div className="max-w-fit flex">
+                <div className="max-w-fit flex mt-2">
                     <div className="flex border rounded-3xl px-3 py-1">
                         <p>Find product</p>
                         <input 
                             type="text" 
                             placeholder="Enter product name, product's SKU, product Id"
-                            className="text-[#A6AFD8] ml-5 focus:outline-none min-w-82"    
+                            className="text-[#A6AFD8] ml-5 focus:outline-none min-w-82"
+                            value={searchValue}
+                            onChange={e => setSearchValue(e.target.value)}
                         />
                     </div>
                     <button 
                         type="button"
-                        className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center" 
+                        className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center hover:cursor-pointer active:bg-purple-700"
+                        onClick={() => searchFilter(searchValue, categoryFilter)}
                     >
                         Apply
                     </button>
@@ -113,13 +138,19 @@ const AllProductSection = () => {
                             <CategoryFilter 
                                 options={categories}
                                 placeholder='Find by category'
-                                onSelect={(value) => setCategory(value)}
+                                value={categoryFilter}
+                                onSelect={(value) => setCategoryFilter(value)}
                             />
                         </div>
                     </div>
                     <button 
                         type="button"
-                        className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center" 
+                        className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center hover:cursor-pointer active:bg-purple-700"
+                        onClick={() => {
+                            setIsSearchActive(false);
+                            setSearchValue('');
+                            setCategoryFilter('');
+                        }}
                     >
                         Reset
                     </button>
@@ -155,6 +186,12 @@ const AllProductSection = () => {
                             </tbody>
                     </table>
                 )}
+                {getProductsState.length === 0 &&
+                    <div className="mt-40">
+                        <img src={database} className="m-auto my-2" />
+                        <p className="text-center">No Data</p>
+                    </div>
+                }
             </div>
         </>
     );

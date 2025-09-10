@@ -31,7 +31,7 @@ const SellerSideBar = () => {
   const navigate = useNavigate();
   
   return (
-    <aside className="bg-black w-85 h-[calc(100vh-4.5rem)] overflow-y custom-scrollbar">
+    <aside className="bg-black w-85 h-[calc(100vh-rem)] overflow-y-auto custom-scrollbar">
       <nav className="pt-7">
         <ul className="text-white font-light">
           <div
@@ -318,7 +318,7 @@ const SellerSideBar = () => {
           src={Documentation}
           onClick={() => navigate("/documentation")}
           alt="documentation"
-          className="m-auto mt-40 hover:cursor-pointer"
+          className="m-auto mt-30 hover:cursor-pointer"
         />
       </nav>
     </aside>

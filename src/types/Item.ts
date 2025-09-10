@@ -131,4 +131,5 @@ export interface AllProducts {
     variant_name: string;
     variant_price: number;
     variant_stock: number;
+    variant_sku: string;
 }

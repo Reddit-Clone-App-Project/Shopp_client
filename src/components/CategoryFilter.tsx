@@ -6,6 +6,7 @@ interface ComboboxProp {
     options: string[];
     placeholder?: string;
     onSelect: (value: string) => void;
+    value?: string;
 }
 
 const CategoryFilter: FC<ComboboxProp> = ({ options, placeholder, onSelect }) => {
