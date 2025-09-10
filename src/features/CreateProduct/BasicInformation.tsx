@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import AddImage from '../../assets/addImage.svg';
 import CategoryInput from '../../components/CategoryInput';
 import { ProductDataType } from '../../pages/seller/ProductManagement/CreateProduct';
+import { Categories } from '../../components/MockCategories';
 
 type BasicInfoProps = {
     data: ProductDataType;
@@ -18,15 +19,8 @@ const BasicInformation: React.FC<BasicInfoProps> = ({ data, onChange, onNext }) 
         productImage, 
         promotionImage,
     } = data;
-
-    // ! Mock category, change in the future
-    const categories = [
-        'Electronics',
-        'Clothing',
-        'Home',
-        'Books',
-        'Toys',
-    ]
+    
+    const categories = Categories;
 
     // handle amount of allowance images in product images
     const productFilesInputRef = useRef<HTMLInputElement | null>(null);

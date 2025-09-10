@@ -31,7 +31,7 @@ const SellerSideBar = () => {
   const navigate = useNavigate();
   
   return (
-    <aside className="bg-black w-85 h-[calc(100vh-4.5rem)] overflow-y-auto custom-scrollbar">
+    <aside className="bg-black w-85 h-[calc(100vh-4.5rem)] overflow-y custom-scrollbar">
       <nav className="pt-7">
         <ul className="text-white font-light">
           <div
