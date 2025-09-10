@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
 import { fetchProductsByStoreId } from "../StoreProducts/StoreProductSlice";
 import { Link } from "react-router-dom";
 import CategoryFilter from "../../components/CategoryFilter";
@@ -26,18 +25,6 @@ const AllProductSection = () => {
     const storeId = selectedStoreId ?? stores[0]?.id; 
     const categories = Categories;
     
-
-    useEffect(() => {
-        if (token) {
-            dispatch(fetchStoreOwned());
-        };
-    }, [dispatch, token]);
-
-    useEffect(() => {
-            if (stores.length > 0 && selectedStoreId == null && token) {
-                dispatch(setSelectedStoreId(storeId));
-            };
-    }, [stores, selectedStoreId, dispatch, token]);
 
     useEffect(() => {
         if (token && storeId) {                                    

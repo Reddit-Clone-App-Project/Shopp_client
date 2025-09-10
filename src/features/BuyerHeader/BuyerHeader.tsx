@@ -11,6 +11,7 @@ import {
   markSingleNotificationAsRead,
 } from "../Notification/NotificationSlice";
 import { toast } from "react-toastify";
+import { deleteProfile } from "../UserProfile/UserProfileSlice";
 // SVG
 import Bell from "../../assets/HomePage/Header/bell.svg";
 import GitHub from "../../assets/HomePage/Header/github-white.svg";
@@ -20,7 +21,9 @@ import Menu from "../../assets/HomePage/Header/hamburger_menu.svg";
 import CloseIcon from "../../assets/HomePage/Header/Close.svg";
 import Logo from "../../assets/Logo.svg";
 import GenericAvatar from "../../assets/generic-avatar.svg";
-import { deleteProfile } from "../UserProfile/UserProfileSlice";
+import Chat from "../../assets/Order/Chat.svg";
+import ChatDropDown from "./ChatDropDown";
+import ChatBox from "./ChatBox";
 
 /* A custom hook for debouncing
  * @param value - The value to debounce
@@ -53,6 +56,7 @@ const BuyerHeader: React.FC = () => {
   const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
   const [isNotificationDropdownOpen, setIsNotificationDropdownOpen] =
     useState(false);
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
   const { status, user } = useSelector((state: RootState) => state.profile);
 
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -60,6 +64,11 @@ const BuyerHeader: React.FC = () => {
     (state: RootState) => state.notification
   );
 
+  const [currentChat, setCurrentChat] = useState<{
+    buyerId: number;
+    sellerId: number;
+  } | null>(null);
+  const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [cachedSuggestions, setCachedSuggestions] = useState<string[]>([]);
@@ -211,6 +220,8 @@ const BuyerHeader: React.FC = () => {
         setIsDropdownOpen(false);
         setIsCartDropdownOpen(false);
         setIsNotificationDropdownOpen(false);
+        setIsChatDropdownOpen(false);
+        setIsChatBoxOpen(false);
       }
     };
 
@@ -227,6 +238,13 @@ const BuyerHeader: React.FC = () => {
       dispatch(fetchNotifications());
     }
   }, [dispatch, status, user]);
+
+  // Close chat box when chat dropdown closes
+  useEffect(() => {
+    if (!isChatDropdownOpen) {
+      setIsChatBoxOpen(false);
+    }
+  }, [isChatDropdownOpen]);
 
   useEffect(() => {
     if (debouncedSearchTerm) {
@@ -345,7 +363,7 @@ const BuyerHeader: React.FC = () => {
               >
                 <div className="relative">
                   <img src={Bell} alt="Notifications" className="w-4 h-4" />
-                  {getUnreadNotificationCount() > 0 && (
+                  {user && getUnreadNotificationCount() > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                       {getUnreadNotificationCount()}
                     </span>
@@ -367,7 +385,7 @@ const BuyerHeader: React.FC = () => {
                         <h3 className="text-lg font-bold text-purple-800">
                           Notifications
                         </h3>
-                        {getUnreadNotificationCount() > 0 && (
+                        {user && getUnreadNotificationCount() > 0 && (
                           <button
                             onClick={handleMarkAllAsRead}
                             className="cursor-pointer bg-purple-600 text-white text-xs px-3 py-1 rounded hover:bg-purple-700 transition-colors"
@@ -378,7 +396,33 @@ const BuyerHeader: React.FC = () => {
                       </div>
                     </div>
 
-                    {getLatestNotifications().length === 0 ? (
+                    {!user ? (
+                      <div className="p-8 text-center">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                          Stay Updated
+                        </h3>
+                        <p className="text-gray-600 text-sm mb-4">
+                          Sign in to your account to receive notifications about
+                          your orders, messages, and more
+                        </p>
+                        <div className="space-y-3">
+                          <Link
+                            to="/login"
+                            className="block w-full py-2 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-150 text-sm font-medium"
+                            onClick={() => setIsNotificationDropdownOpen(false)}
+                          >
+                            Sign In
+                          </Link>
+                          <Link
+                            to="/register"
+                            className="block w-full py-2 px-4 border border-purple-600 text-purple-600 rounded-lg hover:bg-purple-50 transition-colors duration-150 text-sm font-medium"
+                            onClick={() => setIsNotificationDropdownOpen(false)}
+                          >
+                            Create Account
+                          </Link>
+                        </div>
+                      </div>
+                    ) : getLatestNotifications().length === 0 ? (
                       <div className="p-8 text-center">
                         <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                           <img
@@ -588,244 +632,265 @@ const BuyerHeader: React.FC = () => {
               </div>
             )}
           </div>
-          <div className="relative" ref={cartDropdownRef}>
-            <div
-              className="relative cursor-pointer hover:opacity-80"
-              onClick={() => setIsCartDropdownOpen(!isCartDropdownOpen)}
-            >
-              <img
-                src={ShoppingCart}
-                alt="Shopping Cart"
-                className="w-6 h-6 text-white"
+          <div className="flex items-center space-x-6">
+            <div className="relative">
+              <div
+                className="relative cursor-pointer hover:opacity-80"
+                onClick={() => setIsChatDropdownOpen(!isChatDropdownOpen)}
+              >
+                <img src={Chat} alt="Chat" className="w-5 h-5 text-white" />
+              </div>
+              <ChatDropDown
+                isOpen={isChatDropdownOpen}
+                onClose={() => {
+                  setIsChatDropdownOpen(false);
+                  setIsChatBoxOpen(false);
+                }}
+                setCurrentChat={setCurrentChat}
+                setIsChatBoxOpen={setIsChatBoxOpen}
               />
-              {hasCartItems() && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {getTotalCartItems()}
-                </span>
-              )}
             </div>
 
-            {isCartDropdownOpen && (
-              <>
-                {/* Invisible backdrop to capture outside clicks */}
-                <div
-                  className="fixed inset-0 z-5"
-                  onClick={() => setIsCartDropdownOpen(false)}
+            <div className="relative" ref={cartDropdownRef}>
+              <div
+                className="relative cursor-pointer hover:opacity-80"
+                onClick={() => setIsCartDropdownOpen(!isCartDropdownOpen)}
+              >
+                <img
+                  src={ShoppingCart}
+                  alt="Shopping Cart"
+                  className="w-6 h-6 text-white"
                 />
-                <div
-                  className="absolute top-8 right-0 bg-white shadow-xl rounded-lg overflow-hidden min-w-[380px] max-w-[420px] z-10 border border-gray-100"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-purple-800">
-                        Shopping Cart
-                      </h3>
-                      {status === "succeeded" && hasCartItems() && (
-                        <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
-                          {getTotalCartItems()}{" "}
-                          {getTotalCartItems() === 1 ? "item" : "items"}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                {hasCartItems() && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {getTotalCartItems()}
+                  </span>
+                )}
+              </div>
 
-                  {status !== "succeeded" ? (
-                    <div className="p-8 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
-                        <img
-                          src={ShoppingCart}
-                          alt="Cart"
-                          className="w-8 h-8 text-purple-600"
-                        />
-                      </div>
-                      <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                        Sign in to view your cart
-                      </h4>
-                      <p className="text-gray-500 text-sm mb-4">
-                        Please log in to see your saved items and continue
-                        shopping
-                      </p>
-                      <div className="space-y-2">
-                        <Link
-                          to="/login"
-                          className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
-                          onClick={() => setIsCartDropdownOpen(false)}
-                        >
-                          Sign In
-                        </Link>
-                        <Link
-                          to="/register"
-                          className="block w-full bg-white text-purple-600 text-center py-3 rounded-lg hover:bg-purple-50 transition-all duration-200 font-semibold border border-purple-600"
-                          onClick={() => setIsCartDropdownOpen(false)}
-                        >
-                          Create Account
-                        </Link>
+              {isCartDropdownOpen && (
+                <>
+                  {/* Invisible backdrop to capture outside clicks */}
+                  <div
+                    className="fixed inset-0 z-5"
+                    onClick={() => setIsCartDropdownOpen(false)}
+                  />
+                  <div
+                    className="absolute top-8 right-0 bg-white shadow-xl rounded-lg overflow-hidden min-w-[380px] max-w-[420px] z-10 border border-gray-100"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 border-b border-purple-200">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-purple-800">
+                          Shopping Cart
+                        </h3>
+                        {status === "succeeded" && hasCartItems() && (
+                          <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+                            {getTotalCartItems()}{" "}
+                            {getTotalCartItems() === 1 ? "item" : "items"}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  ) : !hasCartItems() ? (
-                    <div className="p-8 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                        <img
-                          src={ShoppingCart}
-                          alt="Empty Cart"
-                          className="w-8 h-8 opacity-50"
-                        />
-                      </div>
-                      <p className="text-gray-500 text-sm">
-                        Your cart is empty
-                      </p>
-                      <p className="text-gray-400 text-xs mt-1">
-                        Add some products to get started!
-                      </p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="max-h-96 overflow-y-auto">
-                        {/* Check if cart has the new structure with stores */}
-                        {(cart as any).stores
-                          ? // New structure: render by stores
-                            (cart as any).stores.map((store: any) => (
-                              <div key={store.store_id}>
-                                {(cart as any).stores.length > 1 && (
-                                  <div className="px-4 py-2 bg-gray-50 border-b border-gray-100">
-                                    <h5 className="text-xs font-semibold text-gray-600">
-                                      {store.store_name}
-                                    </h5>
-                                  </div>
-                                )}
-                                {store.items.map((item: any) => (
-                                  <div
-                                    key={`${store.store_id}-${item.product_variant_id}`}
-                                    className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
-                                  >
-                                    <div className="flex items-start space-x-3">
-                                      <div className="flex-shrink-0">
-                                        <img
-                                          src={
-                                            item.image_url ||
-                                            "/placeholder-image.jpg"
-                                          }
-                                          alt={item.product_name || "Product"}
-                                          className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
-                                        />
-                                      </div>
-                                      <div className="flex-1 min-w-0">
-                                        <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
-                                          {item.product_name ||
-                                            "Unknown Product"}
-                                        </h4>
-                                        {item.variant_name && (
-                                          <p className="text-xs text-gray-400 mb-1">
-                                            Variant: {item.variant_name}
-                                          </p>
-                                        )}
-                                        <div className="flex items-center justify-between mb-2">
-                                          <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                            Qty: {item.quantity}
-                                          </span>
-                                          <span className="text-sm font-bold text-purple-600">
-                                            $
-                                            {(
-                                              item.price_at_purchase *
-                                              item.quantity
-                                            ).toFixed(2)}
-                                          </span>
-                                        </div>
-                                        <button
-                                          onClick={() =>
-                                            handleCartItemRemove(
-                                              item.product_variant_id
-                                            )
-                                          }
-                                          className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
-                                        >
-                                          Remove
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            ))
-                          : // Old structure: render items directly
-                            Array.isArray(cart) &&
-                            cart.map((item: any, index: number) => (
-                              <div
-                                key={index}
-                                className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
-                              >
-                                <div className="flex items-start space-x-3">
-                                  <div className="flex-shrink-0">
-                                    <img
-                                      src={
-                                        item.image_url ||
-                                        "/placeholder-image.jpg"
-                                      }
-                                      alt={item.product_name || "Product"}
-                                      className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
-                                    />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
-                                      {item.product_name || "Unknown Product"}
-                                    </h4>
-                                    {item.variant_name && (
-                                      <p className="text-xs text-gray-400 mb-1">
-                                        Variant: {item.variant_name}
-                                      </p>
-                                    )}
-                                    <div className="flex items-center justify-between mb-2">
-                                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                        Qty: {item.quantity}
-                                      </span>
-                                      <span className="text-sm font-bold text-purple-600">
-                                        $
-                                        {(
-                                          item.price_at_purchase * item.quantity
-                                        ).toFixed(2)}
-                                      </span>
-                                    </div>
-                                    <button
-                                      onClick={() =>
-                                        handleCartItemRemove(
-                                          item.product_variant_id
-                                        )
-                                      }
-                                      className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
-                                    >
-                                      Remove
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                      </div>
 
-                      <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
-                        <div className="flex justify-between items-center mb-4">
-                          <span className="text-lg font-bold text-gray-800">
-                            Total:
-                          </span>
-                          <span className="text-xl font-bold text-purple-700 bg-purple-100 px-3 py-1 rounded-lg">
-                            ${calculateCartTotal()}
-                          </span>
+                    {status !== "succeeded" ? (
+                      <div className="p-8 text-center">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                          <img
+                            src={ShoppingCart}
+                            alt="Cart"
+                            className="w-8 h-8 text-purple-600"
+                          />
                         </div>
-                        <div className="space-y-3">
+                        <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                          Log in to view your cart
+                        </h4>
+                        <p className="text-gray-500 text-sm mb-4">
+                          Please log in to see your saved items and continue
+                          shopping
+                        </p>
+                        <div className="space-y-2">
                           <Link
-                            to="/cart"
+                            to="/login"
                             className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
                             onClick={() => setIsCartDropdownOpen(false)}
                           >
-                            View Full Cart
+                            Log In
+                          </Link>
+                          <Link
+                            to="/register"
+                            className="block w-full bg-white text-purple-600 text-center py-3 rounded-lg hover:bg-purple-50 transition-all duration-200 font-semibold border border-purple-600"
+                            onClick={() => setIsCartDropdownOpen(false)}
+                          >
+                            Register
                           </Link>
                         </div>
                       </div>
-                    </>
-                  )}
-                </div>
-              </>
-            )}
+                    ) : !hasCartItems() ? (
+                      <div className="p-8 text-center">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                          <img
+                            src={ShoppingCart}
+                            alt="Empty Cart"
+                            className="w-8 h-8 opacity-50"
+                          />
+                        </div>
+                        <p className="text-gray-500 text-sm">
+                          Your cart is empty
+                        </p>
+                        <p className="text-gray-400 text-xs mt-1">
+                          Add some products to get started!
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="max-h-96 overflow-y-auto">
+                          {/* Check if cart has the new structure with stores */}
+                          {(cart as any).stores
+                            ? // New structure: render by stores
+                              (cart as any).stores.map((store: any) => (
+                                <div key={store.store_id}>
+                                  {(cart as any).stores.length > 1 && (
+                                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-100">
+                                      <h5 className="text-xs font-semibold text-gray-600">
+                                        {store.store_name}
+                                      </h5>
+                                    </div>
+                                  )}
+                                  {store.items.map((item: any) => (
+                                    <div
+                                      key={`${store.store_id}-${item.product_variant_id}`}
+                                      className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                                    >
+                                      <div className="flex items-start space-x-3">
+                                        <div className="flex-shrink-0">
+                                          <img
+                                            src={
+                                              item.image_url ||
+                                              "/placeholder-image.jpg"
+                                            }
+                                            alt={item.product_name || "Product"}
+                                            className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                          />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                          <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
+                                            {item.product_name ||
+                                              "Unknown Product"}
+                                          </h4>
+                                          {item.variant_name && (
+                                            <p className="text-xs text-gray-400 mb-1">
+                                              Variant: {item.variant_name}
+                                            </p>
+                                          )}
+                                          <div className="flex items-center justify-between mb-2">
+                                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                              Qty: {item.quantity}
+                                            </span>
+                                            <span className="text-sm font-bold text-purple-600">
+                                              $
+                                              {(
+                                                item.price_at_purchase *
+                                                item.quantity
+                                              ).toFixed(2)}
+                                            </span>
+                                          </div>
+                                          <button
+                                            onClick={() =>
+                                              handleCartItemRemove(
+                                                item.product_variant_id
+                                              )
+                                            }
+                                            className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
+                                          >
+                                            Remove
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ))
+                            : // Old structure: render items directly
+                              Array.isArray(cart) &&
+                              cart.map((item: any, index: number) => (
+                                <div
+                                  key={index}
+                                  className="p-4 border-b border-gray-50 hover:bg-gray-25 transition-colors duration-200"
+                                >
+                                  <div className="flex items-start space-x-3">
+                                    <div className="flex-shrink-0">
+                                      <img
+                                        src={
+                                          item.image_url ||
+                                          "/placeholder-image.jpg"
+                                        }
+                                        alt={item.product_name || "Product"}
+                                        className="w-14 h-14 object-cover rounded-lg border border-gray-200 shadow-sm"
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-semibold text-gray-900 truncate mb-1">
+                                        {item.product_name || "Unknown Product"}
+                                      </h4>
+                                      {item.variant_name && (
+                                        <p className="text-xs text-gray-400 mb-1">
+                                          Variant: {item.variant_name}
+                                        </p>
+                                      )}
+                                      <div className="flex items-center justify-between mb-2">
+                                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                                          Qty: {item.quantity}
+                                        </span>
+                                        <span className="text-sm font-bold text-purple-600">
+                                          $
+                                          {(
+                                            item.price_at_purchase *
+                                            item.quantity
+                                          ).toFixed(2)}
+                                        </span>
+                                      </div>
+                                      <button
+                                        onClick={() =>
+                                          handleCartItemRemove(
+                                            item.product_variant_id
+                                          )
+                                        }
+                                        className="text-xs text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors duration-200 border border-red-200 hover:border-red-300 cursor-pointer"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                        </div>
+
+                        <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-t border-gray-200">
+                          <div className="flex justify-between items-center mb-4">
+                            <span className="text-lg font-bold text-gray-800">
+                              Total:
+                            </span>
+                            <span className="text-xl font-bold text-purple-700 bg-purple-100 px-3 py-1 rounded-lg">
+                              ${calculateCartTotal()}
+                            </span>
+                          </div>
+                          <div className="space-y-3">
+                            <Link
+                              to="/cart"
+                              className="block w-full bg-purple-600 text-white text-center py-3 rounded-lg hover:bg-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105"
+                              onClick={() => setIsCartDropdownOpen(false)}
+                            >
+                              View Full Cart
+                            </Link>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -1020,6 +1085,12 @@ const BuyerHeader: React.FC = () => {
                 </>
               )}
             </div>
+            <div
+              className="relative cursor-pointer hover:opacity-80"
+              onClick={() => setIsChatDropdownOpen(!isChatDropdownOpen)}
+            >
+              <img src={Chat} alt="Chat" className="w-4 h-4 text-white" />
+            </div>
           </div>
         </div>
 
@@ -1102,7 +1173,8 @@ const BuyerHeader: React.FC = () => {
               >
                 <div className="relative">
                   <img src={Bell} alt="Notifications" className="w-4 h-4" />
-                  {status === "succeeded" &&
+                  {user &&
+                    status === "succeeded" &&
                     getUnreadNotificationCount() > 0 && (
                       <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-3 w-3 flex items-center justify-center">
                         {getUnreadNotificationCount()}
@@ -1176,7 +1248,27 @@ const BuyerHeader: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* Chat dropdown for mobile */}
+        <ChatDropDown
+          isOpen={isChatDropdownOpen}
+          onClose={() => {
+            setIsChatDropdownOpen(false);
+            setIsChatBoxOpen(false);
+          }}
+          setCurrentChat={setCurrentChat}
+          setIsChatBoxOpen={setIsChatBoxOpen}
+        />
       </div>
+      {currentChat && (
+        <ChatBox
+          buyerId={currentChat.buyerId}
+          sellerId={currentChat.sellerId}
+          isOpen={isChatBoxOpen}
+          onClose={() => setIsChatBoxOpen(false)}
+          storeInfo={null}
+        />
+      )}
     </div>
   );
 };

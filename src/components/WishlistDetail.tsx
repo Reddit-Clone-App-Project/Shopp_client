@@ -225,7 +225,7 @@ const WishlistDetail = () => {
 
                 <div>
                   <Link
-                    to={`/products/${product.id}`}
+                    to={`/product/${product.id}`}
                     className="block w-full px-2 sm:px-3 py-2 bg-purple-600 text-white text-center rounded-lg hover:bg-purple-700 transition-colors text-xs sm:text-sm font-medium"
                   >
                     View Product

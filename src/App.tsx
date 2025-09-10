@@ -133,7 +133,7 @@ const router = createBrowserRouter(
         }
       />
 
-      <Route path="/seller" element={<SellerLandingPage />} />
+      <Route path="/seller-landing-page" element={<SellerLandingPage />} />
       {/* Seller Routes */}
       <Route path="/seller" element={<PrivateRoute><SellerPageTemplate /></PrivateRoute>}>
         <Route path="dashboard" element={<SellerDashboard />} />

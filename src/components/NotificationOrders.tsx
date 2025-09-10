@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 
 // SVG
 import TrashIcon from "../assets/trash.svg";
+import Package from "../assets/Package.svg";
 
 const NotificationOrders = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -97,21 +98,7 @@ const NotificationOrders = () => {
 
       {orderNotifications.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">
-            <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m13-8l-8 5.5L3 5"
-              />
-            </svg>
-          </div>
+          <img src={Package} alt="No Notifications" className="w-16 h-16 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No Order Notifications
           </h3>

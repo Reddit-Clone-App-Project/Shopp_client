@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../redux/store";
 import { deleteOrderById, fetchOrders } from "../features/Orders/OrdersSlice";
+import { fetchConversationDetail } from "../features/Chat/ChatSlice";
 import OrdersSkeleton from "./OrdersSkeleton";
+import ChatBox from "../features/BuyerHeader/ChatBox";
+import ChatDropDown from "../features/BuyerHeader/ChatDropDown";
 // SVG
 import Search from "../assets/Order/search.svg";
 import Chat from "../assets/Order/Chat.svg";
@@ -10,7 +13,7 @@ import Shop from "../assets/Order/Open_shop.svg";
 import Truck from "../assets/Order/Truck.svg";
 import Help from "../assets/Order/Help.svg";
 import GenericAvatar from "../assets/generic-avatar.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 export const handleTransferOrderStatus = (orderStatus: string) => {
   if (orderStatus === "pending") return "Waiting For Payment";
@@ -23,12 +26,26 @@ export const handleTransferOrderStatus = (orderStatus: string) => {
 
 const Orders = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentFilter, setCurrentFilter] = useState("All");
+
+  // Chat state
+  const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
+  const [isChatDropdownOpen, setIsChatDropdownOpen] = useState(false);
+  const [currentChat, setCurrentChat] = useState<{
+    buyerId: number;
+    sellerId: number;
+  } | null>(null);
+  const [currentStore, setCurrentStore] = useState<{
+    name: string;
+    avatar?: string;
+  } | null>(null);
 
   const { orders, status, error } = useSelector(
     (state: RootState) => state.orders
   );
+  const { user } = useSelector((state: RootState) => state.profile);
   const [filteredOrders, setFilteredOrders] = useState(orders);
 
   const filterOrders = (
@@ -82,6 +99,41 @@ const Orders = () => {
     }
   };
 
+  const handleContactSeller = async (store: {
+    id: number;
+    name: string;
+    profile_img?: string | null;
+  }) => {
+    if (!user) {
+      toast.error("Please log in to start a chat");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await dispatch(
+        fetchConversationDetail({
+          buyerIdFromSeller: undefined,
+          sellerId: store.id,
+        })
+      ).unwrap();
+
+      setCurrentChat({
+        buyerId: user.id,
+        sellerId: store.id,
+      });
+      setCurrentStore({
+        name: store.name,
+        avatar: store.profile_img || undefined,
+      });
+      setIsChatDropdownOpen(true);
+      setIsChatBoxOpen(true);
+    } catch (error) {
+      console.error("Failed to start chat:", error);
+      toast.error("Failed to start chat. Please try again.");
+    }
+  };
+
   useEffect(() => {
     const promise = dispatch(fetchOrders());
     return () => {
@@ -94,6 +146,13 @@ const Orders = () => {
       filterOrders(currentFilter);
     }
   }, [orders]);
+
+  // Close chat box when chat dropdown closes
+  useEffect(() => {
+    if (!isChatDropdownOpen) {
+      setIsChatBoxOpen(false);
+    }
+  }, [isChatDropdownOpen]);
 
   const navItems = [
     "All",
@@ -178,7 +237,10 @@ const Orders = () => {
                   <span className="font-medium text-gray-900 text-sm sm:text-base">
                     {order.store.name}
                   </span>
-                  <button className="flex items-center gap-1 py-1 px-2 bg-purple-500 text-white text-xs sm:text-sm cursor-pointer rounded">
+                  <button
+                    onClick={() => handleContactSeller(order.store)}
+                    className="flex items-center gap-1 py-1 px-2 bg-purple-500 text-white text-xs sm:text-sm cursor-pointer rounded"
+                  >
                     <img
                       src={Chat}
                       alt="Chat with Shop"
@@ -276,7 +338,10 @@ const Orders = () => {
                   >
                     Order Details
                   </Link>
-                  <button className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base">
+                  <button
+                    onClick={() => handleContactSeller(order.store)}
+                    className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base"
+                  >
                     Contact Seller
                   </button>
                   <button
@@ -296,7 +361,10 @@ const Orders = () => {
                   >
                     Order Details
                   </Link>
-                  <button className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base">
+                  <button
+                    onClick={() => handleContactSeller(order.store)}
+                    className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base"
+                  >
                     Contact Seller
                   </button>
                   <button
@@ -324,7 +392,10 @@ const Orders = () => {
                   <button className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base">
                     Request A Refund
                   </button>
-                  <button className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base">
+                  <button
+                    onClick={() => handleContactSeller(order.store)}
+                    className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base"
+                  >
                     Contact Seller
                   </button>
                 </div>
@@ -341,7 +412,10 @@ const Orders = () => {
                   >
                     Order Details
                   </Link>
-                  <button className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base">
+                  <button
+                    onClick={() => handleContactSeller(order.store)}
+                    className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base"
+                  >
                     Contact Seller
                   </button>
                 </div>
@@ -357,7 +431,10 @@ const Orders = () => {
                   >
                     Order Details
                   </Link>
-                  <button className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base">
+                  <button
+                    onClick={() => handleContactSeller(order.store)}
+                    className="w-full sm:w-auto border border-gray-300 text-gray-700 px-4 sm:px-6 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer text-sm sm:text-base"
+                  >
                     Contact Seller
                   </button>
                 </div>
@@ -366,6 +443,28 @@ const Orders = () => {
           ))
         )}
       </div>
+
+      {/* Chat Dropdown */}
+      <ChatDropDown
+        isOpen={isChatDropdownOpen}
+        onClose={() => {
+          setIsChatDropdownOpen(false);
+          setIsChatBoxOpen(false);
+        }}
+        setCurrentChat={setCurrentChat}
+        setIsChatBoxOpen={setIsChatBoxOpen}
+      />
+
+      {/* Chat Box */}
+      {currentChat && (
+        <ChatBox
+          buyerId={currentChat.buyerId}
+          sellerId={currentChat.sellerId}
+          isOpen={isChatBoxOpen}
+          onClose={() => setIsChatBoxOpen(false)}
+          storeInfo={currentStore}
+        />
+      )}
     </div>
   );
 };

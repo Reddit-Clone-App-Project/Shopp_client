@@ -38,3 +38,83 @@
 .custom-scrollbar:hover::-webkit-scrollbar-thumb:hover {
   background: #2d2d2d;
 }
+
+/* ChatBox scrollbar styles */
+.chatbox-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #dbeafe #f9fafb;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.chatbox-scrollbar:hover {
+  scrollbar-color: #93c5fd #f3f4f6;
+}
+
+/* Webkit scrollbar styles for ChatBox */
+.chatbox-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbox-scrollbar::-webkit-scrollbar-track {
+  background: #f9fafb;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.chatbox-scrollbar::-webkit-scrollbar-thumb {
+  background: #dbeafe;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.chatbox-scrollbar:hover::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.chatbox-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #93c5fd;
+}
+
+.chatbox-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: #60a5fa;
+}
+
+/* Dark theme ChatBox scrollbar styles for Seller */
+.seller-chatbox-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 #1f2937;
+  transition: scrollbar-color 0.3s ease;
+}
+
+.seller-chatbox-scrollbar:hover {
+  scrollbar-color: #9ca3af #374151;
+}
+
+/* Webkit scrollbar styles for Seller ChatBox */
+.seller-chatbox-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.seller-chatbox-scrollbar::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.seller-chatbox-scrollbar::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.seller-chatbox-scrollbar:hover::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.seller-chatbox-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+}
+
+.seller-chatbox-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}

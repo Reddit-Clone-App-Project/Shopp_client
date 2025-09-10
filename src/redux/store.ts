@@ -20,6 +20,7 @@ import notification from "../features/Notification/NotificationSlice";
 import vouchers from "../features/Vouchers/VouchersSlice";
 import wishlist from "../features/Wishlist/WishlistSlice";
 import wishlistDetail from "../features/Wishlist/WishlistDetailSlice";
+import chat from "../features/Chat/ChatSlice";
 
 export const store = configureStore({
     reducer: {
@@ -43,7 +44,8 @@ export const store = configureStore({
         notification,
         vouchers,
         wishlist,
-        wishlistDetail
+        wishlistDetail,
+        chat
     },
 });
 
