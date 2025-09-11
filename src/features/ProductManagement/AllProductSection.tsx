@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { fetchProductsByStoreId } from "../StoreProducts/StoreProductSlice";
@@ -14,14 +14,13 @@ const AllProductSection = () => {
     const [offset, setOffset] = useState(0);
     const [searchValue, setSearchValue] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
-    const [sort, setSort] = useState<'default' | 'name' | 'variant' | 'category' | 'price' | 'sales' | 'stock'>('default');
+    const [sortKey, setSortKey] = useState<'default' | 'name' | 'variant' | 'category' | 'price' | 'sales' | 'stock'>('default');
+    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
     const dispatch = useDispatch<AppDispatch>();
     const storeId = useSelector((state: RootState) => state.sellerStore.store?.id); 
     const token = useSelector((state: RootState) => state.auth.accessToken);
     const { allProducts, status, error } = useSelector((state: RootState) => state.storeProducts);
     const loading = status.fetchProductsByStoreId === 'loading';
-    const [getProductsState, setGetProductsState] = useState(allProducts);
-    const [isSearchActive, setIsSearchActive] = useState(false);
 
     const categories = Categories;
     
@@ -32,119 +31,82 @@ const AllProductSection = () => {
         }
     }, [dispatch, token, storeId, limit, offset]);
 
-    const activeProducts = allProducts.filter((p) => p.is_active === true);
-    const countActive = activeProducts.length;
-    const violateProducts = allProducts.filter((p) => p.is_active === false && p.is_published === true);
-    const countViolate = violateProducts.length;
-    const pendingProducts = allProducts.filter((p) => p.is_published === false && p.is_active === false); 
-    const countPending = pendingProducts.length;
-
     const filteredState = (state: "all" | "active" | "violate" | "pending") => {
-        setFilter(state);
-        setIsSearchActive(false); 
+        setFilter(state); 
     };
-
-    useEffect(() => {
-        if (!isSearchActive) {
-            switch (filter) {
-                case "all":
-                    setGetProductsState(allProducts);
-                    break;
-                case "active":
-                    setGetProductsState(activeProducts);
-                    break;
-                case "violate":
-                    setGetProductsState(violateProducts);
-                    break;
-                case "pending":
-                    setGetProductsState(pendingProducts);
-                    break;
-            }
-        }
-    }, [filter, allProducts, activeProducts, violateProducts, pendingProducts, isSearchActive]);
-    
-    
+  
     const searchFilter = (inputText: string, category?: string) => {
-        const searchInput = inputText.trim().toLowerCase();
-        const categoryInput = (category ?? categoryFilter).trim().toLowerCase();
-        const filteredProducts = allProducts.filter((p) =>
-            (searchInput && (
-                p.name?.toLowerCase().includes(searchInput) ||
-                p.variant_sku?.toLowerCase().includes(searchInput) ||
-                String(p.id).includes(searchInput)
-            )) ||
-            (categoryInput && p.category_name?.toLowerCase().includes(categoryInput))
-        );
-        setGetProductsState(filteredProducts);
-        setIsSearchActive(true);
+        setSearchValue(inputText);
+        setCategoryFilter(category ?? categoryFilter);
     };
 
-    {/*const sortingArray = (sorting: string) => {
-        switch (sorting) {
-                case "default":
-                    setSort(sorting);
-                    break;
-                case "name":
-                    setSort(sorting);
-                    const sortedName = [...getProductsState].sort((a, b) => a.name.localeCompare(b.name));
-                    setGetProductsState(sortedName);
-                    break;
-                case "category":
-                    setSort(sorting);
-                    const sortedCategory = [...getProductsState].sort((a, b) => a.category_name.localeCompare(b.category_name));
-                    setGetProductsState(sortedCategory);
-                    break;
-                case "price":
-                    setSort(sorting);
-                    const sortedPrice = [...getProductsState].sort((a, b) => a.variant_price - b.variant_price);
-                    setGetProductsState(sortedPrice);
-                    break;
-                case "sales":
-                    setSort(sorting);
-                    const sortedSales = [...getProductsState].sort((a, b) => a.bought - b.bought);
-                    setGetProductsState(sortedSales);
-                    break;
-                case "stock":
-                    setSort(sorting);
-                    const sortedStock = [...getProductsState].sort((a, b) => a.variant_stock - b.variant_stock);
-                    setGetProductsState(sortedStock);
-                    break;
-            }
-    };*/}
-
-    const sortingArray = (sorting: 'default' | 'name' | 'variant' | 'category' | 'price' | 'sales' | 'stock') => {
-        setSort(sorting); 
-    };
-
-    useEffect(() => {
-        
-            switch (sort) {
-                case "default":
-                    break;
-                case "name":
-                    const sortedName = [...getProductsState].sort((a, b) => a.name.localeCompare(b.name));
-                    setGetProductsState(sortedName);
-                    break;
-                case "category":
-                    const sortedCategory = [...getProductsState].sort((a, b) => a.category_name.localeCompare(b.category_name));
-                    setGetProductsState(sortedCategory);
-                    break;
-                case "price":
-                    const sortedPrice = [...getProductsState].sort((a, b) => a.variant_price - b.variant_price);
-                    setGetProductsState(sortedPrice);
-                    break;
-                case "sales":
-                    const sortedSales = [...getProductsState].sort((a, b) => a.bought - b.bought);
-                    setGetProductsState(sortedSales);
-                    break;
-                case "stock":
-                    const sortedStock = [...getProductsState].sort((a, b) => a.variant_stock - b.variant_stock);
-                    setGetProductsState(sortedStock);
-                    break;
-            
+    const sortingArray = (key: typeof sortKey) => {
+        if (key === sortKey) {
+            setSortDir(d => (d === 'asc' ? 'desc' : 'asc'));
+        } else {
+            setSortKey(key);
+            setSortDir('asc');
         }
-    }, [sort]);
+    };
 
+    const displayedProducts = useMemo(() => {
+        let base =
+            filter === 'active'
+                ? allProducts.filter(p => p.is_active === true) : filter === 'violate'
+                ? allProducts.filter(p => p.is_active === false && p.is_published == true) : filter === 'pending'
+                ? allProducts.filter(p => p.is_published === false && p.is_active === false) : allProducts;
+
+        const s = searchValue.trim().toLowerCase();
+        const c = categoryFilter.trim().toLowerCase();
+        if (s || c) {
+            base = base.filter(p => 
+                (s &&
+                    ((p.name ?? '').toLowerCase().includes(s) ||
+                    (p.variant_sku ?? '').toLowerCase().includes(s) ||
+                    String(p.id).includes(s))) ||
+                (c && (p.category_name ?? '').toLowerCase().includes(c))
+            );
+        }
+
+        const sorted = [...base];
+        const cmp = <T,>(a: T, b: T) => (sortDir === 'asc' ? a < b ? -1 : a > b ? 1 : 0 : a < b ? 1 : a > b ? -1 : 0);
+
+        switch (sortKey) {
+            case 'name':
+                sorted.sort((a, b) =>
+                    sortDir === 'asc'
+                        ? (a.name ?? '').localeCompare(b.name ?? '')
+                        : (b.name ?? '').localeCompare(a.name ?? '')
+                );
+                break;
+            case 'category':
+                sorted.sort((a, b) =>
+                    sortDir === 'asc'
+                        ? (a.category_name ?? '').localeCompare(b.category_name ?? '')
+                        : (b.category_name ?? '').localeCompare(a.category_name ?? '')
+                    );
+                break;
+            case 'price':
+                sorted.sort((a, b) => (sortDir === 'asc' ? (a.variant_price ?? 0) - (b.variant_price ?? 0) : (b.variant_price ?? 0) - (a.variant_price ?? 0)));
+                break;
+            case 'sales':
+                sorted.sort((a, b) => (sortDir === 'asc' ? (a.bought ?? 0) - (b.bought ?? 0) : (b.bought ?? 0) - (a.bought ?? 0)));
+                break;
+            case 'stock':
+                sorted.sort((a, b) => (sortDir === 'asc' ? (a.variant_stock ?? 0) - (b.variant_stock ?? 0) : (b.variant_stock ?? 0) - (a.variant_stock ?? 0)));
+                break;
+            case 'default':
+            default:
+                break;
+        }
+
+        return sorted;
+    }, [allProducts, filter, searchValue, categoryFilter, sortKey, sortDir]);
+
+    const countActive   = allProducts.filter(p => p.is_active === true).length;
+    const countViolate  = allProducts.filter(p => p.is_active === false && p.is_published === true).length;
+    const countPending  = allProducts.filter(p => p.is_published === false && p.is_active === false).length;
+    
     return (
         <>
             <header className="flex justify-between items-center">
@@ -200,7 +162,6 @@ const AllProductSection = () => {
                         type="button"
                         className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center hover:cursor-pointer active:bg-purple-700"
                         onClick={() => {
-                            setIsSearchActive(false);
                             setSearchValue('');
                             setCategoryFilter('');
                         }}
@@ -208,7 +169,7 @@ const AllProductSection = () => {
                         Reset
                     </button>
                 </div>
-                <p className="mb-3">{getProductsState.length} products</p>
+                <p className="mb-3">{displayedProducts.length} products</p>
                 {status.fetchProductsByStoreId === 'succeeded' && allProducts.length > 0 && (
                     <table className="min-w-full">
                         <thead>
@@ -249,9 +210,9 @@ const AllProductSection = () => {
                             </tr>
                         </thead>
                         <tbody>
-                                {getProductsState.map((p) => (
+                                {displayedProducts.map((p) => (
                                 <tr key={p.id + '-' + p.variant_name} className="border-b-[0.01rem] text-center">
-                                    <td className="px-4 py-2">{p.name}</td>
+                                    <td className="px-4 py-2 h-16">{p.name}</td>
                                     <td className="px-4 py-2">{p.variant_name}</td>
                                     <td className="px-4 py-2">{p.category_name}</td>
                                     <td className="px-4 py-2">{p.variant_price} $</td>
@@ -264,7 +225,7 @@ const AllProductSection = () => {
                             </tbody>
                     </table>
                 )}
-                {getProductsState.length === 0 &&
+                {displayedProducts.length === 0 &&
                     <div className="mt-40">
                         <img src={database} className="m-auto my-2" />
                         <p className="text-center">No Data</p>
