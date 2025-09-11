@@ -14,6 +14,8 @@ const AllProductSection = () => {
     const [offset, setOffset] = useState(0);
     const [searchValue, setSearchValue] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
+    const [searchDraft, setSearchDraft] = useState('');
+    const [categoryDraft, setCategoryDraft] = useState('');
     const [sortKey, setSortKey] = useState<'default' | 'name' | 'variant' | 'category' | 'price' | 'sales' | 'stock'>('default');
     const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
     const dispatch = useDispatch<AppDispatch>();
@@ -69,7 +71,6 @@ const AllProductSection = () => {
         }
 
         const sorted = [...base];
-        const cmp = <T,>(a: T, b: T) => (sortDir === 'asc' ? a < b ? -1 : a > b ? 1 : 0 : a < b ? 1 : a > b ? -1 : 0);
 
         switch (sortKey) {
             case 'name':
@@ -134,14 +135,21 @@ const AllProductSection = () => {
                             type="text" 
                             placeholder="Enter product name, product's SKU, product Id"
                             className="text-[#A6AFD8] ml-5 focus:outline-none min-w-82"
-                            value={searchValue}
-                            onChange={e => setSearchValue(e.target.value)}
+                            value={searchDraft}
+                            onChange={(e) => setSearchDraft(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { 
+                                setSearchValue(searchDraft.trim());
+                                setCategoryFilter(categoryDraft.trim());
+                            }}}
                         />
                     </div>
                     <button 
                         type="button"
                         className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center hover:cursor-pointer active:bg-purple-700"
-                        onClick={() => searchFilter(searchValue, categoryFilter)}
+                        onClick={() => {
+                            setSearchValue(searchDraft.trim());
+                            setCategoryFilter(categoryDraft.trim());
+                        }}
                     >
                         Apply
                     </button>
@@ -153,8 +161,8 @@ const AllProductSection = () => {
                             <CategoryFilter 
                                 options={categories}
                                 placeholder='Find by category'
-                                value={categoryFilter}
-                                onSelect={(value) => setCategoryFilter(value)}
+                                value={categoryDraft}
+                                onSelect={(value) => setCategoryDraft(value)}
                             />
                         </div>
                     </div>
@@ -162,6 +170,8 @@ const AllProductSection = () => {
                         type="button"
                         className="ml-12 bg-gray-700 px-7 py-0.5 rounded-lg text-md h-fit self-center hover:cursor-pointer active:bg-purple-700"
                         onClick={() => {
+                            setSearchDraft('');
+                            setCategoryDraft('');
                             setSearchValue('');
                             setCategoryFilter('');
                         }}
@@ -180,14 +190,14 @@ const AllProductSection = () => {
                                         <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('name')}/>
                                     </div>
                                 </th>
-                                <th className="px-4 py-2 font-normal min-w-[10rem]">Variant's name</th>
+                                <th className="px-4 py-2 font-normal min-w-[12rem]">Variant's name</th>
                                 <th className="px-4 py-2 font-normal">
                                     <div className="flex justify-center">
                                         <p className="mr-2">Category</p>
                                         <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('category')}/>
                                     </div>
                                 </th>
-                                <th className="px-4 py-2 font-normal">
+                                <th className="px-4 py-2 font-normal min-w-[7rem]">
                                     <div className="flex justify-center">
                                         <p className="mr-2">Price</p>
                                         <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('price')}/>
