@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import CategoryFilter from "../../components/CategoryFilter";
 import { Categories } from "../../components/MockCategories";
 import database from '../../assets/Database.svg';
+import sort from '../../assets/Sort.svg';
 
 const AllProductSection = () => {
     const [filter, setFilter] = useState<'all' | 'active' | 'violate' | 'pending'>('all');
@@ -85,10 +86,10 @@ const AllProductSection = () => {
             </header>
             <nav>
                 <ul className="flex gap-10 mt-5 text-xl">
-                    <li className={filter === 'all' ? 'text-[#A567C6] cursor-pointer hover:underline-none underline' : 'cursor-pointer hover:underline hover:text-[#A567C6]'} onClick={() => filteredState('all')}>All</li>
-                    <li className={filter === 'active' ? 'text-[#A567C6] cursor-pointer hover:underline-none underline' : 'cursor-pointer hover:underline hover:text-[#A567C6]'} onClick={() => filteredState('active')}>Active ({countActive})</li>
-                    <li className={filter === 'violate' ? 'text-[#A567C6] cursor-pointer hover:underline-none underline' : 'cursor-pointer hover:underline hover:text-[#A567C6]'} onClick={() => filteredState('violate')}>Violate ({countViolate})</li>
-                    <li className={filter === 'pending' ? 'text-[#A567C6] cursor-pointer hover:underline-none underline' : 'cursor-pointer hover:underline hover:text-[#A567C6]'} onClick={() => filteredState('pending')}>Pending approval by Shopp ({countPending})</li>
+                    <li className={filter === 'all' ? 'text-[#A567C6] cursor-pointer underline active:underline-offset-3' : 'cursor-pointer hover:underline hover:text-[#A567C6] active:underline-offset-3'} onClick={() => filteredState('all')}>All</li>
+                    <li className={filter === 'active' ? 'text-[#A567C6] cursor-pointer underline active:underline-offset-3' : 'cursor-pointer hover:underline hover:text-[#A567C6] active:underline-offset-3'} onClick={() => filteredState('active')}>Active ({countActive})</li>
+                    <li className={filter === 'violate' ? 'text-[#A567C6] cursor-pointer underline active:underline-offset-3' : 'cursor-pointer hover:underline hover:text-[#A567C6] active:underline-offset-3'} onClick={() => filteredState('violate')}>Violate ({countViolate})</li>
+                    <li className={filter === 'pending' ? 'text-[#A567C6] cursor-pointer underline active:underline-offset-3' : 'cursor-pointer hover:underline hover:text-[#A567C6] active:underline-offset-3'} onClick={() => filteredState('pending')}>Pending approval by Shopp ({countPending})</li>
                 </ul>
             </nav>
             <div className="mt-10 bg-gray-900 p-5 rounded-xl min-h-200">
@@ -145,14 +146,54 @@ const AllProductSection = () => {
                     <table className="min-w-full">
                         <thead>
                             <tr className="bg-gray-700 text-center text-xl">
-                                <th className="px-4 py-2 font-normal rounded-l-xl">Product's name</th>
-                                <th className="px-4 py-2 font-normal">Variant's name</th>
-                                <th className="px-4 py-2 font-normal">Category</th>
-                                <th className="px-4 py-2 font-normal">Price</th>
-                                <th className="px-4 py-2 font-normal">Sales</th>
-                                <th className="px-4 py-2 font-normal">Stock quantity</th>
-                                <th className="px-4 py-2 font-normal">Content quality</th>
-                                <th className="px-4 py-2 font-normal rounded-r-xl">Action</th>
+                                <th className="px-4 py-2 font-normal rounded-l-xl">
+                                    <div className="flex justify-center">
+                                        <p className="mr-2">Product's name</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal">
+                                    <div className="flex justify-center min-w-[10rem]">
+                                        <p className="mr-2">Variant's name</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal">
+                                    <div className="flex justify-center">
+                                        <p className="mr-2">Category</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal">
+                                    <div className="flex justify-center">
+                                        <p className="mr-2">Price</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal">
+                                    <div className="flex justify-center">
+                                        <p className="mr-2">Sales</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal">
+                                    <div className="flex justify-center min-w-[9rem]">
+                                        <p className="mr-2">Stock quantity</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal">
+                                    <div className="flex justify-center min-w-[10rem]">
+                                        <p className="mr-2">Content quality</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
+                                <th className="px-4 py-2 font-normal rounded-r-xl">
+                                    <div className="flex justify-center">
+                                        <p className="mr-2">Action</p>
+                                        <img src={sort}/>
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -165,7 +206,7 @@ const AllProductSection = () => {
                                     <td className="px-4 py-2">{p.bought}</td>
                                     <td className="px-4 py-2">{p.variant_stock}</td>
                                     <td className="px-4 py-2">{p.is_active ? 'Active' : 'Not Active'}</td>
-                                    <td className="px-4 py-2">View</td>
+                                    <td className="px-4 py-2 cursor-pointer hover:underline active:underline-offset-3">View</td>
                                 </tr>
                                 ))}
                             </tbody>
