@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import CategoryFilter from "../../components/CategoryFilter";
 import { Categories } from "../../components/MockCategories";
 import database from '../../assets/Database.svg';
-import sort from '../../assets/Sort.svg';
+import sortImg from '../../assets/Sort.svg';
 
 const AllProductSection = () => {
     const [filter, setFilter] = useState<'all' | 'active' | 'violate' | 'pending'>('all');
@@ -14,6 +14,7 @@ const AllProductSection = () => {
     const [offset, setOffset] = useState(0);
     const [searchValue, setSearchValue] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
+    const [sort, setSort] = useState<'default' | 'name' | 'variant' | 'category' | 'price' | 'sales' | 'stock'>('default');
     const dispatch = useDispatch<AppDispatch>();
     const storeId = useSelector((state: RootState) => state.sellerStore.store?.id); 
     const token = useSelector((state: RootState) => state.auth.accessToken);
@@ -77,6 +78,72 @@ const AllProductSection = () => {
         setGetProductsState(filteredProducts);
         setIsSearchActive(true);
     };
+
+    {/*const sortingArray = (sorting: string) => {
+        switch (sorting) {
+                case "default":
+                    setSort(sorting);
+                    break;
+                case "name":
+                    setSort(sorting);
+                    const sortedName = [...getProductsState].sort((a, b) => a.name.localeCompare(b.name));
+                    setGetProductsState(sortedName);
+                    break;
+                case "category":
+                    setSort(sorting);
+                    const sortedCategory = [...getProductsState].sort((a, b) => a.category_name.localeCompare(b.category_name));
+                    setGetProductsState(sortedCategory);
+                    break;
+                case "price":
+                    setSort(sorting);
+                    const sortedPrice = [...getProductsState].sort((a, b) => a.variant_price - b.variant_price);
+                    setGetProductsState(sortedPrice);
+                    break;
+                case "sales":
+                    setSort(sorting);
+                    const sortedSales = [...getProductsState].sort((a, b) => a.bought - b.bought);
+                    setGetProductsState(sortedSales);
+                    break;
+                case "stock":
+                    setSort(sorting);
+                    const sortedStock = [...getProductsState].sort((a, b) => a.variant_stock - b.variant_stock);
+                    setGetProductsState(sortedStock);
+                    break;
+            }
+    };*/}
+
+    const sortingArray = (sorting: 'default' | 'name' | 'variant' | 'category' | 'price' | 'sales' | 'stock') => {
+        setSort(sorting); 
+    };
+
+    useEffect(() => {
+        
+            switch (sort) {
+                case "default":
+                    break;
+                case "name":
+                    const sortedName = [...getProductsState].sort((a, b) => a.name.localeCompare(b.name));
+                    setGetProductsState(sortedName);
+                    break;
+                case "category":
+                    const sortedCategory = [...getProductsState].sort((a, b) => a.category_name.localeCompare(b.category_name));
+                    setGetProductsState(sortedCategory);
+                    break;
+                case "price":
+                    const sortedPrice = [...getProductsState].sort((a, b) => a.variant_price - b.variant_price);
+                    setGetProductsState(sortedPrice);
+                    break;
+                case "sales":
+                    const sortedSales = [...getProductsState].sort((a, b) => a.bought - b.bought);
+                    setGetProductsState(sortedSales);
+                    break;
+                case "stock":
+                    const sortedStock = [...getProductsState].sort((a, b) => a.variant_stock - b.variant_stock);
+                    setGetProductsState(sortedStock);
+                    break;
+            
+        }
+    }, [sort]);
 
     return (
         <>
@@ -149,51 +216,36 @@ const AllProductSection = () => {
                                 <th className="px-4 py-2 font-normal rounded-l-xl">
                                     <div className="flex justify-center">
                                         <p className="mr-2">Product's name</p>
-                                        <img src={sort}/>
+                                        <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('name')}/>
                                     </div>
                                 </th>
-                                <th className="px-4 py-2 font-normal">
-                                    <div className="flex justify-center min-w-[10rem]">
-                                        <p className="mr-2">Variant's name</p>
-                                        <img src={sort}/>
-                                    </div>
-                                </th>
+                                <th className="px-4 py-2 font-normal min-w-[10rem]">Variant's name</th>
                                 <th className="px-4 py-2 font-normal">
                                     <div className="flex justify-center">
                                         <p className="mr-2">Category</p>
-                                        <img src={sort}/>
+                                        <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('category')}/>
                                     </div>
                                 </th>
                                 <th className="px-4 py-2 font-normal">
                                     <div className="flex justify-center">
                                         <p className="mr-2">Price</p>
-                                        <img src={sort}/>
+                                        <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('price')}/>
                                     </div>
                                 </th>
                                 <th className="px-4 py-2 font-normal">
                                     <div className="flex justify-center">
                                         <p className="mr-2">Sales</p>
-                                        <img src={sort}/>
+                                        <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('sales')}/>
                                     </div>
                                 </th>
                                 <th className="px-4 py-2 font-normal">
                                     <div className="flex justify-center min-w-[9rem]">
                                         <p className="mr-2">Stock quantity</p>
-                                        <img src={sort}/>
+                                        <img src={sortImg} className="cursor-pointer" onClick={() => sortingArray('stock')}/>
                                     </div>
                                 </th>
-                                <th className="px-4 py-2 font-normal">
-                                    <div className="flex justify-center min-w-[10rem]">
-                                        <p className="mr-2">Content quality</p>
-                                        <img src={sort}/>
-                                    </div>
-                                </th>
-                                <th className="px-4 py-2 font-normal rounded-r-xl">
-                                    <div className="flex justify-center">
-                                        <p className="mr-2">Action</p>
-                                        <img src={sort}/>
-                                    </div>
-                                </th>
+                                <th className="px-4 py-2 font-normal min-w-[11rem]">Content quality</th>
+                                <th className="px-4 py-2 font-normal rounded-r-xl">Action</th>
                             </tr>
                         </thead>
                         <tbody>
