@@ -40,6 +40,7 @@ const SellerPageTemplate = () => {
         break;
       case "product":
         displayNavName = "Product Management";
+        if (nameArr[3] === "all") displayNavName += " > All";
         break;
       case "marketing":
         displayNavName = "Marketing";

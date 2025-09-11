@@ -32,9 +32,9 @@ const AllProductSection = () => {
 
     const activeProducts = allProducts.filter((p) => p.is_active === true);
     const countActive = activeProducts.length;
-    const violateProducts = allProducts.filter((p) => p.is_active === false);
+    const violateProducts = allProducts.filter((p) => p.is_active === false && p.is_published === true);
     const countViolate = violateProducts.length;
-    const pendingProducts = allProducts.filter((p) => p.is_published === false);
+    const pendingProducts = allProducts.filter((p) => p.is_published === false && p.is_active === false); 
     const countPending = pendingProducts.length;
 
     const filteredState = (state: "all" | "active" | "violate" | "pending") => {
@@ -164,7 +164,7 @@ const AllProductSection = () => {
                                     <td className="px-4 py-2">{p.variant_price} $</td>
                                     <td className="px-4 py-2">{p.bought}</td>
                                     <td className="px-4 py-2">{p.variant_stock}</td>
-                                    <td className="px-4 py-2">{p.is_active ? 'OK' : 'NOT GOOD'}</td>
+                                    <td className="px-4 py-2">{p.is_active ? 'Active' : 'Not Active'}</td>
                                     <td className="px-4 py-2">View</td>
                                 </tr>
                                 ))}
