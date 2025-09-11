@@ -135,7 +135,7 @@ const router = createBrowserRouter(
 
       <Route path="/seller-landing-page" element={<SellerLandingPage />} />
       {/* Seller Routes */}
-      <Route path="/seller" element={<PrivateRoute><SellerPageTemplate /></PrivateRoute>}>
+      <Route path="/seller" element={<PrivateRoute allowedRoles={['seller']}><SellerPageTemplate /></PrivateRoute>}>
         <Route path="dashboard" element={<SellerDashboard />} />
         <Route path="product/all" element={<AllProductSection />} />
         <Route path="order">
@@ -150,7 +150,7 @@ const router = createBrowserRouter(
       <Route
         path="/seller/product/create"
         element={
-          <AccessGuard>
+          <AccessGuard allowedRoles={['seller']}>
             <CreateProduct />
           </AccessGuard>
         }

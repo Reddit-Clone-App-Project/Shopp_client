@@ -2,7 +2,7 @@ import { Outlet } from "react-router";
 import SellerBlackHeader from "../../components/SellerBlackHeader/SellerBlackHeader";
 import SellerSideBar from "../../features/SellerDashboard/SellerSidebar";
 import { useLocation } from "react-router";
-import { fetchStoreOwned, setSelectedStoreId } from '../../features/StoreSlice/StoreSlice';
+import { fetchYourStore } from "../../features/StoreSlice/SellerStoreSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import { useEffect } from "react";
@@ -13,24 +13,14 @@ const SellerPageTemplate = () => {
   const location = useLocation();
   const pathname = location.pathname;
 
-  const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
-  const stores = useSelector((state: RootState) => state.stores.stores);
   const token = useSelector((state: RootState) => state.auth.accessToken);
 
-  
-  const storeId = selectedStoreId ?? stores[0]?.id; 
-  
   useEffect(() => {
       if (token) {
-          dispatch(fetchStoreOwned());
+          dispatch(fetchYourStore());
       };
   }, [dispatch, token]);
-  
-  useEffect(() => {
-          if (stores.length > 0 && selectedStoreId == null && token) {
-              dispatch(setSelectedStoreId(storeId));
-          };
-  }, [stores, selectedStoreId, dispatch, token]);
+
 
   const pathNameToNav = (name: string) => {
     let displayNavName = "";

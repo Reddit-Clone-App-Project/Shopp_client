@@ -14,15 +14,13 @@ const AllProductSection = () => {
     const [searchValue, setSearchValue] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const dispatch = useDispatch<AppDispatch>();
-    const stores = useSelector((state: RootState) => state.stores.stores);
-    const selectedStoreId = useSelector((state: RootState) => state.stores.selectedStoreId);
+    const storeId = useSelector((state: RootState) => state.sellerStore.store?.id); 
     const token = useSelector((state: RootState) => state.auth.accessToken);
     const { allProducts, status, error } = useSelector((state: RootState) => state.storeProducts);
     const loading = status.fetchProductsByStoreId === 'loading';
     const [getProductsState, setGetProductsState] = useState(allProducts);
     const [isSearchActive, setIsSearchActive] = useState(false);
 
-    const storeId = selectedStoreId ?? stores[0]?.id; 
     const categories = Categories;
     
 

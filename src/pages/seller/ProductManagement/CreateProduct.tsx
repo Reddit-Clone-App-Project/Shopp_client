@@ -8,10 +8,7 @@ import Cart from "../../../assets/HomePage/Header/shopping-cart.svg";
 import BasicInformation from "../../../features/CreateProduct/BasicInformation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
-import {
-  fetchStoreOwned,
-  setSelectedStoreId,
-} from "../../../features/StoreSlice/StoreSlice";
+import { fetchYourStore } from "../../../features/StoreSlice/SellerStoreSlice";
 import axios from "axios";
 import SalesInformation from "../../../features/CreateProduct/SalesInformation";
 
@@ -46,9 +43,8 @@ const CreateProduct = () => {
   const [step, setStep] = useState(1);
   const { accessToken } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch<AppDispatch>();
-  const stores = useSelector((state: RootState) => state.stores.stores);
-  const selectedStoreId = useSelector(
-    (state: RootState) => state.stores.selectedStoreId
+  const storeId = useSelector(
+    (state: RootState) => state.sellerStore.store?.id
   );
   const [productData, setProductData] = useState<ProductDataType>({
     name: "",
@@ -81,14 +77,11 @@ const CreateProduct = () => {
     productData;
 
   useEffect(() => {
-    dispatch(fetchStoreOwned());
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (stores.length > 0 && selectedStoreId == null) {
-      dispatch(setSelectedStoreId(stores[0].id));
+    if (!storeId){
+        dispatch(fetchYourStore());
     }
-  }, [stores, selectedStoreId, dispatch]);
+  }, [dispatch, storeId]);
+
 
   const handleFinalSubmit = async () => {
     try {
@@ -96,7 +89,7 @@ const CreateProduct = () => {
         "http://localhost:3000/products/create",
         {
           ...productData,
-          store_id: selectedStoreId,
+          store_id: storeId,
         },
         {
           headers: {

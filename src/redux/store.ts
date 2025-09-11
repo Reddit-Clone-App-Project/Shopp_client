@@ -21,6 +21,7 @@ import vouchers from "../features/Vouchers/VouchersSlice";
 import wishlist from "../features/Wishlist/WishlistSlice";
 import wishlistDetail from "../features/Wishlist/WishlistDetailSlice";
 import chat from "../features/Chat/ChatSlice";
+import sellerStore from '../features/StoreSlice/SellerStoreSlice';
 
 export const store = configureStore({
     reducer: {
@@ -37,6 +38,7 @@ export const store = configureStore({
         category,
         categoryProducts,
         stores,
+        sellerStore,
         productDetail,
         cart,
         orders,

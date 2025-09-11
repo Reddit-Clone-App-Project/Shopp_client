@@ -302,6 +302,4 @@ export const getConversationsForStore = (storeId: number) => API.get(`/chat/stor
 export const findOrCreateConversation = (buyerIdFromSeller: number | undefined, sellerId: number) => API.post('/chat/find-or-create', { buyerIdFromSeller, sellerId });
 
 //! Seller
-// Get all store owned by the user
-export const getStoreOwned = () => API.get("store/my-store");
-export const getAllStore = () => API.get("/store/involved-stores");
+export const getYourStore = () => API.get("/store/your-store");
