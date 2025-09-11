@@ -5,7 +5,7 @@ import Form2 from "../../features/CreateStore/Form2";
 import FinalForm from "../../features/CreateStore/FinalForm";
 import { AddressFormData } from "../../features/CreateStore/AddAddressModal";
 import { toast } from "react-toastify";
-import axios from "axios";
+import { API } from "../../api";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 
@@ -38,13 +38,7 @@ const CreateStorePage = () => {
 
     const handleFinalSubmit = async () => {
         try {
-            await axios.post('http://localhost:3000/store/', storeData,
-                {
-                    headers: {
-                    Authorization: `Bearer ${accessToken}`
-                    }
-                }
-            );
+            await API.post('/store', storeData);
             toast.success('Registration completed!');
             setStatus(true);
 
