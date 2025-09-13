@@ -47,7 +47,7 @@ API.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (status === 401 && !originalRequest._retry) {
+    if (status === 401 || status === 403 && !originalRequest._retry) {
       if (originalRequest.url.endsWith("/refresh")) {
         console.error("Refresh token is invalid, logging out.");
         store.dispatch(logoutClientSide());
