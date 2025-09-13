@@ -62,6 +62,33 @@ Make sure you have [Node.js](https://nodejs.org/) (version 18 or higher is recom
 
 6.  Open your browser and navigate to `http://localhost:5173` (or the port shown in your terminal) to see the application live.
 
+### Docker Deployment
+
+1.  Make sure `docker` is installed in your system with the compose plugin.
+
+2.  Create a directory for the project and download the `compose.yaml` file from the repository:
+    ```sh
+    mkdir shopp_server
+    cd shopp_server
+    wget https://github.com/Reddit-Clone-App-Project/Shopp_client/raw/refs/heads/main/compose.yaml
+    ```
+
+3.  Download the example .env file and edit it to include your necessary server credentials.\
+    **Note:** Make sure the .env file on the host has AT LEAST read access for all users for the user inside the container to be able to read the file. You can do this with `chmod a+r .env` after editing the file.
+    ```sh
+    wget https://github.com/Reddit-Clone-App-Project/Shopp_client/raw/refs/heads/main/env.example
+    mv env.example .env
+    nano .env # edit the file then save with Ctrl+S
+    ```
+
+4.  Let Docker Compose pull the image and run the server for you:
+    ```sh
+    docker compose up
+
+    # run docker compose up -d for it to be detached
+    # use docker compose down to stop and remove the container
+    ```
+
 ## How to Contribute
 
 We'd love to see your contributions!

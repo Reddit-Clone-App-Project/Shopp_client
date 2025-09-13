@@ -1,0 +1,10 @@
+name: "shopp_client"
+services:
+  shopp_client:
+    image: ghcr.io/reddit-clone-app-project/shopp_client:main
+    container_name: shopp_client
+    hostname: shopp_client
+    restart: always
+    network_mode: host
+    volumes:
+      - ./.env:/client/.env:ro
