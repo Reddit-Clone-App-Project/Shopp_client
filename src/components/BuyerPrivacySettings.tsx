@@ -40,7 +40,7 @@ const BuyerPrivacySettings: React.FC<BuyerPrivacySettingsProps> = ({
 
   const handleRequestOtp = async () => {
     try {
-      await API.post("http://localhost:3000/email-otp/request-otp");
+      await API.post(import.meta.env.VITE_BACKEND_URL + "/email-otp/request-otp");
       setOtpSent(true);
       toast.success("An OTP has been sent to your email.");
     } catch (error) {
@@ -51,7 +51,7 @@ const BuyerPrivacySettings: React.FC<BuyerPrivacySettingsProps> = ({
   const handleVerifyOtp = async () => {
     try {
       const response = await API.post(
-        "http://localhost:3000/email-otp/verify-otp",
+        import.meta.env.VITE_BACKEND_URL + "/email-otp/verify-otp",
         { otp }
       );
       if (response.data.verified) {

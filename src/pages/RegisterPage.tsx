@@ -12,7 +12,7 @@ const RegisterPage = () => {
 
     const handleRegister = async (email: string, phone_number: string, password: string, role: string) => {
         try {
-            await axios.post('http://localhost:3000/users/register', {
+            await axios.post(import.meta.env.VITE_BACKEND_URL + '/users/register', {
                 email,
                 phone_number,
                 password,

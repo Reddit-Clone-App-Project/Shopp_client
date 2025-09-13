@@ -8,7 +8,7 @@ import history from "../history";
 import { PostBuyerAddress, UpdateBuyerAddress } from "../types/BuyerAddress";
 
 export const API = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true,
 });
 

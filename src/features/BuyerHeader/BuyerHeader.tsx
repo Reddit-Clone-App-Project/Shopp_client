@@ -250,7 +250,7 @@ const BuyerHeader: React.FC = () => {
     if (debouncedSearchTerm) {
       axios
         .get(
-          `http://localhost:3000/products/suggestions?q=${debouncedSearchTerm}`
+          import.meta.env.VITE_BACKEND_URL + `/products/suggestions?q=${debouncedSearchTerm}`
         )
         .then((response) => {
           setSuggestions(response.data);

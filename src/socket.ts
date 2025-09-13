@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import { store } from "./redux/store";
 
-const URL = 'http://localhost:3000';
+const URL = import.meta.env.VITE_BACKEND_URL;
 
 // Getting access token
 const getAccessToken = () => {
