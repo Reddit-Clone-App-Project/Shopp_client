@@ -47,7 +47,7 @@ API.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    if (status === 401 || status === 403 && !originalRequest._retry) {
+    if ((status === 401 || status === 403) && !originalRequest._retry) {
       if (originalRequest.url.endsWith("/refresh")) {
         console.error("Refresh token is invalid, logging out.");
         store.dispatch(logoutClientSide());
@@ -303,3 +303,4 @@ export const findOrCreateConversation = (buyerIdFromSeller: number | undefined, 
 
 //! Seller
 export const getYourStore = () => API.get("/store/your-store");
+export const getAllStoreOrders = (storeId: number) => API.get(`/orders/${storeId}/all`);
