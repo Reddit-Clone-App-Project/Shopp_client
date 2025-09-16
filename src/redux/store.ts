@@ -22,6 +22,7 @@ import wishlist from "../features/Wishlist/WishlistSlice";
 import wishlistDetail from "../features/Wishlist/WishlistDetailSlice";
 import chat from "../features/Chat/ChatSlice";
 import sellerStore from '../features/StoreSlice/SellerStoreSlice';
+import storeOrders from "../features/StoreOrders/StoreOrdersSlice"
 
 export const store = configureStore({
     reducer: {
@@ -47,7 +48,8 @@ export const store = configureStore({
         vouchers,
         wishlist,
         wishlistDetail,
-        chat
+        chat,
+        storeOrders
     },
 });
 
